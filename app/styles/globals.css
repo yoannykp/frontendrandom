@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: var(--font-inter);
+  font-family: var(--font-volkhov), var(--font-inter), sans-serif;
 }
 
 h1,
@@ -107,4 +107,22 @@ button {
     backdrop-filter: blur(20px);
     border: 1px solid rgba(171, 171, 171, 0.26);
   }
+}
+p {
+  @apply font-inter;
+}
+
+/* Hide scrollbar for WebKit browsers (Chrome, Safari, Edge) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+.no-scrollbar {
+  scrollbar-width: none; /* For Firefox */
+}
+
+/* Prevent scrollbar-related margin shift */
+.no-scrollbar {
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
 }

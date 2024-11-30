@@ -54,8 +54,13 @@ const config: Config = {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        "gray-light": "rgba(171,171,171,0.26)",
+        "gray-dark": "#28292c",
+        "gray-dark-with-opacity": "#D9D9D912",
+        "off-white": "#FFFFFF80",
       },
       borderRadius: {
+        normal: "15px",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
