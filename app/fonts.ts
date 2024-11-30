@@ -1,4 +1,4 @@
-import { Inter, Lato, Volkhov } from "next/font/google"
+import { Inter, Volkhov } from "next/font/google"
 
 export const inter = Inter({ variable: "--font-inter", subsets: ["latin"] })
 

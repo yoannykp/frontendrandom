@@ -10,7 +10,6 @@ import element6 from "@/public/elements/element-6.png"
 import element7 from "@/public/elements/element-7.png"
 import element8 from "@/public/elements/element-8.png"
 import boyImage from "@/public/images/boy.png"
-import { FaXTwitter } from "react-icons/fa6"
 
 import PreviousStepButton from "../home/previous-step-button"
 import BrandButton from "../ui/brand-button"

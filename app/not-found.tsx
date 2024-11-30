@@ -2,7 +2,6 @@ import { FlagIcon } from "lucide-react"
 
 import BlurBox from "@/components/ui/blur-box"
 import BrandButton from "@/components/ui/brand-button"
-import Footer from "@/components/common/footer"
 import {
   ChatIcon,
   DoubleArrowIcon,
@@ -17,7 +16,6 @@ import {
   VolumeIcon,
 } from "@/components/icons"
 import AlienzoneIcon from "@/components/icons/alienzone"
-import BackgroundCover from "@/components/not-found/background-cover"
 
 const sidebarItems = [
   { label: "", href: "", icon: <HomeIcon className="size-4" /> },
