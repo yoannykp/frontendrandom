@@ -1,16 +1,16 @@
 import React from "react"
 
-import { ChatIcon } from "../icons"
-import BlurBox from "../ui/blur-box"
+import { cn } from "@/lib/utils"
 
-const ChatBox = () => {
+import { ChatIcon } from "../icons"
+import IconButton from "../ui/icon-button"
+
+const ChatBox = ({ className }: { className?: string }) => {
   return (
-    <div className="absolute left-28 bottom-28">
-      <BlurBox className="rounded-normal flex-col items-center gap-2.5 w-14 p-2">
-        <BlurBox>
-          <ChatIcon className="size-4" />
-        </BlurBox>
-      </BlurBox>
+    <div className={cn("", className)}>
+      <IconButton className="size-[55px] lg:size-14 rounded-xl" showBase>
+        <ChatIcon className="size-6" />
+      </IconButton>
     </div>
   )
 }

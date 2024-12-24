@@ -1,4 +1,4 @@
-import React from "react"
+import { cn } from "@/lib/utils"
 
 import {
   MailIcon,
@@ -7,24 +7,31 @@ import {
   ShopIcon,
   VolumeIcon,
 } from "../icons"
-import BlurBox from "../ui/blur-box"
+import IconButton from "../ui/icon-button"
 
 const topbarItems = [
-  { label: "", href: "", icon: <MailIcon className="size-4" /> },
-  { label: "", href: "", icon: <ShopIcon className="size-4" /> },
-  { label: "", href: "", icon: <Shop2Icon className="size-4" /> },
-  { label: "", href: "", icon: <VolumeIcon className="size-4" /> },
-  { label: "", href: "", icon: <SettingsIcon className="size-4" /> },
+  { label: "", href: "", icon: MailIcon },
+  { label: "", href: "", icon: ShopIcon },
+  { label: "", href: "", icon: Shop2Icon },
+  { label: "", href: "", icon: VolumeIcon },
+  { label: "", href: "", icon: SettingsIcon },
 ]
 
-const TopBar = () => {
+const TopBar = ({ className }: { className?: string }) => {
   return (
-    <div className="absolute right-28 top-28 z-20 flex flex-col gap-2">
-      <BlurBox className="rounded-normal items-center gap-2.5 p-2">
+    <div
+      className={cn(
+        "absolute right-28 top-28 z-20 flex flex-col gap-2",
+        className
+      )}
+    >
+      <div className="lg:bg-white/10 w-max rounded-normal items-center gap-2.5 p-2 max-lg:backdrop-blur-0 max-lg:border-none  flex ">
         {topbarItems.map((item, index) => (
-          <BlurBox key={index}> {item.icon}</BlurBox>
+          <IconButton key={index} className="size-10 lg:size-11 rounded-lg">
+            <item.icon className="size-4 lg:size-5" />
+          </IconButton>
         ))}
-      </BlurBox>
+      </div>
     </div>
   )
 }

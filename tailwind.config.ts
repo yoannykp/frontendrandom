@@ -71,11 +71,13 @@ const config: Config = {
         "70": "70px",
       },
       fontSize: {
+        "2xs": ["10px", "1.25rem"],
         xs: ["12px", "1.25rem"],
         sm: ["14px", "1.25rem"],
         base: ["16px", "1.25rem"],
         lg: ["20px", "2rem"],
         xl: ["24px", "1.25rem"],
+        "18": ["18px", "1.25rem"],
       },
     },
   },
