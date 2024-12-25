@@ -1,8 +1,12 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
+import { cn } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
+import { Button } from "@/components/ui/button"
 
 const raids = [
   {
@@ -12,6 +16,7 @@ const raids = [
     time: "2h",
     image: "/images/raids/raid-1.jpg",
     icon: "/images/raids/raid-1_icon.png",
+    isActive: true,
   },
   {
     id: 2,
@@ -20,6 +25,7 @@ const raids = [
     time: "2h",
     image: "/images/raids/raid-2.jpg",
     icon: "/images/raids/raid-1_icon.png",
+    isActive: false,
   },
   {
     id: 3,
@@ -28,6 +34,7 @@ const raids = [
     time: "2h",
     image: "/images/raids/raid-3.jpg",
     icon: "/images/raids/raid-1_icon.png",
+    isActive: false,
   },
   {
     id: 4,
@@ -36,6 +43,7 @@ const raids = [
     time: "2h",
     image: "/images/raids/raid-4.jpg",
     icon: "/images/raids/raid-1_icon.png",
+    isActive: false,
   },
   {
     id: 5,
@@ -44,6 +52,7 @@ const raids = [
     time: "2h",
     image: "/images/raids/raid-1.jpg",
     icon: "/images/raids/raid-1_icon.png",
+    isActive: false,
   },
   {
     id: 6,
@@ -52,6 +61,7 @@ const raids = [
     time: "2h",
     image: "/images/raids/raid-1.jpg",
     icon: "/images/raids/raid-1_icon.png",
+    isActive: false,
   },
   {
     id: 7,
@@ -60,6 +70,7 @@ const raids = [
     time: "2h",
     image: "/images/raids/raid-1.jpg",
     icon: "/images/raids/raid-1_icon.png",
+    isActive: false,
   },
   {
     id: 8,
@@ -68,12 +79,37 @@ const raids = [
     time: "2h",
     image: "/images/raids/raid-1.jpg",
     icon: "/images/raids/raid-1_icon.png",
+    isActive: false,
   },
 ]
 
-const page = () => {
+const Page = () => {
+  const pathname = usePathname()
   return (
     <>
+      <div className="absolute top-10 left-24 flex gap-3 z-20">
+        <Link href="/raids">
+          <Button
+            className={cn(
+              " px-5 !h-14 rounded-xl",
+              pathname === "/raids" ? "glass-effect" : "opacity-70"
+            )}
+          >
+            Raids
+          </Button>
+        </Link>
+        <Link href="/hunt">
+          <Button
+            className={cn(
+              " px-5 !h-14 rounded-xl",
+              pathname === "/hunt" ? "glass-effect" : "opacity-70"
+            )}
+          >
+            Hunt
+          </Button>
+        </Link>
+      </div>
+
       <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-40px)]">
         <div className="absolute inset-0 bg-[url('/images/characters/character-1-mobile.png')] bg-cover bg-center bg-no-repeat lg:bg-[url('/images/pages/bg.jpg')] "></div>
 
@@ -82,7 +118,10 @@ const page = () => {
             {raids.map((raid) => (
               <div
                 key={raid.id}
-                className="flex gap-3 bg-white/10 p-4 rounded-lg relative cursor-pointer hover:bg-white/30 transition-all duration-300"
+                className={cn(
+                  "flex gap-3 bg-white/10 p-4 rounded-lg relative cursor-pointer  transition-all duration-300",
+                  raid.isActive ? "" : "opacity-10"
+                )}
               >
                 <div className="absolute top-4 right-4 bg-white/10 rounded-full p-px">
                   <Image
@@ -151,35 +190,30 @@ const page = () => {
 
               <div className="mb-4 border p-4 rounded-lg">
                 <h2 className="text-lg font-inter mb-4">Rewards</h2>
-                <div className="grid grid-cols-4 gap-4">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <div
-                      key={index}
-                      className="glass-effect p-4 rounded-xl flex flex-col items-center relative overflow-hidden min-h-[150px] justify-center"
-                    >
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="glass-effect p-4 rounded-xl flex flex-col items-center relative overflow-hidden min-h-[150px] justify-center">
+                    <Image
+                      src="/images/star.png"
+                      alt="Star"
+                      width={500}
+                      height={500}
+                      className="object-cover absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] opacity-10"
+                    />
+                    <div className="relative size-20 mb-2">
                       <Image
                         src="/images/star.png"
                         alt="Star"
-                        width={500}
-                        height={500}
-                        className="object-cover absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] opacity-10"
+                        fill
+                        className="object-contain"
                       />
-                      <div className="relative size-20 mb-2">
-                        <Image
-                          src="/images/star.png"
-                          alt="Star"
-                          fill
-                          className="object-contain"
-                        />
-                      </div>
-                      <span className="text-sm">+ 500 STAR</span>
                     </div>
-                  ))}
+                    <span className="text-sm">+ 500 STAR</span>
+                  </div>
                 </div>
               </div>
 
               <BrandButton className=" w-full" blurColor="bg-[#EF98E6]">
-                Launch Raid
+                Launch Hunt
               </BrandButton>
             </div>
             <div className="glass-effect p-4 mt-3 rounded-2xl">
@@ -256,4 +290,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

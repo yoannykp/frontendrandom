@@ -1,7 +1,10 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
+import { cn } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import { Button } from "@/components/ui/button"
 
@@ -72,11 +75,31 @@ const raids = [
   },
 ]
 
-const page = () => {
+const Page = () => {
+  const pathname = usePathname()
   return (
     <>
-      <div>
-        <Button></Button>
+      <div className="absolute top-10 left-24 flex gap-3 z-20">
+        <Link href="/raids">
+          <Button
+            className={cn(
+              " px-5 !h-14 rounded-xl",
+              pathname === "/raids" ? "glass-effect" : "opacity-70"
+            )}
+          >
+            Raids
+          </Button>
+        </Link>
+        <Link href="/hunt">
+          <Button
+            className={cn(
+              " px-5 !h-14 rounded-xl",
+              pathname === "/hunt" ? "glass-effect" : "opacity-70"
+            )}
+          >
+            Hunt
+          </Button>
+        </Link>
       </div>
 
       <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-40px)]">
@@ -261,4 +284,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
