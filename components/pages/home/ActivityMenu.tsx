@@ -76,7 +76,7 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
       className={cn(
         " w-full  z-10  ",
         isMobile
-          ? " absolute inset-0 flex items-center justify-center left-0 lg:hidden"
+          ? "flex items-center justify-center left-0 lg:hidden"
           : "max-lg:hidden relative pb-12 px-8 pt-32 "
       )}
     >
@@ -91,9 +91,9 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
               <Link
                 key={index}
                 href={link.href}
-                className="glass-effect p-2 rounded-xl  hover:scale-105 transition-all duration-300 hover:!bg-white/30"
+                className="glass-effect p-2 rounded-lg lg:rounded-xl  hover:scale-105 transition-all duration-300 hover:!bg-white/30"
               >
-                <div className="relative pb-[60%] rounded-lg overflow-hidden">
+                <div className="relative pb-[40%] lg:pb-[60%] rounded-lg overflow-hidden">
                   <Image
                     src={link.image}
                     alt={link.title}
@@ -113,9 +113,9 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
         </div>
 
         {/* Footer */}
-        <div className="flex gap-4 mt-10 w-full justify-end ">
+        <div className="flex gap-4 mt-10 w-full justify-end hidden lg:block">
           {/* Profile Image */}
-          <div className="glass-effect p-2 rounded-xl">
+          <div className="glass-effect p-2 rounded-xl ">
             <div className="relative size-[100px] rounded-lg overflow-hidden">
               <Image
                 src="/images/characters/character-1-avatar.png"
@@ -148,7 +148,7 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
             </div>
             <div className="glass-effect h-1/2 rounded-b-xl flex items-center justify-center gap-5">
               <div className="flex items-center gap-2">
-                <div className="size-10 rounded-full p-px glass-effect flex items-center justify-center">
+                <div className="size-6 lg:size-10 rounded-full p-px glass-effect flex items-center justify-center">
                   <Image
                     src="/images/coin-zone.png"
                     alt="Coin Zone"
@@ -162,7 +162,7 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
                 </button>
               </div>
               <div className="flex items-center gap-2">
-                <div className="size-10 rounded-full p-px glass-effect flex items-center justify-center">
+                <div className="size-6 lg:size-10 rounded-full p-px glass-effect flex items-center justify-center">
                   <Image
                     src="/images/star.png"
                     alt="Star"

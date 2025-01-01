@@ -3,10 +3,13 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { Plus } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import { Button } from "@/components/ui/button"
+import { ArrowBack } from "@/components/ui/icons"
+import TeamRecap from "@/components/pages/raids/TeamRecap"
 
 const raids = [
   {
@@ -79,7 +82,9 @@ const Page = () => {
   const pathname = usePathname()
   return (
     <>
-      <div className="absolute top-10 left-24 flex gap-3 z-20">
+      <div className="fixed inset-0  bg-cover bg-center bg-no-repeat bg-[url('/images/pages/bg.jpg')]  lg:hidden "></div>
+
+      <div className="absolute top-10 left-24  gap-3 z-20 hidden lg:flex ">
         <Link href="/raids">
           <Button
             className={cn(
@@ -102,10 +107,43 @@ const Page = () => {
         </Link>
       </div>
 
-      <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-40px)]">
-        <div className="absolute inset-0 bg-[url('/images/characters/character-1-mobile.png')] bg-cover bg-center bg-no-repeat lg:bg-[url('/images/pages/bg.jpg')] "></div>
+      <div className=" flex lg:justify-end max-lg:flex-col relative flex-1 rounded-2xl overflow-hidden lg:min-h-[calc(100vh-40px)] max-lg:glass-effect max-lg:z-10 max-lg:p-2 max-lg:gap-3">
+        <div className="absolute inset-0 bg-[url('/images/characters/character-1-mobile.png')] bg-cover bg-center bg-no-repeat lg:bg-[url('/images/pages/bg.jpg')] hidden lg:block "></div>
+        <button
+          // onClick={() => setIsActivityMenuOpen(!isActivityMenuOpen)}
+          className="w-full glass-effect  px-3 py-3 z-10 flex items-center justify-between font-volkhov gap-2 lg:hidden h-max rounded-sm"
+        >
+          Open Raids' List
+          <Plus className="size-5" />
+        </button>
 
-        <div className=" w-full z-10 pb-12 pr-8 pl-24 pt-[105px] relative flex gap-3">
+        <div className="flex-1 bg-black rounded-sm"></div>
+
+        <div className="bg-white/10 p-2 lg:mt-3 rounded-sm lg:rounded-2xl lg:hidden">
+          <div className="flex items-center justify-between ">
+            <h2 className="text-xm font-volkhov">Team Recap</h2>
+            <button className="glass-effect  p-1 rounded-full">
+              <Plus className="size-4" />
+            </button>
+          </div>
+          <div className="flex space-x-1 flex-1 mt-2 bg-white/10 rounded-lg p-2">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div
+                key={index}
+                className="aspect-square relative rounded-xl overflow-hidden border-2 border-white/10 hover:z-10 transition-all duration-300 flex-1"
+              >
+                <Image
+                  src={`/images/raids/raid-1.jpg`}
+                  alt={`Team member ${index + 1}`}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className=" w-full z-10 pb-12 pr-8 pl-24 pt-[105px] relative  gap-3 hidden lg:flex">
           <div className="glass-effect h-full rounded-2xl w-[420px] p-4 flex flex-col gap-2">
             {raids.map((raid) => (
               <div
@@ -210,56 +248,7 @@ const Page = () => {
                 Launch Raid
               </BrandButton>
             </div>
-            <div className="glass-effect p-4 mt-3 rounded-2xl">
-              <div className="flex items-center gap-3 ">
-                <div className="space-y-3 bg-white/10 rounded p-4 w-[30%]">
-                  <h2 className="text-xl font-volkhov">Team Recap</h2>
-
-                  <div className="space-y-2 ">
-                    <div className="flex items-center justify-between bg-white/5 rounded px-2 py-1">
-                      <span className="text-xs  font-inter">
-                        Strengh points
-                      </span>
-                      <span className="font-volkhov text-2xs">4400</span>
-                    </div>
-                    <div className="flex  gap-2">
-                      <div className="flex items-center justify-between bg-white/5 rounded px-2 py-1 flex-1">
-                        <span className="text-xs  font-inter uppercase">
-                          XP
-                        </span>
-                        <span className="font-volkhov text-2xs ">+3%</span>
-                      </div>
-                      <div className="flex items-center justify-between bg-white/5 rounded px-2 py-1 flex-1">
-                        <span className="text-xs  font-inter uppercase">
-                          Star
-                        </span>
-                        <span className="font-volkhov text-2xs">+3%</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between bg-white/5 rounded px-2 py-1">
-                      <span className="text-xs  font-inter">Raid time</span>
-                      <span className="font-volkhov text-2xs">-3%</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex space-x-3 flex-1">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <div
-                      key={index}
-                      className="aspect-square relative rounded-xl overflow-hidden border-2 border-white/10 hover:z-10 transition-all duration-300 flex-1"
-                    >
-                      <Image
-                        src={`/images/raids/raid-1.jpg`}
-                        alt={`Team member ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <TeamRecap />
             {/* End of team recap section */}
           </div>
         </div>

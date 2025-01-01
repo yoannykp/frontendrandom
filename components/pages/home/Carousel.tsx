@@ -56,7 +56,7 @@ const HomeCarousel = () => {
           {slides.map((slide, index) => (
             <CarouselItem key={index}>
               <div className="rounded-lg overflow-hidden relative">
-                <div className="relative h-[234px]">
+                <div className="relative h-[140px] lg:h-[234px]">
                   <Image
                     src={slide.image}
                     alt={slide.title}
@@ -70,11 +70,13 @@ const HomeCarousel = () => {
                         "linear-gradient(266.01deg, rgba(0, 0, 0, 0) -31.57%, rgba(0, 0, 0, 0.8) 100.11%)",
                     }}
                   />
-                  <div className="absolute top-10 left-10 space-y-2 max-w-[60%]">
-                    <h2 className="text-lg font-bold text-white">
+                  <div className="absolute top-8 lg:top-12 left-5 lg:left-10 space-y-2 w-[90%] lg:w-[80%]">
+                    <h2 className="text-18 lg:text-3xl font-bold text-white">
                       {slide.title}
                     </h2>
-                    <p className="text-xs">{slide.description}</p>
+                    <p className="text-2xs lg:text-base leading-4 lg:leading-5">
+                      {slide.description}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -83,7 +85,7 @@ const HomeCarousel = () => {
         </CarouselContent>
 
         {/* Dots */}
-        <div className="flex gap-2 justify-center absolute bottom-8 left-10 z-10">
+        <div className="flex gap-2 justify-center absolute bottom-4 lg:bottom-10 left-5 lg:left-10 z-10">
           {slides.map((_, index) => (
             <button
               key={index}
