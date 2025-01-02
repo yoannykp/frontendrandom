@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 
 import "./styles/globals.css"
 
+import { AppKit } from "@/context/appkit"
+import { WalletProvider } from "@/context/wallet"
 import { ThemeProvider } from "@/contexts/ThemeProvider"
 
 import { cn } from "@/lib/utils"
@@ -28,7 +30,9 @@ export default function RootLayout({
           forcedTheme="dark"
           disableTransitionOnChange
         >
-          {children}
+          <AppKit>
+            <WalletProvider>{children}</WalletProvider>
+          </AppKit>
         </ThemeProvider>
       </body>
     </html>

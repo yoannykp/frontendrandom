@@ -1,15 +1,31 @@
 "use client"
 
-import { FaXTwitter } from "react-icons/fa6"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { useWallet } from "@/context/wallet"
+import { useAppKit } from "@reown/appkit/react"
 
 import BrandButton from "../ui/brand-button"
 import PreviousStepButton from "./previous-step-button"
 
-const ConnectModal = ({ current, moveToPreviousStep, moveToNextStep }: any) => {
+const ConnectModal = ({
+  current,
+  moveToPreviousStep,
+  moveToNextStep,
+}: {
+  current: number
+  moveToPreviousStep: () => void
+  moveToNextStep: (step: number) => void
+}) => {
+  const { open } = useAppKit()
+  const { isConnected, isAuthenticated } = useWallet()
+
+  const router = useRouter()
   const options = [
-    { label: "Twitter", icon: <FaXTwitter className="w-5 h-5" /> },
+    // { key: "twitter", label: "Twitter", icon: <FaXTwitter className="w-5 h-5" /> },
     {
-      label: "Continue with a wallet",
+      key: "wallet",
+      label: isConnected ? "Wallet connected" : "Continue with a wallet",
       icon: (
         <svg
           width="33"
@@ -30,6 +46,18 @@ const ConnectModal = ({ current, moveToPreviousStep, moveToNextStep }: any) => {
       ),
     },
   ]
+
+  const handleOptionClick = (option: (typeof options)[0]) => {
+    if (option.key === "wallet") {
+      open()
+    }
+  }
+
+  useEffect(() => {
+    if (isConnected && isAuthenticated) {
+      router.push("/")
+    }
+  }, [isConnected, isAuthenticated])
 
   return (
     <div className="w-full md:w-[35rem] space-y-6 z-20">
@@ -56,7 +84,7 @@ const ConnectModal = ({ current, moveToPreviousStep, moveToNextStep }: any) => {
             <div
               key={index}
               className="p-5 flex items-center rounded-lg border border-gray-light gap-5 hover:bg-gray-light/10 transition duration-500 cursor-pointer"
-              onClick={() => moveToNextStep(current + 1)}
+              onClick={() => handleOptionClick(option)}
             >
               {option.icon}
               <span>{option.label}</span>

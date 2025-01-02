@@ -7,10 +7,10 @@ import BrandButton from "@/components/ui/brand-button"
 const page = () => {
   return (
     <>
-      <div className="absolute top-10 left-24 flex gap-3 z-20 h-14 items-center">
+      <div className="absolute top-10 left-24 flex gap-3 z-20 h-14 items-center max-lg:hidden">
         <h1 className="text-3xl ">Team</h1>
       </div>
-      <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-40px)]">
+      <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-40px)] max-lg:hidden">
         <div className="absolute inset-0 bg-[url('/images/pages/team-bg.jpg')] bg-cover bg-center bg-no-repeat lg:bg-[url('/images/pages/team-bg.jpg')]">
           <div className="absolute inset-0 bg-[#181818CC]"></div>
         </div>
@@ -151,6 +151,8 @@ const page = () => {
           </div>
         </div>
       </div>
+
+      <div className="flex flex-col rounded-2xl glass-effect z-10 p-2 gap-3 lg:hidden flex-1 max-h-full"></div>
 
       {/* Background Gradients */}
       <div

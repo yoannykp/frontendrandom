@@ -113,7 +113,7 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
         </div>
 
         {/* Footer */}
-        <div className="flex gap-4 mt-10 w-full justify-end hidden lg:block">
+        <div className=" gap-4 mt-10 w-full justify-end hidden lg:flex">
           {/* Profile Image */}
           <div className="glass-effect p-2 rounded-xl ">
             <div className="relative size-[100px] rounded-lg overflow-hidden">

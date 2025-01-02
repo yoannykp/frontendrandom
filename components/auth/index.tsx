@@ -1,9 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { useWallet } from "@/context/wallet"
 import { AnimatePresence, motion } from "framer-motion"
 import { FaXTwitter } from "react-icons/fa6"
 
+import { authenticate } from "@/lib/api"
 import BrandButton from "@/components/ui/brand-button"
 import BackgroundCover from "@/components/common/background-cover"
 import Footer from "@/components/common/footer"
@@ -18,6 +21,9 @@ import Sliders from "./sliders"
 
 const Home = () => {
   const [currentStep, setCurrentStep] = useState(0)
+  const { isConnected, signer, isAuthenticated, setIsAuthenticated } =
+    useWallet()
+  const router = useRouter()
 
   const moveToPreviousStep = () => {
     if (currentStep === 0) return
@@ -31,6 +37,40 @@ const Home = () => {
       setCurrentStep(0)
     }
   }
+
+  const moveToStep = (step: number) => {
+    if (step > 0 && step < 5) {
+      setCurrentStep(step)
+    } else {
+      setCurrentStep(0)
+    }
+  }
+
+  const SIGN_MESSAGE = "Sign this message to continue on alienzone"
+
+  useEffect(() => {
+    const handleAuth = async () => {
+      if (!signer || isAuthenticated || currentStep !== 1) {
+        return
+      }
+
+      const signature = await signer.signMessage(SIGN_MESSAGE)
+
+      if (!signature) return
+
+      setIsAuthenticated(true)
+      const res = await authenticate({
+        signature,
+        signedMessage: SIGN_MESSAGE,
+      })
+
+      // if (res) {
+      //   setIsAuthenticated(true)
+      // }
+    }
+
+    handleAuth()
+  }, [signer, isAuthenticated, currentStep])
 
   return (
     <main className="w-full h-screen relative">
@@ -55,27 +95,27 @@ const Home = () => {
                 <ConnectModal
                   current={currentStep}
                   moveToPreviousStep={moveToPreviousStep}
-                  moveToNextStep={moveToNextStep}
+                  moveToNextStep={() => moveToStep(2)}
                 />
-              ) : currentStep == 2 ? (
+              ) : currentStep == 20 ? (
                 <InviteCodeModal
                   current={currentStep}
                   moveToPreviousStep={moveToPreviousStep}
                   moveToNextStep={moveToNextStep}
                 />
-              ) : currentStep == 3 ? (
+              ) : currentStep == 30 ? (
                 <CreateAlien
                   current={currentStep}
-                  moveToPreviousStep={moveToPreviousStep}
+                  moveToPreviousStep={() => moveToStep(0)}
                   moveToNextStep={moveToNextStep}
                 />
-              ) : currentStep == 4 ? (
+              ) : currentStep == 40 ? (
                 <InfoModal
                   current={currentStep}
                   moveToPreviousStep={moveToPreviousStep}
                   moveToNextStep={moveToNextStep}
                 />
-              ) : currentStep == 5 ? (
+              ) : currentStep == 50 ? (
                 <LinkTwitter
                   current={currentStep}
                   moveToPreviousStep={moveToPreviousStep}

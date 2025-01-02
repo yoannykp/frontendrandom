@@ -167,7 +167,7 @@ const CreateAlien = ({ current, moveToPreviousStep, moveToNextStep }: any) => {
           <BrandButton
             className="items-start hover:-translate-y-1 duration-500 transition-transform w-full"
             blurColor="bg-[#96DFF4]"
-            onClick={() => moveToNextStep(current + 1)}
+            onClick={moveToNextStep}
           >
             Continue
           </BrandButton>

@@ -4,9 +4,8 @@ import { useState } from "react"
 import Image from "next/image"
 import { Plus } from "lucide-react"
 
-import { ArrowBack } from "@/components/ui/icons"
 import { Progress } from "@/components/ui/progress"
-import { FranceIcon } from "@/components/icons"
+import { ArrowBack, FranceIcon } from "@/components/icons"
 import ActivityMenu from "@/components/pages/home/ActivityMenu"
 
 const Page = () => {
