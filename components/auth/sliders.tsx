@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 const Sliders = ({ current, moveToNextStep }: any) => {
   return (
     <div className="z-20 flex gap-4 bottom-20 py-5 items-center">
-      {[...Array(1)].map((_, i) => (
+      {[...Array(3)].map((_, i) => (
         <div
           key={i}
           className={cn(

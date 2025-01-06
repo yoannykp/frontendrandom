@@ -1,6 +1,7 @@
+import { AuthUserData, Profile } from "@/types"
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios"
 
-import { getCookie } from "./cookie"
+import { getCookie, setCookie } from "./cookie"
 
 // Define the structure for API errors
 interface ApiError {
@@ -114,15 +115,74 @@ export const apiManager = new ApiManager(process.env.NEXT_PUBLIC_API_URL || "")
 export const authenticate = async ({
   signature,
   signedMessage,
+  register,
 }: {
   signature: string
   signedMessage: string
-}): Promise<boolean> => {
-  const response = await apiManager.post("/auth/authenticate", {
+  register?: AuthUserData
+}): Promise<
+  ApiResponse<{
+    accessToken: string
+    walletAddress: string
+  } | null>
+> => {
+  const response = await apiManager.post<{
+    accessToken: string
+    walletAddress: string
+  }>("/auth/authenticate", {
     signature,
     signedMessage,
     accessToken: "",
+    register,
   })
+
   const accessToken = response.data?.accessToken
-  return response.error === null
+
+  if (accessToken) {
+    setCookie("accessToken", accessToken)
+  }
+
+  return response
+}
+
+export const checkUserExist = async (
+  walletAddress: string
+): Promise<ApiResponse<boolean>> => {
+  const response = await apiManager.get<boolean>(`/users/check-exists`, {
+    walletAddress,
+  })
+  return response
+}
+
+export const getProfile = async (
+  walletAddress: string
+): Promise<ApiResponse<Profile | null>> => {
+  const response = await apiManager.get<Profile | null>(
+    "/profile/get-profile",
+    {
+      walletAddress,
+    }
+  )
+  console.log("response", response)
+  return response
+}
+
+export const createAlien = async ({
+  name,
+  element,
+  image,
+  strengthPoints,
+}: {
+  name: string
+  element: string
+  image: string
+  strengthPoints: number
+}): Promise<ApiResponse<any>> => {
+  const response = await apiManager.post("/aliens", {
+    name,
+    element,
+    image,
+    strengthPoints,
+  })
+  return response
 }

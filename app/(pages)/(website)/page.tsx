@@ -4,12 +4,14 @@ import { useState } from "react"
 import Image from "next/image"
 import { Plus } from "lucide-react"
 
+import { useAppSelector } from "@/lib/store/hooks"
 import { Progress } from "@/components/ui/progress"
 import { ArrowBack, FranceIcon } from "@/components/icons"
 import ActivityMenu from "@/components/pages/home/ActivityMenu"
 
 const Page = () => {
   const [isActivityMenuOpen, setIsActivityMenuOpen] = useState(false)
+  const { data: profile } = useAppSelector((state) => state.userProfile)
 
   return (
     <>
@@ -22,7 +24,9 @@ const Page = () => {
                 <div className="glass-effect p-1 rounded-lg">
                   <FranceIcon size={13} />
                 </div>
-                <p className="text-lg font-volkhov">0xLeBoo</p>
+                <p className="text-lg font-volkhov">
+                  {profile?.walletAddress.slice(0, 6)}
+                </p>
               </div>
               <div className="flex items-center gap-6 bg-white/10 rounded-lg py-1 px-2">
                 <p className="text-xs">Strengh points</p>
@@ -40,7 +44,7 @@ const Page = () => {
                     <p className="glass-effect py-1 px-3 rounded-lg text-xs">
                       Level
                     </p>
-                    <div className=" py-1 px-3 text-sm">157</div>
+                    <div className=" py-1 px-3 text-sm">{profile?.level}</div>
                   </div>
 
                   <div className="flex items-center w-full">

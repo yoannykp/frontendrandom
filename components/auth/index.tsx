@@ -1,9 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useWallet } from "@/context/wallet"
+import { AuthUserData } from "@/types"
 import { AnimatePresence, motion } from "framer-motion"
+import toast from "react-hot-toast"
 import { FaXTwitter } from "react-icons/fa6"
 
 import { authenticate } from "@/lib/api"
@@ -21,6 +23,21 @@ import Sliders from "./sliders"
 
 const Home = () => {
   const [currentStep, setCurrentStep] = useState(0)
+
+  const [userData, setUserData] = useState<AuthUserData>({
+    name: "",
+    code: "",
+    country: "",
+    twitterId: "",
+    image: "",
+    element: "0",
+    strengthPoints: 0,
+    hair: "0",
+    face: "0",
+  })
+
+  const [isTwitterLinked, setIsTwitterLinked] = useState(false)
+
   const { isConnected, signer, isAuthenticated, setIsAuthenticated } =
     useWallet()
   const router = useRouter()
@@ -30,7 +47,12 @@ const Home = () => {
     setCurrentStep((previous) => previous - 1)
   }
 
-  const moveToNextStep = () => {
+  const moveToNextStep = async () => {
+    if (currentStep === 3) {
+      handleAuthenticate()
+      return
+    }
+
     if (currentStep < 5) {
       setCurrentStep((previous) => previous + 1)
     } else {
@@ -46,31 +68,25 @@ const Home = () => {
     }
   }
 
-  const SIGN_MESSAGE = "Sign this message to continue on alienzone"
-
-  useEffect(() => {
-    const handleAuth = async () => {
-      if (!signer || isAuthenticated || currentStep !== 1) {
-        return
-      }
-
-      const signature = await signer.signMessage(SIGN_MESSAGE)
-
-      if (!signature) return
-
-      setIsAuthenticated(true)
-      const res = await authenticate({
-        signature,
-        signedMessage: SIGN_MESSAGE,
-      })
-
-      // if (res) {
-      //   setIsAuthenticated(true)
-      // }
+  const handleAuthenticate = async () => {
+    if (!signer) {
+      toast.error("Please connect your wallet")
+      return
     }
-
-    handleAuth()
-  }, [signer, isAuthenticated, currentStep])
+    const signature = await signer.signMessage(
+      process.env.NEXT_PUBLIC_SIGN_MESSAGE!
+    )
+    if (!signature) return
+    setIsAuthenticated(true)
+    const res = await authenticate({
+      signature,
+      signedMessage: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
+      register: userData,
+    })
+    if (res.data) {
+      router.push("/")
+    }
+  }
 
   return (
     <main className="w-full h-screen relative">
@@ -95,7 +111,7 @@ const Home = () => {
                 <ConnectModal
                   current={currentStep}
                   moveToPreviousStep={moveToPreviousStep}
-                  moveToNextStep={() => moveToStep(2)}
+                  moveToStep={moveToStep}
                 />
               ) : currentStep == 20 ? (
                 <InviteCodeModal
@@ -103,17 +119,22 @@ const Home = () => {
                   moveToPreviousStep={moveToPreviousStep}
                   moveToNextStep={moveToNextStep}
                 />
-              ) : currentStep == 30 ? (
+              ) : currentStep == 2 ? (
                 <CreateAlien
                   current={currentStep}
-                  moveToPreviousStep={() => moveToStep(0)}
+                  moveToPreviousStep={moveToPreviousStep}
                   moveToNextStep={moveToNextStep}
+                  setUserData={setUserData}
+                  userData={userData}
                 />
-              ) : currentStep == 40 ? (
+              ) : currentStep == 3 ? (
                 <InfoModal
                   current={currentStep}
                   moveToPreviousStep={moveToPreviousStep}
                   moveToNextStep={moveToNextStep}
+                  setUserData={setUserData}
+                  userData={userData}
+                  isTwitterLinked={isTwitterLinked}
                 />
               ) : currentStep == 50 ? (
                 <LinkTwitter

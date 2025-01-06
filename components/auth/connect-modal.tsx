@@ -2,8 +2,15 @@
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useWallet } from "@/context/wallet"
-import { useAppKit } from "@reown/appkit/react"
+import {
+  useAppKit,
+  useAppKitAccount,
+  useAppKitProvider,
+} from "@reown/appkit/react"
+import { BrowserProvider, Eip1193Provider } from "ethers"
+import toast from "react-hot-toast"
+
+import { authenticate, checkUserExist } from "@/lib/api"
 
 import BrandButton from "../ui/brand-button"
 import PreviousStepButton from "./previous-step-button"
@@ -11,14 +18,15 @@ import PreviousStepButton from "./previous-step-button"
 const ConnectModal = ({
   current,
   moveToPreviousStep,
-  moveToNextStep,
+  moveToStep,
 }: {
   current: number
   moveToPreviousStep: () => void
-  moveToNextStep: (step: number) => void
+  moveToStep: (step: number) => void
 }) => {
   const { open } = useAppKit()
-  const { isConnected, isAuthenticated } = useWallet()
+  const { isConnected, address } = useAppKitAccount()
+  const { walletProvider } = useAppKitProvider("eip155")
 
   const router = useRouter()
   const options = [
@@ -53,11 +61,41 @@ const ConnectModal = ({
     }
   }
 
-  useEffect(() => {
-    if (isConnected && isAuthenticated) {
+  const handleAuthenticate = async () => {
+    const provider = new BrowserProvider(walletProvider as Eip1193Provider)
+    const signer = await provider.getSigner()
+
+    if (!signer) {
+      toast.error("Please connect your wallet")
+      return
+    }
+    const signature = await signer.signMessage(
+      process.env.NEXT_PUBLIC_SIGN_MESSAGE!
+    )
+    if (!signature) return
+    const res = await authenticate({
+      signature,
+      signedMessage: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
+    })
+    if (res.data) {
       router.push("/")
     }
-  }, [isConnected, isAuthenticated])
+  }
+
+  useEffect(() => {
+    const checkUser = async () => {
+      if (isConnected && address) {
+        const res = await checkUserExist(address)
+        console.log(res)
+        if (res.data) {
+          handleAuthenticate()
+        } else {
+          moveToStep(3)
+        }
+      }
+    }
+    checkUser()
+  }, [isConnected])
 
   return (
     <div className="w-full md:w-[35rem] space-y-6 z-20">

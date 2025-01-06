@@ -5,6 +5,7 @@ import "./styles/globals.css"
 import { AppKit } from "@/context/appkit"
 import { WalletProvider } from "@/context/wallet"
 import { ThemeProvider } from "@/contexts/ThemeProvider"
+import { Toaster } from "react-hot-toast"
 
 import { cn } from "@/lib/utils"
 
@@ -34,6 +35,7 @@ export default function RootLayout({
             <WalletProvider>{children}</WalletProvider>
           </AppKit>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   )

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { Dispatch, SetStateAction } from "react"
 import Image from "next/image"
 import character from "@/public/images/characters/character-1.png"
 import element1 from "@/public/images/elements/element-1.png"
@@ -11,6 +11,7 @@ import element5 from "@/public/images/elements/element-5.png"
 import element6 from "@/public/images/elements/element-6.png"
 import element7 from "@/public/images/elements/element-7.png"
 import element8 from "@/public/images/elements/element-8.png"
+import { AuthUserData } from "@/types"
 
 import BrandButton from "@/components/ui/brand-button"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
@@ -27,13 +28,21 @@ const elements = [
   element8,
 ]
 
-const CreateAlien = ({ current, moveToPreviousStep, moveToNextStep }: any) => {
-  const [selectedOptions, setSelectedOptions] = useState({
-    element: 0,
-    hair: 0,
-    face: 0,
-  })
+interface CreateAlienProps {
+  current: number
+  moveToPreviousStep: () => void
+  moveToNextStep: () => void
+  setUserData: Dispatch<SetStateAction<AuthUserData>>
+  userData: AuthUserData
+}
 
+const CreateAlien = ({
+  current,
+  moveToPreviousStep,
+  moveToNextStep,
+  setUserData,
+  userData,
+}: CreateAlienProps) => {
   return (
     <div className="w-full space-y-6 z-20">
       <div className="relative w-full flex items-center justify-between">
@@ -71,14 +80,14 @@ const CreateAlien = ({ current, moveToPreviousStep, moveToNextStep }: any) => {
                     className="w-20 h-20 p-0.5 rounded-lg shrink-0 cursor-pointer"
                     style={{
                       background:
-                        selectedOptions.element === index
+                        userData.element === index.toString()
                           ? "linear-gradient(360deg, #5FFF95 0%, rgba(95, 255, 149, 0) 100%)"
                           : "unset",
                     }}
                     onClick={() =>
-                      setSelectedOptions({
-                        ...selectedOptions,
-                        element: index,
+                      setUserData({
+                        ...userData,
+                        element: index.toString(),
                       })
                     }
                   >
@@ -111,14 +120,14 @@ const CreateAlien = ({ current, moveToPreviousStep, moveToNextStep }: any) => {
                     className="min-w-20 h-20 p-0.5 rounded-lg cursor-pointer"
                     style={{
                       background:
-                        selectedOptions.hair === index
+                        userData.hair === index.toString()
                           ? "linear-gradient(360deg, #5FFF95 0%, rgba(95, 255, 149, 0) 100%)"
                           : "unset",
                     }}
                     onClick={() =>
-                      setSelectedOptions({
-                        ...selectedOptions,
-                        hair: index,
+                      setUserData({
+                        ...userData,
+                        hair: index.toString(),
                       })
                     }
                   >
@@ -145,14 +154,14 @@ const CreateAlien = ({ current, moveToPreviousStep, moveToNextStep }: any) => {
                     className="min-w-20 h-20 p-0.5 rounded-lg cursor-pointer"
                     style={{
                       background:
-                        selectedOptions.face === index
+                        userData.face === index.toString()
                           ? "linear-gradient(360deg, #5FFF95 0%, rgba(95, 255, 149, 0) 100%)"
                           : "unset",
                     }}
                     onClick={() =>
-                      setSelectedOptions({
-                        ...selectedOptions,
-                        face: index,
+                      setUserData({
+                        ...userData,
+                        face: index.toString(),
                       })
                     }
                   >

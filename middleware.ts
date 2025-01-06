@@ -8,16 +8,16 @@ export async function middleware(request: NextRequest) {
   const expiredToken = isTokenExpired(token as string)
 
   // Redirect unauthenticated users to login page
-  // if (expiredToken) {
-  //   if (!request.nextUrl.pathname.startsWith("/auth")) {
-  //     return NextResponse.redirect(new URL("/auth", request.url))
-  //   }
-  // } else {
-  //   // Redirect authenticated users from login page to dashboard
-  //   if (request.nextUrl.pathname.startsWith("/auth")) {
-  //     return NextResponse.redirect(new URL("/", request.url))
-  //   }
-  // }
+  if (expiredToken) {
+    if (!request.nextUrl.pathname.startsWith("/auth")) {
+      return NextResponse.redirect(new URL("/auth", request.url))
+    }
+  } else {
+    // Redirect authenticated users from login page to dashboard
+    if (request.nextUrl.pathname.startsWith("/auth")) {
+      return NextResponse.redirect(new URL("/", request.url))
+    }
+  }
 
   return NextResponse.next()
 }

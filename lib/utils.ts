@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export const formatBalance = (num?: number, decimals: number = 2): string => {
+export const formatNumber = (num?: number, decimals: number = 2): string => {
   if (num === null || num === undefined || num === 0 || isNaN(num)) {
     return "0"
   }
