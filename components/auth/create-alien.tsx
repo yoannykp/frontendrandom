@@ -3,29 +3,23 @@
 import { Dispatch, SetStateAction } from "react"
 import Image from "next/image"
 import character from "@/public/images/characters/character-1.png"
-import element1 from "@/public/images/elements/element-1.png"
-import element2 from "@/public/images/elements/element-2.png"
-import element3 from "@/public/images/elements/element-3.png"
-import element4 from "@/public/images/elements/element-4.png"
-import element5 from "@/public/images/elements/element-5.png"
-import element6 from "@/public/images/elements/element-6.png"
-import element7 from "@/public/images/elements/element-7.png"
-import element8 from "@/public/images/elements/element-8.png"
-import { AuthUserData } from "@/types"
+import { useAliens } from "@/store/hooks"
+import { AuthUserData, CreateAlienData } from "@/types"
+import toast from "react-hot-toast"
 
 import BrandButton from "@/components/ui/brand-button"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import PreviousStepButton from "@/components/auth/previous-step-button"
 
 const elements = [
-  element1,
-  element2,
-  element3,
-  element4,
-  element5,
-  element6,
-  element7,
-  element8,
+  "/images/elements/element-1.png",
+  "/images/elements/element-2.png",
+  "/images/elements/element-3.png",
+  "/images/elements/element-4.png",
+  "/images/elements/element-5.png",
+  "/images/elements/element-6.png",
+  "/images/elements/element-7.png",
+  "/images/elements/element-8.png",
 ]
 
 interface CreateAlienProps {
@@ -34,6 +28,8 @@ interface CreateAlienProps {
   moveToNextStep: () => void
   setUserData: Dispatch<SetStateAction<AuthUserData>>
   userData: AuthUserData
+  createAlienData: CreateAlienData
+  setCreateAlienData: Dispatch<SetStateAction<CreateAlienData>>
 }
 
 const CreateAlien = ({
@@ -42,7 +38,40 @@ const CreateAlien = ({
   moveToNextStep,
   setUserData,
   userData,
+  createAlienData,
+  setCreateAlienData,
 }: CreateAlienProps) => {
+  const { createAlien, createStatus } = useAliens()
+
+  const handleCreateAlien = async () => {
+    // Validate required fields
+    if (!createAlienData.name) {
+      toast.error("Please enter a name for your alien")
+      return
+    }
+    if (!createAlienData.element) {
+      toast.error("Please select an element for your alien")
+      return
+    }
+    if (!createAlienData.hair) {
+      toast.error("Please select a hair style for your alien")
+      return
+    }
+    if (!createAlienData.face) {
+      toast.error("Please select a face for your alien")
+      return
+    }
+
+    try {
+      await createAlien(createAlienData)
+      if (!createStatus.error) {
+        moveToNextStep()
+      }
+    } catch (error) {
+      toast.error("Failed to create alien. Please try again.")
+    }
+  }
+
   return (
     <div className="w-full space-y-6 z-20">
       <div className="relative w-full flex items-center justify-between">
@@ -66,6 +95,24 @@ const CreateAlien = ({
         <div className="w-full flex flex-col gap-8 overflow-hidden px-2">
           <div className="space-y-3">
             <div className="space-y-2">
+              <h3 className="text-2xl">Name your Alien</h3>
+              <input
+                type="text"
+                value={createAlienData.name}
+                onChange={(e) =>
+                  setCreateAlienData({
+                    ...createAlienData,
+                    name: e.target.value,
+                  })
+                }
+                placeholder="Enter alien name"
+                className="w-full px-4 py-2 rounded-lg bg-gray-dark text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#5FFF95]"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="space-y-2">
               <h3 className="text-2xl">Choose your Element</h3>
               <p className="text-white text-[12px] font-inter">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -80,14 +127,14 @@ const CreateAlien = ({
                     className="w-20 h-20 p-0.5 rounded-lg shrink-0 cursor-pointer"
                     style={{
                       background:
-                        userData.element === index.toString()
+                        createAlienData.element === element
                           ? "linear-gradient(360deg, #5FFF95 0%, rgba(95, 255, 149, 0) 100%)"
                           : "unset",
                     }}
                     onClick={() =>
-                      setUserData({
-                        ...userData,
-                        element: index.toString(),
+                      setCreateAlienData({
+                        ...createAlienData,
+                        element: element,
                       })
                     }
                   >
@@ -95,6 +142,8 @@ const CreateAlien = ({
                       <Image
                         src={element}
                         alt="element image"
+                        width={64}
+                        height={64}
                         className="w-16 h-16"
                       />
                     </div>
@@ -120,13 +169,13 @@ const CreateAlien = ({
                     className="min-w-20 h-20 p-0.5 rounded-lg cursor-pointer"
                     style={{
                       background:
-                        userData.hair === index.toString()
+                        createAlienData.hair === index.toString()
                           ? "linear-gradient(360deg, #5FFF95 0%, rgba(95, 255, 149, 0) 100%)"
                           : "unset",
                     }}
                     onClick={() =>
-                      setUserData({
-                        ...userData,
+                      setCreateAlienData({
+                        ...createAlienData,
                         hair: index.toString(),
                       })
                     }
@@ -154,13 +203,13 @@ const CreateAlien = ({
                     className="min-w-20 h-20 p-0.5 rounded-lg cursor-pointer"
                     style={{
                       background:
-                        userData.face === index.toString()
+                        createAlienData.face === index.toString()
                           ? "linear-gradient(360deg, #5FFF95 0%, rgba(95, 255, 149, 0) 100%)"
                           : "unset",
                     }}
                     onClick={() =>
-                      setUserData({
-                        ...userData,
+                      setCreateAlienData({
+                        ...createAlienData,
                         face: index.toString(),
                       })
                     }
@@ -176,9 +225,10 @@ const CreateAlien = ({
           <BrandButton
             className="items-start hover:-translate-y-1 duration-500 transition-transform w-full"
             blurColor="bg-[#96DFF4]"
-            onClick={moveToNextStep}
+            onClick={handleCreateAlien}
+            disabled={createStatus.loading}
           >
-            Continue
+            {createStatus.loading ? "Creating..." : "Continue"}
           </BrandButton>
         </div>
       </div>

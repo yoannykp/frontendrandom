@@ -2,10 +2,12 @@
 
 import { Dispatch, SetStateAction } from "react"
 import Image from "next/image"
+import { useWallet } from "@/context/wallet"
 import character from "@/public/images/characters/character-1.png"
 import { AuthUserData } from "@/types"
 import toast from "react-hot-toast"
 
+import { authenticate } from "@/lib/api"
 import BrandButton from "@/components/ui/brand-button"
 import { Input } from "@/components/ui/input"
 import {
@@ -34,11 +36,43 @@ const InfoModal = ({
   userData,
   isTwitterLinked,
 }: InfoModalProps) => {
-  const handleMoveToNextStep = () => {
-    if (userData.name && userData.country) {
-      moveToNextStep()
-    } else {
+  const { signer, setIsAuthenticated } = useWallet()
+
+  const handleMoveToNextStep = async () => {
+    if (!userData.name || !userData.country) {
       toast.error("Please fill all fields")
+      return
+    }
+
+    if (!signer) {
+      toast.error("Please connect your wallet")
+      return
+    }
+
+    try {
+      const signature = await signer.signMessage(
+        process.env.NEXT_PUBLIC_SIGN_MESSAGE!
+      )
+      if (!signature) {
+        toast.error("Failed to sign message")
+        return
+      }
+
+      const res = await authenticate({
+        signature,
+        signedMessage: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
+        register: userData,
+      })
+
+      if (res.error) {
+        toast.error(res.error.message || "Authentication failed")
+        return
+      }
+
+      setIsAuthenticated(true)
+      moveToNextStep()
+    } catch (error) {
+      toast.error("Authentication failed. Please try again.")
     }
   }
 

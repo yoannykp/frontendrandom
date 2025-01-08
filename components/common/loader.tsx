@@ -1,11 +1,12 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useAppDispatch } from "@/store/hooks"
+import { fetchAliens } from "@/store/slices/aliensSlice"
+import { fetchRaidHistory, fetchRaids } from "@/store/slices/raidsSlice"
+import { fetchUserProfile } from "@/store/slices/userProfileSlice"
 import { useAppKitAccount } from "@reown/appkit/react"
 import { Loader2 } from "lucide-react"
-
-import { useAppDispatch } from "@/lib/store/hooks"
-import { fetchUserProfile } from "@/lib/store/slices/userProfileSlice"
 
 export function Loader({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch()
@@ -15,6 +16,9 @@ export function Loader({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (address) {
       dispatch(fetchUserProfile(address))
+      dispatch(fetchRaids())
+      dispatch(fetchAliens())
+      dispatch(fetchRaidHistory())
       setIsLoading(false)
     }
   }, [address, dispatch])

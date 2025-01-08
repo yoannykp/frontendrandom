@@ -1,4 +1,10 @@
-import { AuthUserData, Profile } from "@/types"
+import {
+  Alien,
+  AuthUserData,
+  Profile,
+  RaidHistoryResponse,
+  RaidResponse,
+} from "@/types"
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios"
 
 import { getCookie, setCookie } from "./cookie"
@@ -163,7 +169,6 @@ export const getProfile = async (
       walletAddress,
     }
   )
-  console.log("response", response)
   return response
 }
 
@@ -178,11 +183,48 @@ export const createAlien = async ({
   image: string
   strengthPoints: number
 }): Promise<ApiResponse<any>> => {
-  const response = await apiManager.post("/aliens", {
+  const response = await apiManager.post("/profile/create-alien", {
     name,
     element,
     image,
     strengthPoints,
   })
+  return response
+}
+
+export const getAliens = async (): Promise<ApiResponse<Alien[]>> => {
+  const response = await apiManager.get<Alien[]>("/profile/get-aliens")
+  return response
+}
+
+export const getRaids = async (): Promise<ApiResponse<RaidResponse[]>> => {
+  const response = await apiManager.get<RaidResponse[]>("/raids/get-list")
+  return response
+}
+
+export const launchRaid = async ({
+  raidId,
+  alienIds,
+}: {
+  raidId: number
+  alienIds: number[]
+}): Promise<ApiResponse<RaidHistoryResponse>> => {
+  const response = await apiManager.post<RaidHistoryResponse>(
+    "/raids/launch-raid",
+    {
+      raidId,
+      alienIds,
+      characterIds: [],
+    }
+  )
+  return response
+}
+
+export const getRaidHistory = async (): Promise<
+  ApiResponse<RaidHistoryResponse[]>
+> => {
+  const response = await apiManager.get<RaidHistoryResponse[]>(
+    "/raids/get-raid-history"
+  )
   return response
 }

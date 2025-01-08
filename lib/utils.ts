@@ -1,3 +1,4 @@
+import { Raid, RaidHistoryResponse } from "@/types"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -51,4 +52,58 @@ export const formateWalletAddress = (address: string, lastLength?: number) => {
 
 export const trimString = (str: string, length: number) => {
   return str.length > length ? `${str.slice(0, length)}...` : str
+}
+
+export const isRaidLaunched = (
+  raid: Raid,
+  histories?: RaidHistoryResponse[] | null
+) => {
+  if (!histories) return false
+  const history = histories.find((h) => h.raidId === raid.id && h.inProgress)
+  return history?.inProgress
+}
+
+export const calculateLaunchedRaidRemainingTime = (
+  history?: RaidHistoryResponse | null,
+  raid?: Raid | null
+) => {
+  if (!history || !raid || !history.inProgress) return null
+  const createdAt = new Date(history.createdAt)
+  const raidDuration = raid.duration
+  const raidEndTime = new Date(createdAt.getTime() + raidDuration * 1000)
+  const now = new Date()
+  const remainingTime = raidEndTime.getTime() - now.getTime()
+  return remainingTime
+}
+
+export const getActiveHistoryByRaidId = (
+  histories: RaidHistoryResponse[] | null,
+  raidId: number
+) => {
+  if (!histories) return null
+  return histories.find((h) => h.raidId === raidId && h.inProgress)
+}
+
+export const formatRemainingTime = (remainingTime: number) => {
+  if (remainingTime <= 0) return "0s"
+  const hours = Math.floor(remainingTime / (1000 * 60 * 60))
+  const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000)
+
+  let result = ""
+  if (hours > 0) result += `${hours}h `
+  if (minutes > 0) result += `${minutes}m `
+  if (seconds > 0) result += `${seconds}s`
+  return result.trim()
+}
+
+export const formatDuration = (duration: number) => {
+  const hours = Math.floor(duration / 3600)
+  const minutes = Math.floor((duration % 3600) / 60)
+  const seconds = duration % 60
+  const result = []
+  if (hours > 0) result.push(`${hours}h`)
+  if (minutes > 0) result.push(`${minutes}m`)
+  if (seconds > 0) result.push(`${seconds}s`)
+  return result.join(" ")
 }

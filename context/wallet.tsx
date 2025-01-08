@@ -11,8 +11,6 @@ import {
   Provider,
 } from "ethers"
 
-import { authenticate } from "@/lib/api"
-
 type WalletContextType = {
   isConnected: boolean
   isAuthenticated: boolean

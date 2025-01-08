@@ -1,9 +1,11 @@
 import React from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useProfile } from "@/store/hooks"
 import { Plus } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { levelRequirements } from "@/config/constants"
+import { cn, formatNumber } from "@/lib/utils"
 import { Progress } from "@/components/ui/progress"
 import {
   DojoIcon,
@@ -71,6 +73,7 @@ export const links = [
 ]
 
 const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
+  const { data: profile } = useProfile()
   return (
     <div
       className={cn(
@@ -133,16 +136,21 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
                 <p className="glass-effect py-1 px-3 rounded-lg text-xs">
                   Level
                 </p>
-                <div className=" py-1 px-3 text-sm">157</div>
+                <div className=" py-1 px-3 text-sm">{profile?.level}</div>
               </div>
 
               <div className="flex items-center w-full">
                 <p className="glass-effect py-1 px-3 rounded-lg text-xs">XP</p>
 
-                <Progress value={60} className="w-full " />
+                <Progress
+                  value={profile?.experience}
+                  total={levelRequirements[profile?.level ?? 0].requiredPoints}
+                  className="w-full "
+                />
 
                 <p className="glass-effect py-1 px-3 rounded-lg text-xs font-volkhov">
-                  157/200
+                  {profile?.experience}/
+                  {levelRequirements[profile?.level ?? 0].requiredPoints}
                 </p>
               </div>
             </div>
@@ -170,7 +178,9 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
                     height={50}
                   />
                 </div>
-                <p className="text-xs font-volkhov">151,600 STAR</p>
+                <p className="text-xs font-volkhov">
+                  {formatNumber(profile?.stars)} STAR
+                </p>
                 <button className="glass-effect size-5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
                   <Plus className="size-3" />
                 </button>

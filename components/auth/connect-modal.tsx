@@ -86,11 +86,10 @@ const ConnectModal = ({
     const checkUser = async () => {
       if (isConnected && address) {
         const res = await checkUserExist(address)
-        console.log(res)
         if (res.data) {
           handleAuthenticate()
         } else {
-          moveToStep(3)
+          moveToStep(2)
         }
       }
     }

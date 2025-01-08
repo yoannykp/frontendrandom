@@ -3,12 +3,10 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useWallet } from "@/context/wallet"
-import { AuthUserData } from "@/types"
+import { AuthUserData, CreateAlienData } from "@/types"
 import { AnimatePresence, motion } from "framer-motion"
-import toast from "react-hot-toast"
 import { FaXTwitter } from "react-icons/fa6"
 
-import { authenticate } from "@/lib/api"
 import BrandButton from "@/components/ui/brand-button"
 import BackgroundCover from "@/components/common/background-cover"
 import Footer from "@/components/common/footer"
@@ -17,8 +15,6 @@ import Header from "@/components/common/header"
 import ConnectModal from "./connect-modal"
 import CreateAlien from "./create-alien"
 import InfoModal from "./info-modal"
-import InviteCodeModal from "./invite-code-modal"
-import LinkTwitter from "./link-twitter"
 import Sliders from "./sliders"
 
 const Home = () => {
@@ -26,20 +22,23 @@ const Home = () => {
 
   const [userData, setUserData] = useState<AuthUserData>({
     name: "",
-    code: "",
+    code: "random",
     country: "",
-    twitterId: "",
-    image: "",
-    element: "0",
-    strengthPoints: 0,
+    twitterId: "random",
+    image: "random",
+  })
+
+  const [createAlienData, setCreateAlienData] = useState<CreateAlienData>({
+    name: "",
+    element: "/images/elements/element-1.png",
+    image: "/images/characters/character-1.png",
+    strengthPoints: 87,
     hair: "0",
     face: "0",
   })
 
   const [isTwitterLinked, setIsTwitterLinked] = useState(false)
-
-  const { isConnected, signer, isAuthenticated, setIsAuthenticated } =
-    useWallet()
+  const { isConnected, isAuthenticated } = useWallet()
   const router = useRouter()
 
   const moveToPreviousStep = () => {
@@ -47,13 +46,13 @@ const Home = () => {
     setCurrentStep((previous) => previous - 1)
   }
 
-  const moveToNextStep = async () => {
+  const moveToNextStep = () => {
     if (currentStep === 3) {
-      handleAuthenticate()
+      router.push("/")
       return
     }
 
-    if (currentStep < 5) {
+    if (currentStep < 4) {
       setCurrentStep((previous) => previous + 1)
     } else {
       setCurrentStep(0)
@@ -61,30 +60,10 @@ const Home = () => {
   }
 
   const moveToStep = (step: number) => {
-    if (step > 0 && step < 5) {
+    if (step > 0 && step < 4) {
       setCurrentStep(step)
     } else {
       setCurrentStep(0)
-    }
-  }
-
-  const handleAuthenticate = async () => {
-    if (!signer) {
-      toast.error("Please connect your wallet")
-      return
-    }
-    const signature = await signer.signMessage(
-      process.env.NEXT_PUBLIC_SIGN_MESSAGE!
-    )
-    if (!signature) return
-    setIsAuthenticated(true)
-    const res = await authenticate({
-      signature,
-      signedMessage: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
-      register: userData,
-    })
-    if (res.data) {
-      router.push("/")
     }
   }
 
@@ -107,27 +86,13 @@ const Home = () => {
               transition={{ duration: 0.2 }}
               className="z-50 "
             >
-              {currentStep == 1 ? (
+              {currentStep === 1 ? (
                 <ConnectModal
                   current={currentStep}
                   moveToPreviousStep={moveToPreviousStep}
                   moveToStep={moveToStep}
                 />
-              ) : currentStep == 20 ? (
-                <InviteCodeModal
-                  current={currentStep}
-                  moveToPreviousStep={moveToPreviousStep}
-                  moveToNextStep={moveToNextStep}
-                />
-              ) : currentStep == 2 ? (
-                <CreateAlien
-                  current={currentStep}
-                  moveToPreviousStep={moveToPreviousStep}
-                  moveToNextStep={moveToNextStep}
-                  setUserData={setUserData}
-                  userData={userData}
-                />
-              ) : currentStep == 3 ? (
+              ) : currentStep === 2 ? (
                 <InfoModal
                   current={currentStep}
                   moveToPreviousStep={moveToPreviousStep}
@@ -136,11 +101,15 @@ const Home = () => {
                   userData={userData}
                   isTwitterLinked={isTwitterLinked}
                 />
-              ) : currentStep == 50 ? (
-                <LinkTwitter
+              ) : currentStep === 3 ? (
+                <CreateAlien
                   current={currentStep}
                   moveToPreviousStep={moveToPreviousStep}
                   moveToNextStep={moveToNextStep}
+                  setUserData={setUserData}
+                  userData={userData}
+                  createAlienData={createAlienData}
+                  setCreateAlienData={setCreateAlienData}
                 />
               ) : null}
             </motion.div>

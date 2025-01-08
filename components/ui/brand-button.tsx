@@ -27,6 +27,7 @@ const BrandButton: FC<BrandButtonProps> = ({
 }) => {
   const sharedClasses = cn(
     "relative flex items-center justify-center gap-2.5 p-[15px] px-[30px] border border-gray-light backdrop-blur-[20px] rounded-normal isolation-isolate overflow-hidden text-lg group",
+    "disabled:opacity-50 disabled:cursor-not-allowed",
     className
   )
 
@@ -34,6 +35,7 @@ const BrandButton: FC<BrandButtonProps> = ({
     <span
       className={cn(
         "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
+        "group-disabled:group-hover:h-[30px]",
         blurColor
       )}
     />

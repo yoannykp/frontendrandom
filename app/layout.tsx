@@ -3,8 +3,10 @@ import type { Metadata } from "next"
 import "./styles/globals.css"
 
 import { AppKit } from "@/context/appkit"
+import { RaidTimerProvider } from "@/context/raidTimer"
+import { ThemeProvider } from "@/context/ThemeProvider"
 import { WalletProvider } from "@/context/wallet"
-import { ThemeProvider } from "@/contexts/ThemeProvider"
+import { ReduxProvider } from "@/store/provider"
 import { Toaster } from "react-hot-toast"
 
 import { cn } from "@/lib/utils"
@@ -31,11 +33,17 @@ export default function RootLayout({
           forcedTheme="dark"
           disableTransitionOnChange
         >
-          <AppKit>
-            <WalletProvider>{children}</WalletProvider>
-          </AppKit>
+          <ReduxProvider>
+            <AppKit>
+              <WalletProvider>
+                <RaidTimerProvider>
+                  {children}
+                  <Toaster />
+                </RaidTimerProvider>
+              </WalletProvider>
+            </AppKit>
+          </ReduxProvider>
         </ThemeProvider>
-        <Toaster />
       </body>
     </html>
   )

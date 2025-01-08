@@ -1,9 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useRaids } from "@/store/hooks"
+import { Raid } from "@/types"
 import { Plus } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -17,7 +19,15 @@ import TeamRecap from "@/components/pages/raids/TeamRecap"
 const Page = () => {
   const pathname = usePathname()
   const [isRaidsListOpen, setIsRaidsListOpen] = useState(false)
-  const [selectedRaid, setSelectedRaid] = useState<number | null>(null)
+  const { data: raids } = useRaids()
+  const [selectedRaid, setSelectedRaid] = useState<Raid | null>(null)
+
+  useEffect(() => {
+    if (raids && raids.length > 0) {
+      setSelectedRaid(raids[0])
+    }
+  }, [raids])
+
   return (
     <>
       <div className="fixed inset-0  bg-cover bg-center bg-no-repeat bg-[url('/images/pages/bg.jpg')]  lg:hidden "></div>
@@ -52,9 +62,10 @@ const Page = () => {
           <RaidsList
             selectedRaid={selectedRaid}
             setSelectedRaid={setSelectedRaid}
+            raids={raids || []}
           />
           <div className="flex-1 h-full">
-            <SingleRaid />
+            <SingleRaid raid={selectedRaid || undefined} />
             <TeamRecap />
             {/* End of team recap section */}
           </div>
@@ -87,11 +98,12 @@ const Page = () => {
         {isRaidsListOpen || selectedRaid ? (
           <ScrollArea className="flex-1 flex flex-col ">
             {selectedRaid ? (
-              <SingleRaid />
+              <SingleRaid raid={selectedRaid} />
             ) : isRaidsListOpen ? (
               <RaidsList
                 selectedRaid={selectedRaid}
                 setSelectedRaid={setSelectedRaid}
+                raids={raids || []}
               />
             ) : null}
           </ScrollArea>

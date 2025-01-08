@@ -2,16 +2,27 @@
 
 import { useState } from "react"
 import Image from "next/image"
+import { useRaidTimer } from "@/context/raidTimer"
+import { useAliens, useProfile, useRaids } from "@/store/hooks"
 import { Plus } from "lucide-react"
 
-import { useAppSelector } from "@/lib/store/hooks"
+import { formatNumber, formatRemainingTime } from "@/lib/utils"
 import { Progress } from "@/components/ui/progress"
 import { ArrowBack, FranceIcon } from "@/components/icons"
 import ActivityMenu from "@/components/pages/home/ActivityMenu"
 
 const Page = () => {
   const [isActivityMenuOpen, setIsActivityMenuOpen] = useState(false)
-  const { data: profile } = useAppSelector((state) => state.userProfile)
+  const { data: profile } = useProfile()
+  const { data: aliens } = useAliens()
+  const { data: raids } = useRaids()
+  const { activeRaids } = useRaidTimer()
+
+  // Find the first active raid to display
+  const activeRaid = activeRaids[0]
+  const raidDetails = activeRaid
+    ? raids?.find((r) => r.id === activeRaid.raidId)
+    : null
 
   return (
     <>
@@ -30,9 +41,21 @@ const Page = () => {
               </div>
               <div className="flex items-center gap-6 bg-white/10 rounded-lg py-1 px-2">
                 <p className="text-xs">Strengh points</p>
-                <p className="font-volkhov text-sm">2400</p>
+                <p className="font-volkhov text-sm">
+                  {aliens?.[0]?.strengthPoints ?? 0}
+                </p>
               </div>
             </div>
+            {activeRaid && raidDetails && (
+              <div className="absolute top-4 lg:top-10 right-4 lg:right-[330px] glass-effect z-10 px-3 py-2 rounded-xl w-44">
+                <div className="flex items-center gap-2">
+                  <p className="font-volkhov">Ongoing Raid</p>
+                </div>
+                <p className="text-xs text-white/50">
+                  {formatRemainingTime(activeRaid.remainingTime)} left
+                </p>
+              </div>
+            )}
             <ActivityMenu />
           </div>
           <div className="lg:hidden space-y-4 relative z-10 mt-4">
@@ -83,7 +106,9 @@ const Page = () => {
                         height={50}
                       />
                     </div>
-                    <p className="text-xs font-volkhov">151,600 STAR</p>
+                    <p className="text-xs font-volkhov">
+                      {formatNumber(profile?.stars)} STAR
+                    </p>
                     <button className="glass-effect size-5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
                       <Plus className="size-3" />
                     </button>

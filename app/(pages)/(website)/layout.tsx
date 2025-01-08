@@ -3,8 +3,8 @@
 import React, { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { ReduxProvider } from "@/store/provider"
 
-import { ReduxProvider } from "@/lib/store/provider"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import IconButton from "@/components/ui/icon-button"
