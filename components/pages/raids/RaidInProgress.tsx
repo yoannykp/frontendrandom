@@ -19,8 +19,8 @@ const RaidInProgress = ({ raid }: RaidInProgressProps) => {
     : 0
 
   return (
-    <div className="lg:bg-white/10 rounded-sm lg:rounded-2xl  lg:p-4 ">
-      <div className="h-[570px] rounded-lg flex flex-col justify-end p-4 lg:p-10 relative overflow-hidden">
+    <div className="lg:bg-white/10 rounded-sm lg:rounded-2xl  lg:p-4 max-lg:flex-1">
+      <div className="h-full lg:h-[570px] rounded-lg flex flex-col justify-end p-4 lg:p-10 relative overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src={raid?.image}
@@ -51,7 +51,7 @@ const RaidInProgress = ({ raid }: RaidInProgressProps) => {
             </div>
           </div>
           <div className="flex gap-w p-3 lg:p-4 bg-white/10 backdrop-blur-lg rounded-xl gap-2 mt-3 lg:mt-5 max-lg:border border-white/20">
-            <div className="bg-white/10 rounded-full flex items-center justify-center px-3 ">
+            <div className="bg-white/10 rounded-full flex items-center justify-center px-3 min-w-20 ">
               <h2 className="text-white font-inter text-xs whitespace-nowrap">
                 {currentRaid &&
                   Object.entries(

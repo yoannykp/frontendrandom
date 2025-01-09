@@ -1,18 +1,18 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useRaids } from "@/store/hooks"
+import { useRaidHistory, useRaids } from "@/store/hooks"
 import { Raid } from "@/types"
 import { Plus } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { cn, isRaidLaunched } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ArrowBack } from "@/components/icons"
 import NoRaid from "@/components/pages/raids/NoRaid"
+import RaidInProgress from "@/components/pages/raids/RaidInProgress"
 import RaidsList from "@/components/pages/raids/RaidsList"
 import SingleRaid from "@/components/pages/raids/SingleRaid"
 import TeamRecap from "@/components/pages/raids/TeamRecap"
@@ -22,6 +22,7 @@ const Page = () => {
   const [isRaidsListOpen, setIsRaidsListOpen] = useState(false)
   const { data: raids } = useRaids()
   const [selectedRaid, setSelectedRaid] = useState<Raid | null>(null)
+  const { data: histories } = useRaidHistory()
 
   return (
     <>
@@ -90,7 +91,27 @@ const Page = () => {
           )}
         </button>
 
-        {isRaidsListOpen || selectedRaid ? (
+        {isRaidsListOpen && !selectedRaid && (
+          <ScrollArea className="flex-1 flex flex-col ">
+            <RaidsList
+              selectedRaid={selectedRaid}
+              setSelectedRaid={setSelectedRaid}
+              raids={raids || []}
+            />
+          </ScrollArea>
+        )}
+
+        {selectedRaid && isRaidLaunched(selectedRaid, histories) && (
+          <RaidInProgress raid={selectedRaid} />
+        )}
+
+        {selectedRaid && !isRaidLaunched(selectedRaid, histories) && (
+          <ScrollArea className="flex-1 flex flex-col ">
+            <SingleRaid raid={selectedRaid} />
+          </ScrollArea>
+        )}
+
+        {/* {isRaidsListOpen || selectedRaid ? (
           <ScrollArea className="flex-1 flex flex-col ">
             {selectedRaid ? (
               <SingleRaid raid={selectedRaid} />
@@ -104,11 +125,11 @@ const Page = () => {
           </ScrollArea>
         ) : (
           ""
-        )}
+        )} */}
 
         {!selectedRaid && !isRaidsListOpen ? <NoRaid /> : ""}
 
-        <div className="bg-white/10 p-2 lg:mt-3 rounded-sm lg:rounded-2xl lg:hidden">
+        {/* <div className="bg-white/10 p-2 lg:mt-3 rounded-sm lg:rounded-2xl lg:hidden">
           <div className="flex items-center justify-between ">
             <h2 className="text-xm font-volkhov">Team Recap</h2>
             <button className="glass-effect  p-1 rounded-full">
@@ -130,7 +151,8 @@ const Page = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
+        <TeamRecap />
       </div>
 
       {/* Background Gradients */}

@@ -56,7 +56,6 @@ const Page = () => {
           <div className="flex-1 h-full">
             <SingleRaid />
             <TeamRecap />
-            {/* End of team recap section */}
           </div>
         </div>
       </div>

@@ -81,7 +81,6 @@ export const RaidTimerProvider = ({
         const firstRaid = newActiveRaids.sort(
           (a, b) => a.remainingTime - b.remainingTime
         )[0]
-        console.log(firstRaid)
         setMostSoonToCompleteRaid(firstRaid)
       } else {
         setMostSoonToCompleteRaid(null)
