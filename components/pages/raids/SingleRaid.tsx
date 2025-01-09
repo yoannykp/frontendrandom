@@ -16,13 +16,19 @@ import {
 } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 
+import NoRaid from "./NoRaid"
+import RaidInProgress from "./RaidInProgress"
+
+const rewardImages = {
+  STARS: "/images/star.png",
+  XP: "/images/xp.png",
+  REP: "/images/rep.png",
+}
+
 const SingleRaid = ({ raid }: { raid?: Raid }) => {
   const dispatch = useAppDispatch()
   const { data: aliens } = useAliens()
   const { data: raidHistory } = useRaidHistory()
-  const { activeRaids } = useRaidTimer()
-
-  const activeRaid = activeRaids.find((ar) => ar.raidId === raid?.id)
 
   const handleLaunchRaid = async () => {
     if (!raid?.id) return
@@ -40,7 +46,11 @@ const SingleRaid = ({ raid }: { raid?: Raid }) => {
     }
   }
 
-  if (!raid) return null
+  if (!raid) return <NoRaid />
+
+  if (isRaidLaunched(raid, raidHistory)) {
+    return <RaidInProgress raid={raid} />
+  }
 
   return (
     <div className="bg-white/10 rounded-sm lg:rounded-2xl p-2 lg:p-4">
@@ -48,11 +58,11 @@ const SingleRaid = ({ raid }: { raid?: Raid }) => {
         <div className="flex lg:items-center gap-4 flex-col lg:flex-row">
           <div className="lg:bg-white/10  rounded-lg lg:p-4 max-lg:w-full ">
             <Image
-              src="/images/raids/raid-1.jpg"
-              alt="Raid"
+              src={raid.image}
+              alt={raid.title}
               width={500}
               height={500}
-              className="object-cover lg:aspect-auto lg:max-w-[190px] lg:max-h-[190px] rounded-lg max-lg:h-32"
+              className="object-cover lg:aspect-auto lg:max-w-[190px] lg:h-[190px] rounded-lg max-lg:h-32"
             />
           </div>
           <div>
@@ -61,21 +71,15 @@ const SingleRaid = ({ raid }: { raid?: Raid }) => {
                 <h2 className=" lg:text-3xl font-inter  lg:font-volkhov ">
                   {raid?.title}
                 </h2>
-                {isRaidLaunched(raid, raidHistory) ? (
-                  <span className="text-xs text-white/50 font-inter">
-                    {formatRemainingTime(activeRaid?.remainingTime || 0)}
-                    <span className="hidden lg:inline"> left</span>
-                  </span>
-                ) : (
-                  <span className="text-xs text-white/50 font-inter">
-                    {formatDuration(raid?.duration)}
-                  </span>
-                )}
+
+                <span className="text-xs text-white/50 font-inter">
+                  {formatDuration(raid?.duration)}
+                </span>
               </div>
               <div className=" bg-white/10 rounded-full p-px">
                 <Image
-                  src="/images/raids/raid-1_icon.png"
-                  alt="Raid"
+                  src={raid.icon}
+                  alt={raid.title}
                   width={30}
                   height={30}
                   className="object-cover size-4 lg:size-6"
@@ -96,16 +100,16 @@ const SingleRaid = ({ raid }: { raid?: Raid }) => {
               className="glass-effect p-2 lg:p-4 rounded-xl flex flex-col items-center relative overflow-hidden  lg:min-h-[150px] justify-center"
             >
               <Image
-                src="/images/star.png"
-                alt="Star"
+                src={rewardImages[reward.type]}
+                alt={reward.type}
                 width={500}
                 height={500}
                 className="object-cover absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-40 lg:size-[400px] opacity-10"
               />
               <div className="relative size-8 lg:size-20 mb-2">
                 <Image
-                  src="/images/star.png"
-                  alt="Star"
+                  src={rewardImages[reward.type]}
+                  alt={reward.type}
                   fill
                   className="object-contain"
                 />
@@ -124,13 +128,7 @@ const SingleRaid = ({ raid }: { raid?: Raid }) => {
         onClick={handleLaunchRaid}
         disabled={isRaidLaunched(raid, raidHistory)}
       >
-        {isRaidLaunched(raid, raidHistory) ? (
-          <span>
-            In Progress ({formatRemainingTime(activeRaid?.remainingTime || 0)})
-          </span>
-        ) : (
-          "Launch Raid"
-        )}
+        Launch Raid
       </BrandButton>
     </div>
   )

@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ArrowBack } from "@/components/icons"
+import NoRaid from "@/components/pages/raids/NoRaid"
 import RaidsList from "@/components/pages/raids/RaidsList"
 import SingleRaid from "@/components/pages/raids/SingleRaid"
 import TeamRecap from "@/components/pages/raids/TeamRecap"
@@ -21,12 +22,6 @@ const Page = () => {
   const [isRaidsListOpen, setIsRaidsListOpen] = useState(false)
   const { data: raids } = useRaids()
   const [selectedRaid, setSelectedRaid] = useState<Raid | null>(null)
-
-  useEffect(() => {
-    if (raids && raids.length > 0) {
-      setSelectedRaid(raids[0])
-    }
-  }, [raids])
 
   return (
     <>
@@ -111,38 +106,7 @@ const Page = () => {
           ""
         )}
 
-        {!selectedRaid && !isRaidsListOpen ? (
-          <div
-            className="flex-1  rounded-sm relative overflow-hidden h-full"
-            style={{
-              backgroundImage: "url('/images/pages/raids-bg.jpg')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-            }}
-          >
-            <div
-              className="absolute inset-0 "
-              style={{
-                background:
-                  "linear-gradient(0deg, rgba(217, 217, 217, 0.07), rgba(217, 217, 217, 0.07)),linear-gradient(248.67deg, rgba(0, 0, 0, 0) -17.77%, #000000 110%)",
-              }}
-            />
-
-            <div className="px-4 py-8 flex flex-col gap-2 justify-between h-full relative z-10">
-              <div className="flex flex-col gap-2">
-                <h2 className="text-3xl font-volkhov">Raids</h2>
-                <p className="text-white/50 text-sm">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
-                  sagittis ipsum sit amet tortor efficitur volutpat. Nullam a
-                  quam efficitur, sagittis est non, vestibulum ligula.
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : (
-          ""
-        )}
+        {!selectedRaid && !isRaidsListOpen ? <NoRaid /> : ""}
 
         <div className="bg-white/10 p-2 lg:mt-3 rounded-sm lg:rounded-2xl lg:hidden">
           <div className="flex items-center justify-between ">
@@ -174,14 +138,13 @@ const Page = () => {
         className="fixed inset-0 "
         style={{
           background:
-            "radial-gradient(69.65% 69.65% at 43.52% 23.05%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.54) 100%)",
+            "radial-gradient(91.36% 91.36% at 31.6% 44.58%, rgba(0, 0, 0, 0) 0%, #000000 100%)",
         }}
       ></div>
       <div
-        className="fixed inset-0 "
+        className="fixed w-32 h-96 bg-black/40 left-0 top-20 "
         style={{
-          background:
-            "radial-gradient(48.12% 75.2% at 31.6% 44.58%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.81) 100%)",
+          filter: "blur(50px)",
         }}
       ></div>
     </>

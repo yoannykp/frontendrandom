@@ -37,9 +37,15 @@ export interface Profile {
 
 export interface RaidReward {
   id: number
-  type: "STARS" | "XP" | "REP"
+  type: RewardType
   amount: number
   raidId: number
+}
+
+export enum RewardType {
+  STARS = "STARS",
+  XP = "XP",
+  REP = "REP",
 }
 
 export interface Raid {
@@ -50,6 +56,8 @@ export interface Raid {
   rewards: RaidReward[]
   createdAt: string
   updatedAt: string
+  icon: string
+  image: string
 }
 
 export interface RaidResponse extends Raid {

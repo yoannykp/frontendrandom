@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import Image from "next/image"
 import { useRaidTimer } from "@/context/raidTimer"
 import { useAliens, useProfile, useRaids } from "@/store/hooks"
@@ -16,13 +16,7 @@ const Page = () => {
   const { data: profile } = useProfile()
   const { data: aliens } = useAliens()
   const { data: raids } = useRaids()
-  const { activeRaids } = useRaidTimer()
-
-  // Find the first active raid to display
-  const activeRaid = activeRaids[0]
-  const raidDetails = activeRaid
-    ? raids?.find((r) => r.id === activeRaid.raidId)
-    : null
+  const { activeRaids, mostSoonToCompleteRaid } = useRaidTimer()
 
   return (
     <>
@@ -46,13 +40,29 @@ const Page = () => {
                 </p>
               </div>
             </div>
-            {activeRaid && raidDetails && (
-              <div className="absolute top-4 lg:top-10 right-4 lg:right-[330px] glass-effect z-10 px-3 py-2 rounded-xl w-44">
+            {mostSoonToCompleteRaid && (
+              <div className="absolute top-4 lg:top-10 right-4 lg:right-[330px] glass-effect z-10 px-3 py-2 rounded-xl w-44 max-lg:hidden">
                 <div className="flex items-center gap-2">
                   <p className="font-volkhov">Ongoing Raid</p>
                 </div>
                 <p className="text-xs text-white/50">
-                  {formatRemainingTime(activeRaid.remainingTime)} left
+                  {mostSoonToCompleteRaid &&
+                    Object.entries(
+                      formatRemainingTime(mostSoonToCompleteRaid.remainingTime)
+                    )
+                      .filter(([_, { value }]) => parseInt(value) > 0)
+                      .map(([unit, { value, text }], index, arr) => (
+                        <React.Fragment key={unit}>
+                          <span>
+                            {value}
+                            {text}
+                          </span>
+                          {index < arr.length - 1 && (
+                            <span className="text-white/50 mx-px">:</span>
+                          )}
+                        </React.Fragment>
+                      ))}{" "}
+                  left
                 </p>
               </div>
             )}

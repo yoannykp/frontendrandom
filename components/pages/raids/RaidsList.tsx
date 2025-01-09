@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction } from "react"
 import Image from "next/image"
 import { Raid } from "@/types"
 
-import { cn } from "@/lib/utils"
+import { cn, formatDuration } from "@/lib/utils"
 
 const RaidsList = ({
   selectedRaid,
@@ -28,7 +28,7 @@ const RaidsList = ({
         >
           <div className="absolute top-4 right-4 bg-white/10 rounded-full p-px">
             <Image
-              src={"/images/raids/raid-1_icon.png"}
+              src={raid.icon}
               alt={raid.title}
               width={24}
               height={24}
@@ -36,14 +36,18 @@ const RaidsList = ({
             />
           </div>
           <div className="relative  rounded overflow-hidden aspect-square w-14 shrink-0">
-            <Image src={"/images/raids/raid-1.jpg"} alt={raid.title} fill />
+            <Image src={raid.image} alt={raid.title} fill />
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-2 font-inter ">
               <h2 className="text-[18px]  font-inter ">{raid.title}</h2>
-              <span className="text-xs text-white/50 ">{raid.duration}h</span>
+              <span className="text-xs text-white/50 ">
+                {formatDuration(raid.duration)}
+              </span>
             </div>
-            <p className=" text-white/50 text-xs">{raid.description}</p>
+            <p className="text-white/50 text-xs line-clamp-1">
+              {raid.description}
+            </p>
           </div>
         </div>
       ))}

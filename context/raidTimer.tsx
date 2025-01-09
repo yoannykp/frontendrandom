@@ -3,13 +3,20 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { useAppDispatch, useRaidHistory, useRaids } from "@/store/hooks"
 import { updateRaidHistoryStatus } from "@/store/slices/raidsSlice"
-import { Raid, RaidHistoryResponse } from "@/types"
+import { RaidResponse } from "@/types"
 import toast from "react-hot-toast"
 
 import { calculateLaunchedRaidRemainingTime } from "@/lib/utils"
 
 type RaidTimerContextType = {
-  activeRaids: { raidId: number; remainingTime: number }[]
+  activeRaids: (RaidResponse & {
+    remainingTime: number
+  })[]
+  mostSoonToCompleteRaid:
+    | (RaidResponse & {
+        remainingTime: number
+      })
+    | null
 }
 
 const RaidTimerContext = createContext<RaidTimerContextType | undefined>(
@@ -25,8 +32,16 @@ export const RaidTimerProvider = ({
   const { data: raidHistory } = useRaidHistory()
   const { data: raids } = useRaids()
   const [activeRaids, setActiveRaids] = useState<
-    { raidId: number; remainingTime: number }[]
+    (RaidResponse & {
+      remainingTime: number
+    })[]
   >([])
+  const [mostSoonToCompleteRaid, setMostSoonToCompleteRaid] = useState<
+    | (RaidResponse & {
+        remainingTime: number
+      })
+    | null
+  >(null)
 
   useEffect(() => {
     if (!raidHistory || !raids) return
@@ -56,14 +71,21 @@ export const RaidTimerProvider = ({
             return null
           }
 
-          return { raidId: raid.id, remainingTime }
+          return { ...raid, remainingTime }
         })
-        .filter(
-          (raid): raid is { raidId: number; remainingTime: number } =>
-            raid !== null
-        )
+        .filter((raid) => raid !== null)
 
       setActiveRaids(newActiveRaids)
+
+      if (newActiveRaids.length > 0) {
+        const firstRaid = newActiveRaids.sort(
+          (a, b) => a.remainingTime - b.remainingTime
+        )[0]
+        console.log(firstRaid)
+        setMostSoonToCompleteRaid(firstRaid)
+      } else {
+        setMostSoonToCompleteRaid(null)
+      }
     }
 
     updateTimers()
@@ -73,7 +95,7 @@ export const RaidTimerProvider = ({
   }, [raidHistory, raids, dispatch])
 
   return (
-    <RaidTimerContext.Provider value={{ activeRaids }}>
+    <RaidTimerContext.Provider value={{ activeRaids, mostSoonToCompleteRaid }}>
       {children}
     </RaidTimerContext.Provider>
   )

@@ -25,7 +25,7 @@ const Home = () => {
     code: "random",
     country: "",
     twitterId: "random",
-    image: "random",
+    image: "/images/user.png",
   })
 
   const [createAlienData, setCreateAlienData] = useState<CreateAlienData>({
@@ -38,7 +38,6 @@ const Home = () => {
   })
 
   const [isTwitterLinked, setIsTwitterLinked] = useState(false)
-  const { isConnected, isAuthenticated } = useWallet()
   const router = useRouter()
 
   const moveToPreviousStep = () => {

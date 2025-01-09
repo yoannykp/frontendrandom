@@ -1,7 +1,9 @@
 import React from "react"
 import Image from "next/image"
+import { useProfile } from "@/store/hooks"
 
 const TeamRecap = () => {
+  const { data: profile } = useProfile()
   return (
     <div className="glass-effect p-4 mt-3 rounded-2xl">
       <div className="flex items-center gap-3 ">
@@ -31,19 +33,14 @@ const TeamRecap = () => {
         </div>
 
         <div className="flex space-x-3 flex-1">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <div
-              key={index}
-              className="aspect-square relative rounded-xl overflow-hidden border-2 border-white/10 hover:z-10 transition-all duration-300 flex-1"
-            >
-              <Image
-                src={`/images/raids/raid-1.jpg`}
-                alt={`Team member ${index + 1}`}
-                fill
-                className="object-cover"
-              />
-            </div>
-          ))}
+          <div className="aspect-square relative rounded-xl overflow-hidden border-2 border-white/10 hover:z-10 transition-all duration-300 flex-1 max-w-[165px]">
+            <Image
+              src={profile?.image || ""}
+              alt={profile?.name || ""}
+              fill
+              className="object-cover"
+            />
+          </div>
         </div>
       </div>
     </div>

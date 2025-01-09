@@ -85,16 +85,45 @@ export const getActiveHistoryByRaidId = (
 }
 
 export const formatRemainingTime = (remainingTime: number) => {
-  if (remainingTime <= 0) return "0s"
-  const hours = Math.floor(remainingTime / (1000 * 60 * 60))
-  const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60))
-  const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000)
+  if (remainingTime <= 0) {
+    return {
+      hours: { value: "00", text: "h" },
+      minutes: { value: "00", text: "m" },
+      seconds: { value: "00", text: "s" },
+    }
+  }
 
-  let result = ""
-  if (hours > 0) result += `${hours}h `
-  if (minutes > 0) result += `${minutes}m `
-  if (seconds > 0) result += `${seconds}s`
-  return result.trim()
+  const timeUnits = [
+    { unit: "hours", divisor: 1000 * 60 * 60, text: "h" },
+    { unit: "minutes", divisor: 1000 * 60, text: "m" },
+    { unit: "seconds", divisor: 1000, text: "s" },
+  ]
+
+  const result = timeUnits.reduce(
+    (acc, { unit, divisor, text }) => {
+      const numValue =
+        unit === "hours"
+          ? Math.floor(remainingTime / divisor)
+          : Math.floor(
+              (remainingTime %
+                timeUnits[timeUnits.findIndex((t) => t.unit === unit) - 1]
+                  .divisor) /
+                divisor
+            )
+
+      // Pad with zeros to ensure two digits
+      const value = numValue.toString().padStart(2, "0")
+
+      return { ...acc, [unit]: { value, text } }
+    },
+    {} as Record<string, { value: string; text: string }>
+  )
+
+  return result as {
+    hours: { value: string; text: string }
+    minutes: { value: string; text: string }
+    seconds: { value: string; text: string }
+  }
 }
 
 export const formatDuration = (duration: number) => {
@@ -106,4 +135,16 @@ export const formatDuration = (duration: number) => {
   if (minutes > 0) result.push(`${minutes}m`)
   if (seconds > 0) result.push(`${seconds}s`)
   return result.join(" ")
+}
+
+export const calculateRaidProgress = (
+  remainingTime: number,
+  totalDuration: number
+): number => {
+  if (remainingTime <= 0) return 100
+  if (totalDuration <= 0) return 0
+
+  const elapsed = totalDuration - remainingTime / 1000
+  const progress = (elapsed / totalDuration) * 100
+  return Math.min(Math.max(progress, 0), 100) // Ensure value is between 0 and 100
 }
