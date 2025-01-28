@@ -40,7 +40,7 @@ export default withPWA({
   dest: "public",
   register: true,
   skipWaiting: true,
-  // disable: process.env.NODE_ENV === "development",
+  disable: process.env.NODE_ENV === "development",
   maximumFileSizeToCacheInBytes: 20000000, // 20mb
   fallbacks: {
     document: "/offline", // if you want to customize offline page

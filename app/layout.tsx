@@ -10,6 +10,7 @@ import { ReduxProvider } from "@/store/provider"
 import { Toaster } from "react-hot-toast"
 
 import { cn } from "@/lib/utils"
+import { InstallPWAPrompt } from "@/components/pages/pwa/InstallPWAPrompt"
 
 import { inter, volkhov } from "./fonts"
 
@@ -48,6 +49,7 @@ export default function RootLayout({
                 <RaidTimerProvider>
                   {children}
                   <Toaster />
+                  <InstallPWAPrompt />
                 </RaidTimerProvider>
               </WalletProvider>
             </AppKit>

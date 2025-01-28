@@ -72,7 +72,6 @@ export default function Home() {
             "radial-gradient(95.75% 157.14% at 100% 0%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 50%) 100%)",
         }}
       />
-      <InstallPWAPrompt />
     </>
   )
 }
