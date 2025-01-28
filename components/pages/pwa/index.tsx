@@ -7,7 +7,6 @@ import { useAliens } from "@/store/hooks"
 import { calculateJackpot, getTokenPrice } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 
-import { InstallPWAPrompt } from "./InstallPWAPrompt"
 import { InviteCard } from "./InviteCard"
 import { JackpotCard } from "./JackpotCard"
 import { UserProgress } from "./UserProgress"
