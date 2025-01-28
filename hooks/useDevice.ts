@@ -174,6 +174,9 @@ export function useDevice() {
     }
   }, [])
 
+  useEffect(() => {
+    console.log(deviceInfo)
+  }, [deviceInfo])
   return {
     ...deviceInfo,
   }

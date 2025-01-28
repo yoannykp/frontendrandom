@@ -71,7 +71,7 @@ if (!self.define) {
 define(["./workbox-bd7e3b9b"], function (workbox) {
   "use strict"
 
-  importScripts("fallback-development.js")
+  importScripts()
   self.skipWaiting()
   workbox.clientsClaim()
   workbox.registerRoute(
@@ -91,9 +91,6 @@ define(["./workbox-bd7e3b9b"], function (workbox) {
             return response
           },
         },
-        {
-          handlerDidError: async ({ request }) => self.fallback(request),
-        },
       ],
     }),
     "GET"
@@ -102,11 +99,7 @@ define(["./workbox-bd7e3b9b"], function (workbox) {
     /.*/i,
     new workbox.NetworkOnly({
       cacheName: "dev",
-      plugins: [
-        {
-          handlerDidError: async ({ request }) => self.fallback(request),
-        },
-      ],
+      plugins: [],
     }),
     "GET"
   )
