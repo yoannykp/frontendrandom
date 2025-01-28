@@ -1,12 +1,13 @@
 "use client"
 
-import { Suspense, useEffect, useState } from "react"
+import { Suspense, useEffect, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { AuthUserData, CreateAlienData, Traits } from "@/types"
 import { AnimatePresence, motion } from "framer-motion"
 import { FaXTwitter } from "react-icons/fa6"
 
 import { getAllTraits } from "@/lib/api"
+import { useIsMobile } from "@/hooks/useIsMobile"
 import BrandButton from "@/components/ui/brand-button"
 import BackgroundCover from "@/components/common/background-cover"
 import Footer from "@/components/common/footer"
@@ -46,9 +47,11 @@ function ReferralCodeHandler({
 
 const Home = () => {
   const [currentStep, setCurrentStep] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   const [traits, setTraits] = useState<Traits | null>(null)
   const router = useRouter()
-
+  const isMObile = useIsMobile()
   const [userData, setUserData] = useState<AuthUserData>({
     name: "",
     code: "random",
@@ -71,6 +74,11 @@ const Home = () => {
     getAllTraits().then((res) => {
       setTraits(res.data)
     })
+  }, [])
+
+  useEffect(() => {
+    audioRef.current = new Audio("/music.mp3")
+    audioRef.current.loop = true
   }, [])
 
   const moveToPreviousStep = () => {
@@ -97,6 +105,16 @@ const Home = () => {
     } else {
       setCurrentStep(0)
     }
+  }
+
+  const handleButtonClick = () => {
+    if (isMObile) {
+      if (!isPlaying && audioRef.current) {
+        audioRef.current.play()
+        setIsPlaying(true)
+      }
+    }
+    setCurrentStep((previous) => previous + 1)
   }
 
   return (
@@ -157,11 +175,15 @@ const Home = () => {
           <BrandButton
             className="items-center hover:scale-105 duration-500 transition-transform active:scale-95"
             blurColor="bg-[#9E96F4]"
-            onClick={() => {
-              setCurrentStep((previous) => previous + 1)
-            }}
+            onClick={handleButtonClick}
           >
-            Log In with <FaXTwitter className="w-5 h-5" />
+            {isMObile ? (
+              "Tap here"
+            ) : (
+              <>
+                Log In with <FaXTwitter className="w-5 h-5" />
+              </>
+            )}
           </BrandButton>
           {currentStep > 0 ? (
             <Sliders current={currentStep} moveToNextStep={moveToNextStep} />

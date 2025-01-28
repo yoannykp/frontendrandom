@@ -14,10 +14,12 @@ export function InstallPWAPrompt() {
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      {/* <div className="whitespace-pre-wrap">
+      <div className="bg-gray-dark rounded-xl p-6 w-full max-w-sm space-y-6">
+        {isPwaMode ? "pwa" : "not pwa"}
+        {isStandalone ? "standalone" : "not standalone"}
+        {/* <div className="whitespace-pre-wrap">
         {JSON.stringify(deviceInfo, null, 2)}
       </div> */}
-      <div className="bg-gray-dark rounded-xl p-6 w-full max-w-sm space-y-6">
         <div className="space-y-4">
           <div>
             <h3 className="text-xl font-bold text-center">

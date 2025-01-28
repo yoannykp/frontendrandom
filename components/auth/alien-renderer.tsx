@@ -109,7 +109,7 @@ export const AlienRenderer = forwardRef<HTMLCanvasElement, AlienRendererProps>(
     return (
       <div
         ref={containerRef}
-        className="w-full h-full flex items-center justify-center min-h-[250px]"
+        className="w-full h-full flex items-center justify-center "
       >
         {/* Visible canvas for display */}
         <canvas
@@ -120,6 +120,7 @@ export const AlienRenderer = forwardRef<HTMLCanvasElement, AlienRendererProps>(
             maxWidth: "100%",
             objectFit: "contain",
           }}
+          className="max-sm:!h-64"
         />
         {/* Hidden canvas for high-res output */}
         <canvas ref={canvasRef} style={{ display: "none" }} />

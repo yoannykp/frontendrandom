@@ -149,37 +149,42 @@ export const calculateRaidProgress = (
   return Math.min(Math.max(progress, 0), 100) // Ensure value is between 0 and 100
 }
 
-// Fetch token price from Uniswap subgraph
+// Fetch token price from Birdeye API
 export async function getTokenPrice(): Promise<number> {
   try {
+    const TOKEN_ADDRESS = process.env.NEXT_PUBLIC_TOKEN_ADDRESS
+
     const response = await fetch(
-      "https://api.thegraph.com/subgraphs/name/uniswap/arbitrum-v3",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: `{
-          token(id: "0x888aaa48ebea87c74f690189e947d2c679705972") {
-            derivedETH
-            totalValueLockedUSD
-          }
-          bundle(id: "1") {
-            ethPriceUSD
-          }
-        }`,
-        }),
-      }
+      `https://api.geckoterminal.com/api/v2/simple/networks/arbitrum/token_price/${TOKEN_ADDRESS}`
     )
 
-    const data = await response.json()
-    const derivedETH = parseFloat(data.data.token.derivedETH)
-    const ethPriceUSD = parseFloat(data.data.bundle.ethPriceUSD)
+    const res = await response.json()
+    console.log(res)
+    // {
+    //   data: {
+    //     id: "e5aca29d-487d-42ad-a70e-00b6b91dfc8c",
+    //     type: "simple_token_price",
+    //     attributes: {
+    //       token_prices: {
+    //         "0x888aaa48ebea87c74f690189e947d2c679705972":
+    //           "0.0340259571206654",
+    //       },
+    //     },
+    //   },
+    // }
+    if (
+      res.data &&
+      res.data.attributes &&
+      res.data.attributes.token_prices &&
+      TOKEN_ADDRESS
+    ) {
+      return Number(res.data.attributes.token_prices[TOKEN_ADDRESS])
+    }
 
-    return derivedETH * ethPriceUSD
+    console.error("Invalid response from Birdeye API:", res)
+    return 0
   } catch (error) {
-    console.error("Error fetching token price:", error)
+    console.error("Error fetching token price from Birdeye:", error)
     return 0
   }
 }

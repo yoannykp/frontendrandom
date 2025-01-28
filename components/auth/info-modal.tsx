@@ -1,9 +1,7 @@
 "use client"
 
 import { Dispatch, SetStateAction } from "react"
-import Image from "next/image"
 import { useWallet } from "@/context/wallet"
-import character from "@/public/images/characters/character-1.png"
 import { AuthUserData } from "@/types"
 import toast from "react-hot-toast"
 
@@ -92,12 +90,12 @@ const InfoModal = ({
         />
       </div>
       <div className="p-6 rounded-normal border border-gray-light backdrop-blur-[40px] flex flex-col lg:flex-row gap-4 overflow-hidden">
-        <Image
+        {/* <Image
           src={character}
           alt="image"
           placeholder="blur"
           className="w-full lg:w-[462px] lg:h-[620px] object-cover rounded-normal"
-        />
+        /> */}
 
         <div className="w-full flex flex-col overflow-hidden justify-between px-2">
           <div className="gap-8 flex flex-col">

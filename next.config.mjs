@@ -17,23 +17,6 @@ const nextConfig = {
     config.externals.push("pino-pretty", "lokijs", "encoding")
     return config
   },
-  async headers() {
-    return [
-      {
-        source: "/images/:path*",
-        headers: [
-          {
-            key: "Access-Control-Allow-Origin",
-            value: "*",
-          },
-          {
-            key: "Access-Control-Allow-Methods",
-            value: "GET",
-          },
-        ],
-      },
-    ]
-  },
 }
 
 export default withPWA({
@@ -47,5 +30,4 @@ export default withPWA({
   // },
   cacheOnFrontEndNav: true,
   reloadOnOnline: true,
-
 })(nextConfig)

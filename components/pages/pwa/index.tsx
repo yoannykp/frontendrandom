@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { useAliens } from "@/store/hooks"
+import { useAliens, useProfile } from "@/store/hooks"
 
 import { calculateJackpot, getTokenPrice } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
@@ -14,6 +14,7 @@ import { UserProgress } from "./UserProgress"
 export default function Home() {
   const [jackpotAmount, setJackpotAmount] = useState(0)
   const { data: aliens } = useAliens()
+  const { data: profile } = useProfile()
 
   useEffect(() => {
     const fetchJackpotAmount = async () => {
@@ -24,9 +25,9 @@ export default function Home() {
 
     fetchJackpotAmount()
     // Refresh price every minute
-    const interval = setInterval(fetchJackpotAmount, 60000)
+    // const interval = setInterval(fetchJackpotAmount, 60000)
 
-    return () => clearInterval(interval)
+    // return () => clearInterval(interval)
   }, [])
 
   return (
@@ -54,9 +55,9 @@ export default function Home() {
           </Link>
           <InviteCard />
           <UserProgress
-            username="La P"
+            username={profile?.name ?? "Name"}
             tokenType="TON"
-            stars={50}
+            stars={profile?.stars ?? 0}
             level="Airdrop Level 1"
             amount={0}
             profit={0}

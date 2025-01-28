@@ -29,7 +29,7 @@ export const usePwa = () => {
     // Listen for changes in display mode
     const mediaQuery = window.matchMedia("(display-mode: standalone)")
     const handleChange = (e: MediaQueryListEvent) => {
-      setIsPwaMode(e.matches)
+      setIsPwaMode(isPwa())
     }
 
     mediaQuery.addEventListener("change", handleChange)

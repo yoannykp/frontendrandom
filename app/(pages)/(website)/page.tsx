@@ -25,6 +25,13 @@ const Page = () => {
         <>
           <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden ">
             <div className="absolute inset-0 bg-[url('/images/characters/character-1-mobile.png')] bg-cover bg-center bg-no-repeat lg:bg-[url('/images/characters/character-1-main.png')]"></div>
+            {aliens?.[0]?.image && (
+              <img
+                src={aliens?.[0]?.image}
+                alt="alien"
+                className="absolute top-4 lg:-top-56 right-4  lg:-left-[40vw] xl:-left-[30vw] 2xl:-left-[12vw]    px-3 py-2 rounded-xl w-[1400px] min-w-[1400px]"
+              />
+            )}
             <div className="absolute top-4 lg:top-10 right-4 lg:left-[23%]  glass-effect  z-10  px-3 py-2 rounded-xl w-max">
               <div className="flex items-center gap-2">
                 <div className="glass-effect p-1 rounded-lg">

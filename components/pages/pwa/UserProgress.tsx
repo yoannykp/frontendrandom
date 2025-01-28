@@ -21,7 +21,7 @@ export function UserProgress({
     <div className="bg-white/10 rounded-2xl p-4">
       <div className="flex justify-between  text-sm">
         <div>
-          <div className="text-gray-400">La P</div>
+          <div className="text-gray-400">{username}</div>
           <div>TON</div>
         </div>
         <div className="text-right">
