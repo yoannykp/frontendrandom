@@ -133,62 +133,44 @@ export function useDevice() {
     })
   }
 
-  const installPWA = async () => {
-    if (!deferredPrompt) {
-      console.log("PWA installation prompt not available")
-      return false
-    }
-
-    try {
-      await deferredPrompt.prompt()
-      const { outcome } = await deferredPrompt.userChoice
-      return outcome === "accepted"
-    } catch (error) {
-      console.error("Error during PWA installation:", error)
-      return false
-    }
-  }
-
   useEffect(() => {
     checkDeviceInfo()
 
-    // Handle PWA installation prompt
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault()
-      setDeferredPrompt(e as BeforeInstallPromptEvent)
-      setDeviceInfo((prev) => ({ ...prev, canInstallPWA: true }))
-    }
+    // // Handle PWA installation prompt
+    // const handleBeforeInstallPrompt = (e: Event) => {
+    //   e.preventDefault()
+    //   setDeferredPrompt(e as BeforeInstallPromptEvent)
+    //   setDeviceInfo((prev) => ({ ...prev, canInstallPWA: true }))
+    // }
 
-    // Handle successful PWA installation
-    const handleAppInstalled = () => {
-      setDeviceInfo((prev) => ({
-        ...prev,
-        isStandalone: true,
-        canInstallPWA: false,
-      }))
-      setDeferredPrompt(null)
-    }
+    // // Handle successful PWA installation
+    // const handleAppInstalled = () => {
+    //   setDeviceInfo((prev) => ({
+    //     ...prev,
+    //     canInstallPWA: false,
+    //   }))
+    //   setDeferredPrompt(null)
+    // }
 
-    // Add event listeners
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt)
-    window.addEventListener("appinstalled", handleAppInstalled)
+    // // Add event listeners
+    // window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt)
+    // window.addEventListener("appinstalled", handleAppInstalled)
 
     // Handle resize for responsive updates
     window.addEventListener("resize", checkDeviceInfo)
 
     // Cleanup
     return () => {
-      window.removeEventListener(
-        "beforeinstallprompt",
-        handleBeforeInstallPrompt
-      )
-      window.removeEventListener("appinstalled", handleAppInstalled)
+      // window.removeEventListener(
+      //   "beforeinstallprompt",
+      //   handleBeforeInstallPrompt
+      // )
+      // window.removeEventListener("appinstalled", handleAppInstalled)
       window.removeEventListener("resize", checkDeviceInfo)
     }
   }, [])
 
   return {
     ...deviceInfo,
-    installPWA,
   }
 }

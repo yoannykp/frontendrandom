@@ -1,20 +1,18 @@
 import { useDevice } from "@/hooks/useDevice"
 
 export function InstallPWAPrompt() {
-  const {
-    isIOS,
-    isMobile,
-    isStandalone,
-    canInstallPWA,
-    shareButtonPosition,
-    installPWA,
-  } = useDevice()
+  const { isIOS, isMobile, isStandalone, canInstallPWA, shareButtonPosition } =
+    useDevice()
+  const deviceInfo = useDevice()
 
   if (isStandalone || !isMobile) return null
   if (!canInstallPWA && !isIOS) return null
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+      <div className="whitespace-pre-wrap">
+        {JSON.stringify(deviceInfo, null, 2)}
+      </div>
       <div className="bg-gray-dark rounded-xl p-6 w-full max-w-sm space-y-6">
         <div className="space-y-4">
           <div>
@@ -53,14 +51,6 @@ export function InstallPWAPrompt() {
                 </li>
                 <li>Tap &apos;Install&apos; to confirm</li>
               </ol>
-              {canInstallPWA && (
-                <button
-                  onClick={installPWA}
-                  className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Install App
-                </button>
-              )}
             </div>
           )}
         </div>
