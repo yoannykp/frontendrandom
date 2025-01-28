@@ -159,7 +159,6 @@ export async function getTokenPrice(): Promise<number> {
     )
 
     const res = await response.json()
-    console.log(res)
     // {
     //   data: {
     //     id: "e5aca29d-487d-42ad-a70e-00b6b91dfc8c",
