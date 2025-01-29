@@ -44,7 +44,7 @@ function ReferralCodeHandler({
 }
 
 const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
-  const [currentStep, setCurrentStep] = useState(3)
+  const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [traits, setTraits] = useState<Traits>({
