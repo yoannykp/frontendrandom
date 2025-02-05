@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 
 import "./styles/globals.css"
 
-import { AppKit } from "@/context/appkit"
 import { RaidTimerProvider } from "@/context/raidTimer"
 import { ThemeProvider } from "@/context/ThemeProvider"
 import { WalletProvider } from "@/context/wallet"
@@ -11,6 +10,7 @@ import { Toaster } from "react-hot-toast"
 
 import { cn } from "@/lib/utils"
 import { InstallPWAPrompt } from "@/components/pages/pwa/InstallPWAPrompt"
+import Providers from "@/components/Providers"
 
 import { inter, volkhov } from "./fonts"
 
@@ -43,8 +43,8 @@ export default function RootLayout({
           forcedTheme="dark"
           disableTransitionOnChange
         >
-          <ReduxProvider>
-            <AppKit>
+          <Providers>
+            <ReduxProvider>
               <WalletProvider>
                 <RaidTimerProvider>
                   {children}
@@ -52,8 +52,8 @@ export default function RootLayout({
                   <InstallPWAPrompt />
                 </RaidTimerProvider>
               </WalletProvider>
-            </AppKit>
-          </ReduxProvider>
+            </ReduxProvider>
+          </Providers>
         </ThemeProvider>
       </body>
     </html>

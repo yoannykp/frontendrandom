@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAliens, useProfile } from "@/store/hooks"
-import { useDisconnect } from "@reown/appkit/react"
+import { useLogout } from "@privy-io/react-auth"
 
 import { getUnseenReferralRewards, markReferralRewardsAsSeen } from "@/lib/api"
 import { calculateJackpot, getTokenPrice } from "@/lib/utils"
@@ -19,7 +19,7 @@ export default function Home() {
   const { data: aliens } = useAliens()
   const router = useRouter()
   const { data: profile } = useProfile()
-  const { disconnect } = useDisconnect()
+  const { logout } = useLogout()
 
   const [unseenReferralRewards, setUnseenReferralRewards] = useState(0)
 
@@ -39,7 +39,7 @@ export default function Home() {
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken")
-    disconnect()
+    logout()
     router.push("/auth")
   }
 

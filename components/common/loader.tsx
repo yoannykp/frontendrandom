@@ -6,7 +6,7 @@ import { useAliens, useAppDispatch } from "@/store/hooks"
 import { fetchAliens } from "@/store/slices/aliensSlice"
 import { fetchRaidHistory, fetchRaids } from "@/store/slices/raidsSlice"
 import { fetchUserProfile } from "@/store/slices/userProfileSlice"
-import { useAppKitAccount } from "@reown/appkit/react"
+import { usePrivy } from "@privy-io/react-auth"
 import { Loader2 } from "lucide-react"
 import toast from "react-hot-toast"
 
@@ -19,7 +19,7 @@ const WALLET_INIT_TIMEOUT = 2000
 export function Loader({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch()
   const router = useRouter()
-  const { address, isConnected } = useAppKitAccount()
+  const { ready, authenticated, user } = usePrivy()
   const [isLoading, setIsLoading] = useState(true)
   const [walletInitialized, setWalletInitialized] = useState(false)
   const { data: aliens } = useAliens()
@@ -56,16 +56,16 @@ export function Loader({ children }: { children: React.ReactNode }) {
     const handleWalletState = async () => {
       if (!walletInitialized) return
 
-      if (!isConnected) {
+      if (!authenticated) {
         removeCookie("accessToken")
         router.push("/auth")
         return
       }
 
-      if (address) {
+      if (user?.wallet?.address) {
         try {
           await Promise.all([
-            dispatch(fetchUserProfile(address)),
+            dispatch(fetchUserProfile(user?.wallet?.address)),
             dispatch(fetchRaids()),
             dispatch(fetchAliens()),
             dispatch(fetchRaidHistory()),
@@ -87,7 +87,13 @@ export function Loader({ children }: { children: React.ReactNode }) {
     }
 
     handleWalletState()
-  }, [address, dispatch, walletInitialized, isConnected, router])
+  }, [
+    user?.wallet?.address,
+    dispatch,
+    walletInitialized,
+    authenticated,
+    router,
+  ])
 
   if (isLoading) {
     return (

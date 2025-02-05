@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from "react"
-import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react"
+import { useActiveWallet, usePrivy, useWallets } from "@privy-io/react-auth"
 import {
   BrowserProvider,
   Eip1193Provider,
@@ -36,25 +36,33 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   const [provider, setProvider] = useState<Provider | null>(null)
   const [signer, setSigner] = useState<JsonRpcSigner | null>(null)
   const [user, setUser] = useState<WalletContextType["user"] | null>(null)
-  const { address } = useAppKitAccount()
-  const { walletProvider } = useAppKitProvider("eip155")
+  const { user: privyUser } = usePrivy()
+  const { wallets } = useWallets()
+  const wallet = wallets[0]
   const [isConnected, setIsConnected] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
     const initialize = async () => {
-      if (!walletProvider || !address) return
-      const provider = new BrowserProvider(walletProvider as Eip1193Provider)
-      const signer = await provider.getSigner()
+      if (!wallet) return
+      const privyProvider = await wallet.getEthereumProvider()
+      if (!privyProvider || !privyUser?.wallet?.address) return
+      const ethersProvider = new ethers.BrowserProvider(privyProvider)
+      const signer = await ethersProvider.getSigner()
       setProvider(provider)
       setSigner(signer)
-      const balance = await provider.getBalance(address)
-      setUser({ address, balance: Number(ethers.formatEther(balance)) })
+      const balance = await ethersProvider.getBalance(
+        privyUser?.wallet?.address
+      )
+      setUser({
+        address: privyUser?.wallet?.address,
+        balance: Number(ethers.formatEther(balance)),
+      })
       setIsConnected(true)
     }
 
     initialize()
-  }, [walletProvider, address])
+  }, [wallet, privyUser?.wallet?.address])
 
   return (
     <WalletContext.Provider

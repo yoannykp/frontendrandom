@@ -2,14 +2,7 @@
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-import {
-  useAppKit,
-  useAppKitAccount,
-  useAppKitProvider,
-} from "@reown/appkit/react"
-import { BrowserProvider, Eip1193Provider } from "ethers"
-import { Mail } from "lucide-react"
-import toast from "react-hot-toast"
+import { usePrivy } from "@privy-io/react-auth"
 
 import { authenticate, checkUserExist } from "@/lib/api"
 
@@ -25,20 +18,18 @@ const ConnectModal = ({
   moveToPreviousStep: () => void
   moveToStep: (step: number) => void
 }) => {
-  const { open } = useAppKit()
-  const { isConnected, address } = useAppKitAccount()
-  const { walletProvider } = useAppKitProvider("eip155")
+  const { login, ready, authenticated, user, signMessage } = usePrivy()
 
   const router = useRouter()
   const options = [
-    {
-      key: "email",
-      label: "Login with Email",
-      icon: <Mail className="w-5 h-5" />,
-    },
+    // {
+    //   key: "email",
+    //   label: "Login with Email",
+    //   icon: <Mail className="w-5 h-5" />,
+    // },
     {
       key: "wallet",
-      label: isConnected ? "Wallet connected" : "Continue with a wallet",
+      label: authenticated ? "Wallet connected" : "Continue with a wallet",
       icon: (
         <svg
           width="33"
@@ -62,24 +53,17 @@ const ConnectModal = ({
 
   const handleOptionClick = (option: (typeof options)[0]) => {
     // if (option.key === "wallet") {
-    open()
+    login()
     // }
   }
 
   const handleAuthenticate = async () => {
-    const provider = new BrowserProvider(walletProvider as Eip1193Provider)
-    const signer = await provider.getSigner()
-
-    if (!signer) {
-      toast.error("Please connect your wallet")
-      return
-    }
-    const signature = await signer.signMessage(
-      process.env.NEXT_PUBLIC_SIGN_MESSAGE!
-    )
-    if (!signature) return
+    const response = await signMessage({
+      message: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
+    })
+    if (!response) return
     const res = await authenticate({
-      signature,
+      signature: response.signature,
       signedMessage: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
     })
     if (res.data) {
@@ -89,8 +73,8 @@ const ConnectModal = ({
 
   useEffect(() => {
     const checkUser = async () => {
-      if (isConnected && address) {
-        const res = await checkUserExist(address)
+      if (authenticated && ready && user?.wallet?.address) {
+        const res = await checkUserExist(user?.wallet?.address)
         if (res.data) {
           handleAuthenticate()
         } else {
@@ -99,7 +83,7 @@ const ConnectModal = ({
       }
     }
     checkUser()
-  }, [isConnected])
+  }, [authenticated, ready, user?.wallet?.address])
 
   return (
     <div className="w-full md:w-[35rem] space-y-6 z-20">
