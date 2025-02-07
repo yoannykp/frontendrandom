@@ -1,6 +1,7 @@
 import {
   Alien,
   AuthUserData,
+  Pack,
   Profile,
   RaidHistoryResponse,
   RaidResponse,
@@ -243,5 +244,25 @@ export const markReferralRewardsAsSeen = async (): Promise<
   const response = await apiManager.post<boolean>(
     "/profile/mark-referral-rewards-seen"
   )
+  return response
+}
+
+export const getAllPacks = async (): Promise<ApiResponse<Pack[]>> => {
+  const response = await apiManager.get<Pack[]>("/packs")
+  return response
+}
+
+export const createCheckoutSession = async (
+  type: "PACK" | "ALIEN_PART" | "STARS" | "XP" | "REP",
+  itemId: number,
+  quantity?: number
+): Promise<ApiResponse<{ url: string }>> => {
+  const response = await apiManager.post<{
+    url: string
+  }>("/stripe/create-checkout", {
+    type,
+    itemId,
+    quantity,
+  })
   return response
 }

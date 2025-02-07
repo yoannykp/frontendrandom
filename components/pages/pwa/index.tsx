@@ -40,7 +40,7 @@ export default function Home() {
   const handleLogout = () => {
     localStorage.removeItem("accessToken")
     logout()
-    router.push("/auth")
+    router.push("/")
   }
 
   useEffect(() => {
@@ -90,6 +90,11 @@ export default function Home() {
               unseenReferralRewards={unseenReferralRewards}
             />
             <InviteCard profile={profile ?? null} />
+            <Link href={"/website/treasure"}>
+              <BrandButton className="w-full mt-4" blurColor="bg-[#96DFF4]">
+                Treasure
+              </BrandButton>
+            </Link>
             <Link
               href={
                 "https://app.uniswap.org/explore/tokens/arbitrum/0x888aaa48ebea87c74f690189e947d2c679705972?chain=arbitrum"

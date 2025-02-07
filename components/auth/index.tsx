@@ -141,12 +141,12 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
   }
 
   const handleButtonClick = () => {
-    if (deviceType === "mobile") {
-      if (!isPlaying && audioRef.current) {
-        audioRef.current.play()
-        setIsPlaying(true)
-      }
+    // if (deviceType === "mobile") {
+    if (!isPlaying && audioRef.current) {
+      audioRef.current.play()
+      setIsPlaying(true)
     }
+    // }
     setCurrentStep((previous) => previous + 1)
   }
 

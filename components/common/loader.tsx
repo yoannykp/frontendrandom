@@ -21,7 +21,6 @@ export function Loader({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const { ready, authenticated, user } = usePrivy()
   const [isLoading, setIsLoading] = useState(true)
-  const [walletInitialized, setWalletInitialized] = useState(false)
   const { data: aliens } = useAliens()
   const isMobile = useIsMobile()
   const pathname = usePathname()
@@ -38,23 +37,9 @@ export function Loader({ children }: { children: React.ReactNode }) {
     }
   }, [searchParams, router])
 
-  // useEffect(() => {
-  //   if (pathname !== "/pwa" && isMobile) {
-  //     router.push("/pwa")
-  //   }
-  // }, [pathname, isMobile, router])
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setWalletInitialized(true)
-    }, WALLET_INIT_TIMEOUT)
-
-    return () => clearTimeout(timer)
-  }, [])
-
   useEffect(() => {
     const handleWalletState = async () => {
-      if (!walletInitialized) return
+      if (!ready) return
 
       if (!authenticated) {
         removeCookie("accessToken")
@@ -87,13 +72,7 @@ export function Loader({ children }: { children: React.ReactNode }) {
     }
 
     handleWalletState()
-  }, [
-    user?.wallet?.address,
-    dispatch,
-    walletInitialized,
-    authenticated,
-    router,
-  ])
+  }, [user?.wallet?.address, dispatch, ready, authenticated, router])
 
   if (isLoading) {
     return (

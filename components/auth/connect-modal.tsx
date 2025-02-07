@@ -2,7 +2,10 @@
 
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { usePrivy } from "@privy-io/react-auth"
+import { useLogout, usePrivy, useWallets } from "@privy-io/react-auth"
+import { ethers } from "ethers"
+import { Mail } from "lucide-react"
+import toast from "react-hot-toast"
 
 import { authenticate, checkUserExist } from "@/lib/api"
 
@@ -19,17 +22,20 @@ const ConnectModal = ({
   moveToStep: (step: number) => void
 }) => {
   const { login, ready, authenticated, user, signMessage } = usePrivy()
+  const { logout } = useLogout()
+
+  const { wallets } = useWallets()
 
   const router = useRouter()
   const options = [
-    // {
-    //   key: "email",
-    //   label: "Login with Email",
-    //   icon: <Mail className="w-5 h-5" />,
-    // },
+    {
+      key: "email",
+      label: "Login with Email",
+      icon: <Mail className="w-5 h-5" />,
+    },
     {
       key: "wallet",
-      label: authenticated ? "Wallet connected" : "Continue with a wallet",
+      label: authenticated ? "Disconnect wallet" : "Continue with a wallet",
       icon: (
         <svg
           width="33"
@@ -52,18 +58,36 @@ const ConnectModal = ({
   ]
 
   const handleOptionClick = (option: (typeof options)[0]) => {
-    // if (option.key === "wallet") {
-    login()
-    // }
+    if (ready && authenticated) {
+      logout()
+    } else {
+      login()
+    }
   }
 
   const handleAuthenticate = async () => {
-    const response = await signMessage({
-      message: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
-    })
+    const wallet = wallets[0]
+
+    if (!wallet) {
+      toast.error("Please connect a wallet")
+      return
+    }
+
+    const provider = await wallet.getEthereumProvider()
+    if (!provider) {
+      toast.error("Please connect a wallet")
+      return
+    }
+
+    const ethersProvider = new ethers.BrowserProvider(provider)
+    const signer = await ethersProvider.getSigner()
+
+    const response = await signer.signMessage(
+      process.env.NEXT_PUBLIC_SIGN_MESSAGE!
+    )
     if (!response) return
     const res = await authenticate({
-      signature: response.signature,
+      signature: response,
       signedMessage: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
     })
     if (res.data) {

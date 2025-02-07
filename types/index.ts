@@ -119,3 +119,13 @@ export type Traits = {
   Face: string[]
   Hair: string[]
 }
+
+export interface Pack {
+  id: number
+  name: string
+  description: string
+  image: string
+  price: number
+  createdAt: string
+  updatedAt: string
+}
