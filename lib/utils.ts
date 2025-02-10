@@ -1,6 +1,19 @@
 import { Raid, RaidHistoryResponse } from "@/types"
 import { clsx, type ClassValue } from "clsx"
+import { ethers } from "ethers"
 import { twMerge } from "tailwind-merge"
+import * as chains from "viem/chains"
+
+export function getChain(chainId: number) {
+  for (const chain of Object.values(chains)) {
+    if ("id" in chain) {
+      if (chain.id === chainId) {
+        return chain
+      }
+    }
+  }
+  return chains.arbitrum
+}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -197,4 +210,31 @@ export function calculateJackpot(tokenPrice: number): number {
 // a utility funtion to sanitize input value on change allow space and special characters
 export const sanitizeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
   return e.target.value.replace(/[^a-zA-Z0-9\s]/g, "")
+}
+
+// Add this ERC20 ABI for token balance checking
+const ERC20_ABI = [
+  "function balanceOf(address owner) view returns (uint256)",
+  "function decimals() view returns (uint8)",
+]
+
+export async function getZoneBalance(
+  provider: ethers.Provider | null,
+  address: string
+): Promise<number> {
+  try {
+    if (!provider) return 0
+
+    const tokenAddress = "0x888aaa48ebea87c74f690189e947d2c679705972"
+    const contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider)
+
+    const [balance, decimals] = await Promise.all([
+      contract.balanceOf(address),
+      contract.decimals(),
+    ])
+    return Number(ethers.formatUnits(balance, decimals))
+  } catch (error) {
+    console.error("Error fetching ZONE balance:", error)
+    return 0
+  }
 }

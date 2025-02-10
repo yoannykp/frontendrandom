@@ -8,6 +8,7 @@ import { Mail } from "lucide-react"
 import toast from "react-hot-toast"
 
 import { authenticate, checkUserExist } from "@/lib/api"
+import { getChain } from "@/lib/utils"
 
 import BrandButton from "../ui/brand-button"
 import PreviousStepButton from "./previous-step-button"
@@ -23,7 +24,6 @@ const ConnectModal = ({
 }) => {
   const { login, ready, authenticated, user, signMessage } = usePrivy()
   const { logout } = useLogout()
-  console.log(user)
 
   const { wallets } = useWallets()
 
@@ -72,6 +72,14 @@ const ConnectModal = ({
     if (!wallet) {
       toast.error("Please connect a wallet")
       return
+    }
+
+    const chain = getChain(parseInt(wallet.chainId.split(":")[1]))
+
+    if (chain.id !== parseInt(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID!)) {
+      await wallet.switchChain(
+        parseInt(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID!)
+      )
     }
 
     let sign = ""

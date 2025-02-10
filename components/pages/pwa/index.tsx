@@ -1,10 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAliens, useProfile } from "@/store/hooks"
-import { useLogout } from "@privy-io/react-auth"
+import { useLogout, usePrivy, useWallets } from "@privy-io/react-auth"
 import { Copy, CopyCheck, LogOut } from "lucide-react"
 
 import { getUnseenReferralRewards, markReferralRewardsAsSeen } from "@/lib/api"
@@ -25,7 +26,8 @@ export default function Home() {
   const router = useRouter()
   const { data: profile } = useProfile()
   const { logout } = useLogout()
-
+  const { user } = usePrivy()
+  const { wallets } = useWallets()
   const [unseenReferralRewards, setUnseenReferralRewards] = useState(0)
   const [isCopied, setIsCopied] = useState(false)
 
@@ -122,10 +124,18 @@ export default function Home() {
             <div className="flex gap-2">
               {/* wallet add */}
               <BrandButton
-                className="w-full "
+                className="w-full flex items-center gap-2"
                 blurColor="bg-[#FFC0CB]"
                 onClick={() => handleCopy(profile?.walletAddress ?? "")}
               >
+                {/* chain logo */}
+                <Image
+                  src={"/images/logos/arb.png"}
+                  alt="chain logo"
+                  width={20}
+                  height={20}
+                  className="size-5"
+                />
                 {formateWalletAddress(profile?.walletAddress ?? "")}{" "}
                 {isCopied ? (
                   <CopyCheck className="size-4" />

@@ -2,6 +2,8 @@
 
 import { PrivyProvider } from "@privy-io/react-auth"
 
+import { getChain } from "@/lib/utils"
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <PrivyProvider
@@ -19,6 +21,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         embeddedWallets: {
           createOnLogin: "users-without-wallets",
         },
+        defaultChain: getChain(
+          parseInt(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID!)
+        ),
       }}
     >
       {children}

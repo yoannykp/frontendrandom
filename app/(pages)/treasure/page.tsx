@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useWallet } from "@/context/wallet"
 import { useProfile } from "@/store/hooks"
 import { Pack } from "@/types"
+import type { EmblaCarouselType } from "embla-carousel"
 import { ArrowLeft, Plus } from "lucide-react"
 
 import { createCheckoutSession, getAllPacks } from "@/lib/api"
@@ -37,6 +39,9 @@ const Page = () => {
   const [activeTab, setActiveTab] = useState("star")
   const [packs, setPacks] = useState<Pack[]>([])
   const { data: profile } = useProfile()
+  const { user } = useWallet()
+  const [api, setApi] = useState<EmblaCarouselType>()
+  const [current, setCurrent] = useState(0)
 
   useEffect(() => {
     const fetchPacks = async () => {
@@ -47,6 +52,14 @@ const Page = () => {
     }
     fetchPacks()
   }, [])
+
+  useEffect(() => {
+    if (!api) return
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap())
+    })
+  }, [api])
 
   const handleBuy = async (pack: Pack) => {
     const response = await createCheckoutSession("PACK", pack.id)
@@ -95,8 +108,14 @@ const Page = () => {
             </div>
 
             {/* Carousel Section */}
-            <div className=" mt-4 bg-white/10 rounded px-2 py-4 ">
-              <Carousel className="w-full ">
+            <div className=" mt-4 bg-white/10 rounded px-2 py-4 relative">
+              <Carousel
+                className="w-full"
+                setApi={setApi}
+                opts={{
+                  loop: true,
+                }}
+              >
                 <CarouselContent>
                   {packs.map((pack, index) => (
                     <CarouselItem
@@ -142,6 +161,19 @@ const Page = () => {
                   ))}
                 </CarouselContent>
               </Carousel>
+
+              {/* Navigation Dots */}
+              {/* <div className="flex gap-2 justify-center mt-4">
+                {packs.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => api?.scrollTo(index)}
+                    className={`size-2 rounded-full transition-colors ${
+                      current === index ? "bg-white scale-110" : "bg-white/30"
+                    }`}
+                  />
+                ))}
+              </div> */}
             </div>
 
             {/* Balance Display */}
@@ -153,7 +185,7 @@ const Page = () => {
                   width={24}
                   height={24}
                 />
-                <span>{profile?.experience} ZONE</span>
+                <span>{user?.zoneBalance} ZONE</span>
                 <button className="ml-2 rounded-full p-1 border border-white/10">
                   <Plus size={12} />
                 </button>
@@ -201,8 +233,14 @@ const Page = () => {
             ))}
           </div>
         </div>
-        <div className=" bg-white/10 rounded px-2 py-4 flex-1 ">
-          <Carousel className="w-full h-full">
+        <div className=" bg-white/10 rounded px-2 py-4 flex-1 relative flex flex-col gap-4">
+          <Carousel
+            className="w-full flex-1"
+            setApi={setApi}
+            opts={{
+              loop: true,
+            }}
+          >
             <CarouselContent className="h-full">
               {packs.map((pack, index) => (
                 <CarouselItem
@@ -248,6 +286,19 @@ const Page = () => {
               ))}
             </CarouselContent>
           </Carousel>
+
+          {/* Navigation Dots for Mobile */}
+          <div className="flex gap-2 justify-center ">
+            {packs.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => api?.scrollTo(index)}
+                className={`size-2 rounded-full transition-colors ${
+                  current === index ? "bg-white scale-110" : "bg-white/30"
+                }`}
+              />
+            ))}
+          </div>
         </div>
         <div className="flex items-center gap-4 border border-white/10 rounded-xl px-4  bg-white/10 justify-center">
           <div className="flex h-14 items-center gap-2">
@@ -257,7 +308,7 @@ const Page = () => {
               width={24}
               height={24}
             />
-            <span>{profile?.experience} ZONE</span>
+            <span>{user?.zoneBalance} ZONE</span>
             <button className="ml-2 rounded-full p-1 border border-white/10">
               <Plus size={12} />
             </button>
