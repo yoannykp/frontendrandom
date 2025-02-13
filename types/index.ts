@@ -164,6 +164,7 @@ export interface Pack {
   createdAt: string
   updatedAt: string
   rewards: PackReward[]
+  isPurchased: boolean
 }
 
 // enum PackRewardType {

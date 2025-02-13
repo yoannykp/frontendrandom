@@ -197,25 +197,19 @@ const Page = () => {
                             className="object-contain"
                           />
                         </div>
-                        <div
-                          className="bg-white/10 h-12 rounded flex items-center justify-between px-4 cursor-pointer hover:bg-white/20 transition-all duration-300"
-                          onClick={() => handleBuy(pack)}
-                        >
-                          {/* <div className="flex items-center gap-2">
-                            <p className="font-volkhov">{pack.price}</p>
-                            <div className="flex items-center justify-center p-1 border border-white/10 rounded-full  ">
-                              <Image
-                                src="/images/stars.png"
-                                alt="STAR"
-                                width={20}
-                                height={20}
-                              />
-                            </div>
-                          </div> */}
-
-                          <p className="">Buy for</p>
-                          <p className="text-[#5FD7FF]">{pack.price}$</p>
-                        </div>
+                        {pack.isPurchased ? (
+                          <div className="bg-white/10 h-12 rounded flex items-center justify-center text-center px-4">
+                            <p>Claimed</p>
+                          </div>
+                        ) : (
+                          <div
+                            className="bg-white/10 h-12 rounded flex items-center justify-between px-4 cursor-pointer hover:bg-white/20 transition-all duration-300"
+                            onClick={() => handleBuy(pack)}
+                          >
+                            <p className="">Buy for</p>
+                            <p className="text-[#5FD7FF]">{pack.price}$</p>
+                          </div>
+                        )}
                       </div>
                     </CarouselItem>
                   ))}
@@ -325,25 +319,19 @@ const Page = () => {
                         className="object-contain"
                       />
                     </div>
-                    <div
-                      className="bg-white/10 h-12 rounded flex items-center justify-between px-4 cursor-pointer hover:bg-white/20 transition-all duration-300"
-                      onClick={() => handleBuy(pack)}
-                    >
-                      {/* <div className="flex items-center gap-2">
-                            <p className="font-volkhov">{pack.price}</p>
-                            <div className="flex items-center justify-center p-1 border border-white/10 rounded-full  ">
-                              <Image
-                                src="/images/stars.png"
-                                alt="STAR"
-                                width={20}
-                                height={20}
-                              />
-                            </div>
-                          </div> */}
-
-                      <p className="">Buy for</p>
-                      <p className="text-[#5FD7FF]">{pack.price}$</p>
-                    </div>
+                    {pack.isPurchased ? (
+                      <div className="bg-white/10 h-12 rounded flex items-center justify-center text-center px-4">
+                        <p>Claimed</p>
+                      </div>
+                    ) : (
+                      <div
+                        className="bg-white/10 h-12 rounded flex items-center justify-between px-4 cursor-pointer hover:bg-white/20 transition-all duration-300"
+                        onClick={() => handleBuy(pack)}
+                      >
+                        <p className="">Buy for</p>
+                        <p className="text-[#5FD7FF]">{pack.price}$</p>
+                      </div>
+                    )}
                   </div>
                 </CarouselItem>
               ))}
