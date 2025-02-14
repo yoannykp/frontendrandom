@@ -1,7 +1,7 @@
 {
-  "name": "AlienZone",
-  "short_name": "AlienZone",
-  "description": "AlienZone - The Ultimate Gaming Experience",
+  "name": "Odoroki Kōgeki",
+  "short_name": "Odoroki Kōgeki",
+  "description": "Odoroki Kōgeki - The Ultimate Gaming Experience",
   "start_url": "/",
   "scope": "/",
   "display_override": ["standalone"],

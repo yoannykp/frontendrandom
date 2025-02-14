@@ -15,8 +15,8 @@ import Providers from "@/components/Providers"
 import { inter, volkhov } from "./fonts"
 
 export const metadata: Metadata = {
-  title: "AlienZone",
-  description: "AlienZone - The Ultimate Gaming Experience",
+  title: "Odoroki Kōgeki",
+  description: "Odoroki Kōgeki - The Ultimate Gaming Experience",
   manifest: "/manifest.json",
 }
 
