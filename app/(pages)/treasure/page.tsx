@@ -126,7 +126,7 @@ const Page = () => {
       <div className="absolute top-10 left-24 flex gap-3 z-20 h-14 items-center max-lg:hidden">
         <h1 className="text-3xl ">Treasure</h1>
       </div>
-      <div className="flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-33px)] max-lg:hidden">
+      <div className="flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden max-lg:hidden">
         <div className="absolute inset-0 bg-[url('/images/pages/team-bg.jpg')] bg-cover bg-center bg-no-repeat lg:bg-[url('/images/pages/team-bg.jpg')]">
           <div className="absolute inset-0 bg-[#181818CC]"></div>
         </div>

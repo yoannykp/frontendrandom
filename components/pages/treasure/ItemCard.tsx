@@ -41,7 +41,7 @@ const ItemCard = ({ pack, setSelectedPack }: ItemCardProps) => {
   }
 
   return (
-    <div className="bg-white/10 p-4 rounded-lg flex flex-col gap-4  mx-2 border border-white/10 min-h-[500px] h-[calc(100vh-390px)]">
+    <div className="bg-white/10 p-4 rounded-lg flex flex-col gap-4  mx-2 border border-white/10 min-h-[500px] h-[calc(100vh-440px)]">
       <div className="flex justify-between items-center border border-white/10  rounded-xl h-12 px-4">
         <p>{pack.name}</p>
         <button
