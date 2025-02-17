@@ -74,7 +74,7 @@ export default function Home() {
   return (
     <>
       <div
-        className="space-y-6 p-4 min-h-screen lg:pb-20 w-full  mx-auto lg:flex lg:flex-col lg:items-center lg:justify-center"
+        className=" p-4 min-h-screen w-full  mx-auto lg:flex lg:flex-col lg:items-center lg:justify-center"
         style={{
           background: "url('/images/image1.png')",
           backgroundSize: "cover",
@@ -82,82 +82,92 @@ export default function Home() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="flex gap-4 items-stretch w-full max-w-screen-lg">
-          <div className="w-1/2 hidden lg:block">
-            <div className="w-full h-full  rounded-xl overflow-hidden bg-[#2C2D30]  relative z-10">
-              <img
-                src={aliens?.[0]?.image}
-                alt="User's alien"
-                className="w-full h-[calc(100%+130px)] object-contain z-10 relative"
-              />
-              <img
-                src={aliens?.[0]?.element?.background}
-                alt="User's alien"
-                className="w-full h-full object-cover absolute top-0 left-0"
-              />
-            </div>
-          </div>
-          <div className="relative z-10 space-y-4 w-full lg:w-1/2">
-            <JackpotCard amount={jackpotAmount} />
-
-            <UserProgress
-              profile={profile ?? null}
-              alien={aliens?.[0] ?? null}
-              unseenReferralRewards={unseenReferralRewards}
-            />
-            <InviteCard profile={profile ?? null} />
-            <Link href={"/treasure"}>
-              <BrandButton className="w-full mt-4" blurColor="bg-[#96DFF4]">
-                Treasure
-              </BrandButton>
-            </Link>
-            <Link
-              href={
-                "https://app.uniswap.org/explore/tokens/arbitrum/0x888aaa48ebea87c74f690189e947d2c679705972?chain=arbitrum"
-              }
-              target="_blank"
-            >
-              <BrandButton className="w-full mt-4" blurColor="bg-[#96DFF4]">
-                Buy $ZONE
-              </BrandButton>
-            </Link>
-            <div className="flex gap-2">
-              {/* wallet add */}
-              <BrandButton
-                className="w-full flex items-center gap-2"
-                blurColor="bg-[#FFC0CB]"
-                onClick={() => handleCopy(profile?.walletAddress ?? "")}
-              >
-                {/* chain logo */}
-                <Image
-                  src={"/images/logos/arb.png"}
-                  alt="chain logo"
-                  width={20}
-                  height={20}
-                  className="size-5"
+        <div className="flex-1 flex flex-col items-center justify-center">
+          <div className="flex gap-4 items-stretch w-full max-w-screen-lg">
+            <div className="w-1/2 hidden lg:block">
+              <div className="w-full h-full  rounded-xl overflow-hidden bg-[#2C2D30]  relative z-10">
+                <img
+                  src={aliens?.[0]?.image}
+                  alt="User's alien"
+                  className="w-full h-[calc(100%+130px)] object-contain z-10 relative"
                 />
-                {formateWalletAddress(profile?.walletAddress ?? "")}{" "}
-                {isCopied ? (
-                  <CopyCheck className="size-4" />
-                ) : (
-                  <Copy className="size-4" />
-                )}
-              </BrandButton>
-              <BrandButton
-                blurColor="bg-[#FFC0CB]"
-                onClick={handleLogout}
-                disabled={isLoggingOut}
+                <img
+                  src={aliens?.[0]?.element?.background}
+                  alt="User's alien"
+                  className="w-full h-full object-cover absolute top-0 left-0"
+                />
+              </div>
+            </div>
+            <div className="relative z-10 space-y-4 w-full lg:w-1/2">
+              <JackpotCard amount={jackpotAmount} />
+
+              <UserProgress
+                profile={profile ?? null}
+                alien={aliens?.[0] ?? null}
+                unseenReferralRewards={unseenReferralRewards}
+              />
+              <InviteCard profile={profile ?? null} />
+              <Link href={"/treasure"}>
+                <BrandButton className="w-full mt-4" blurColor="bg-[#96DFF4]">
+                  Treasure
+                </BrandButton>
+              </Link>
+              <Link
+                href={
+                  "https://app.uniswap.org/explore/tokens/arbitrum/0x888aaa48ebea87c74f690189e947d2c679705972?chain=arbitrum"
+                }
+                target="_blank"
               >
-                {isLoggingOut ? (
-                  <Loader2 className="size-6 animate-spin" />
-                ) : (
-                  <LogOut className="size-6" />
-                )}
-              </BrandButton>
+                <BrandButton className="w-full mt-4" blurColor="bg-[#96DFF4]">
+                  Buy $ZONE
+                </BrandButton>
+              </Link>
+              <div className="flex gap-2">
+                {/* wallet add */}
+                <BrandButton
+                  className="w-full flex items-center gap-2"
+                  blurColor="bg-[#FFC0CB]"
+                  onClick={() => handleCopy(profile?.walletAddress ?? "")}
+                >
+                  {/* chain logo */}
+                  <Image
+                    src={"/images/logos/arb.png"}
+                    alt="chain logo"
+                    width={20}
+                    height={20}
+                    className="size-5"
+                  />
+                  {formateWalletAddress(profile?.walletAddress ?? "")}{" "}
+                  {isCopied ? (
+                    <CopyCheck className="size-4" />
+                  ) : (
+                    <Copy className="size-4" />
+                  )}
+                </BrandButton>
+                <BrandButton
+                  blurColor="bg-[#FFC0CB]"
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                >
+                  {isLoggingOut ? (
+                    <Loader2 className="size-6 animate-spin" />
+                  ) : (
+                    <LogOut className="size-6" />
+                  )}
+                </BrandButton>
+              </div>
             </div>
           </div>
         </div>
+        <p className="text-center text-sm text-white/50 py-4 max-lg:hidden z-10  ">
+          © {new Date().getFullYear()} Alienzone All rights reserved. Reach out
+          to us at{" "}
+          <a href="mailto:team@alienzone.io" className="underline">
+            team@alienzone.io
+          </a>
+        </p>
       </div>
+
       <div
         className="fixed top-0 left-0 w-full h-full bg-black/10 backdrop-blur-lg "
         style={{

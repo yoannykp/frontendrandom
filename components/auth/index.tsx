@@ -153,8 +153,8 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
         <ReferralCodeHandler setUserData={setUserData} />
       </Suspense>
 
-      <div className="w-full h-screen relative max-w-7xl mx-auto py-10 px-6 flex flex-col justify-between items-center">
-        <Header />
+      <div className="w-full h-screen relative max-w-7xl overflow-hidden mx-auto py-10 px-6 flex flex-col justify-between items-center">
+        {currentStep !== 3 ? <Header /> : null}
         <AnimatePresence mode="wait">
           {currentStep > 0 && (
             <motion.div
@@ -198,7 +198,7 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
           )}
         </AnimatePresence>
 
-        <div className="space-y-10 relative w-full flex flex-col items-center justify-center">
+        <div className="relative w-full flex flex-col items-center justify-center">
           <BrandButton
             className="items-center hover:scale-105 duration-500 transition-transform active:scale-95 lg:fixed lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2"
             blurColor="bg-[#9E96F4]"

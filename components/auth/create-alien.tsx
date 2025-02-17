@@ -140,7 +140,7 @@ const CreateAlien = ({
 
       {traits && (
         <div className="p-2 lg:p-6 rounded-normal border border-gray-light backdrop-blur-[40px] flex flex-col lg:flex-row gap-4 overflow-hidden">
-          <div className="w-full lg:w-[662px]">
+          <div className="w-full lg:w-[562px]">
             <AlienRenderer
               ref={canvasRef}
               selectedTraits={selectedTraits}
@@ -152,8 +152,8 @@ const CreateAlien = ({
             />
           </div>
 
-          <div className="w-full flex flex-col  lg:gap-8 overflow-hidden px-2">
-            <div className="space-y-3">
+          <div className="w-full flex flex-col lg:gap-4 overflow-hidden px-2">
+            <div className="space-y-2">
               <h3 className="text-xl max-lg:hidden">Name your Alien</h3>
               <input
                 type="text"
@@ -169,7 +169,7 @@ const CreateAlien = ({
               />
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <h3 className="text-xl max-lg:hidden">Choose your Element</h3>
 
               <ScrollArea>
@@ -206,7 +206,7 @@ const CreateAlien = ({
                 <ScrollBar orientation="horizontal" />
               </ScrollArea>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2">
               <h3 className="text-xl max-lg:hidden">Choose your Hair</h3>
 
               <ScrollArea>
@@ -243,7 +243,7 @@ const CreateAlien = ({
                 <ScrollBar orientation="horizontal" />
               </ScrollArea>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2">
               <h3 className="text-xl max-lg:hidden">Choose your Face</h3>
 
               <ScrollArea>
