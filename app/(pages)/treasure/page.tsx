@@ -173,7 +173,7 @@ const Page = () => {
                   {packs.map((pack, index) => (
                     <CarouselItem
                       key={index}
-                      className="  lg:basis-1/2 xl:basis-1/4 "
+                      className="lg:basis-1/2 xl:basis-1/3 "
                     >
                       <ItemCard pack={pack} setSelectedPack={setSelectedPack} />
                     </CarouselItem>
@@ -264,7 +264,7 @@ const Page = () => {
               {packs.map((pack, index) => (
                 <CarouselItem
                   key={index}
-                  className="  lg:basis-1/2 xl:basis-1/4 "
+                  className=" lg:basis-1/2 xl:basis-1/3 "
                 >
                   <ItemCard pack={pack} setSelectedPack={setSelectedPack} />
                 </CarouselItem>
