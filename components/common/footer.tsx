@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <div className="font-inter text-[12px]/[12px] font-normal text-off-white flex gap-1 md:gap-0 flex-col md:flex-row w-full justify-center items-center">
+    <div className="font-inter text-[12px]/[12px] font-normal text-off-white flex gap-1 md:gap-0 flex-col md:flex-row w-full justify-center items-center z-50 relative">
       <span>© {new Date().getFullYear()} Alienzone All rights reserved.</span>
       <span>
         &nbsp; Reach out to us at &nbsp;
