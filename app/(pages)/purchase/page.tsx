@@ -69,9 +69,9 @@ function PurchaseContent() {
   const content = {
     success: {
       icon: <CheckCircle2 className="w-10 h-10 text-green-500" />,
-      title: "Purchase Successful!",
+      title: "Thank you for your purchase!",
       message:
-        "Your purchase has been completed successfully. You can now close this tab and return to the game.",
+        "Your equipment is successfully registered and will be available upon the game’s release.",
     },
     cancel: {
       icon: <CircleX className="w-10 h-10 text-red-500" />,
@@ -93,6 +93,12 @@ function PurchaseContent() {
         <div className="space-y-2">
           <h1 className="text-2xl font-bold">{content[status].title}</h1>
           <p className="text-white/70">{content[status].message}</p>
+
+          <p className="text-white/70">Stay tuned for updates.</p>
+          <p className="text-white/70">
+            See you soon,
+            <br /> The Team Alienzone
+          </p>
         </div>
 
         <div className="flex flex-col gap-3 w-full">

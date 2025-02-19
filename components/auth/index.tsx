@@ -71,8 +71,8 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
     hair: string
     face: string
   }>({
-    hair: "/images/alien/hair/kusege.png",
-    face: "/images/alien/face/persona3.png",
+    hair: "",
+    face: "",
   })
 
   const [isTwitterLinked, setIsTwitterLinked] = useState(false)
@@ -206,9 +206,7 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
           >
             Tap here
           </BrandButton>
-          {currentStep > 0 ? (
-            <Sliders current={currentStep} moveToNextStep={moveToNextStep} />
-          ) : null}
+          {currentStep > 0 ? <Sliders current={currentStep} /> : null}
           <Footer />
         </div>
       </div>
