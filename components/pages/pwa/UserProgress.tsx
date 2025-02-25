@@ -7,38 +7,12 @@ interface UserProgressProps {
   unseenReferralRewards: number
 }
 
-interface LevelRange {
-  min: number
-  max: number
-  level: number
-}
-
-const LEVEL_RANGES: LevelRange[] = [
-  { min: 0, max: 5, level: 1 },
-  { min: 5, max: 25, level: 2 },
-  { min: 25, max: 50, level: 3 },
-  { min: 50, max: 100, level: 4 },
-]
-
 export function UserProgress({
   profile,
   alien,
   unseenReferralRewards,
 }: UserProgressProps) {
-  // Calculate current level range
-  const getCurrentLevelRange = (referrals: number): LevelRange => {
-    return (
-      LEVEL_RANGES.find(
-        (range) => referrals >= range.min && referrals < range.max
-      ) || LEVEL_RANGES[LEVEL_RANGES.length - 1]
-    )
-  }
-
-  const currentRange = getCurrentLevelRange(profile?.totalReferrals ?? 0)
-  const progressInLevel =
-    ((profile?.totalReferrals ?? 0 - currentRange.min) /
-      (currentRange.max - currentRange.min)) *
-    100
+  const progressInLevel = ((profile?.totalReferrals ?? 0) / 5) * 100
 
   return (
     <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 flex flex-col gap-4">
@@ -94,9 +68,7 @@ export function UserProgress({
 
           <div className="flex justify-between text-xs ">
             <span>{profile?.stars} Stars</span>
-            <span>
-              {profile?.totalReferrals} / {currentRange.max}
-            </span>
+            <span>{profile?.totalReferrals} / 5</span>
           </div>
         </div>
       </div>
