@@ -1,0 +1,272 @@
+import React, { useEffect, useState } from "react"
+import Image from "next/image"
+import { useAppDispatch, useCharacters } from "@/store/hooks"
+import { Character } from "@/types"
+import { createPortal } from "react-dom"
+import toast from "react-hot-toast"
+
+import { multiSummonCharacter, summonCharacter } from "@/lib/api"
+import BrandButton from "@/components/ui/brand-button"
+
+import MultiSummonModal from "./MultiSummonModal"
+
+const VideoPlayerModal = ({
+  isOpen,
+  setIsOpen,
+  videoUrl,
+}: {
+  isOpen: boolean
+  setIsOpen: (isOpen: boolean) => void
+  videoUrl: string
+}) => {
+  const [mounted, setMounted] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasError, setHasError] = useState(false)
+  const { fetchCharacters } = useCharacters()
+  const dispatch = useAppDispatch()
+  useEffect(() => {
+    setMounted(true)
+    return () => setMounted(false)
+  }, [])
+
+  // Reset loading state when video URL changes
+  useEffect(() => {
+    if (videoUrl) {
+      setIsLoading(true)
+      setHasError(false)
+    }
+  }, [videoUrl])
+
+  // Handle closing the modal
+  const handleClose = () => {
+    setIsOpen(false)
+    // Refresh characters when modal is closed
+    fetchCharacters()
+  }
+
+  if (!isOpen || !mounted) return null
+
+  const handleEnded = () => {
+    toast.success("Character summoned successfully")
+    handleClose()
+  }
+
+  // Using createPortal to render the modal outside the normal DOM hierarchy
+  return createPortal(
+    <div
+      className="fixed inset-0 flex items-center justify-center bg-black"
+      style={{ zIndex: 2147483647 }} // Maximum possible z-index value
+    >
+      {isLoading && !hasError && (
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+          <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+        </div>
+      )}
+
+      {hasError && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-20 text-white">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-16 w-16 text-red-500 mb-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+          <p className="text-xl">Failed to load video</p>
+          <button
+            className="mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+            onClick={handleEnded}
+          >
+            Close
+          </button>
+        </div>
+      )}
+
+      <BrandButton
+        blurColor="bg-[#EF98E6]"
+        className="absolute bottom-4 right-4 z-30 "
+        onClick={handleEnded}
+      >
+        Skip
+      </BrandButton>
+
+      {!hasError && (
+        <video
+          src={videoUrl}
+          autoPlay
+          className="w-full h-full object-cover"
+          onEnded={handleEnded}
+          onLoadedData={() => setIsLoading(false)}
+          onError={() => {
+            setIsLoading(false)
+            setHasError(true)
+          }}
+          controls={false}
+          // onClick={handleClose}
+          playsInline
+        />
+      )}
+    </div>,
+    document.body
+  )
+}
+
+const DrawPage = ({ portal }: { portal: number }) => {
+  const [loading, setLoading] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [videoModalOpen, setVideoModalOpen] = useState(false)
+  const [characterVideoUrl, setCharacterVideoUrl] = useState("")
+  const [multiSommonCharacters, setMultiSommonCharacters] = useState<
+    Character[]
+  >([])
+
+  // Get the fetchCharacters function from the useCharacters hook
+  const { fetchCharacters } = useCharacters()
+
+  const handleSummonCharacter = async () => {
+    try {
+      setLoading(true)
+      const response = await summonCharacter({ portal })
+      if (response.error) {
+        toast.error(response.error.message)
+        return
+      }
+
+      // Refresh characters list after successful summon
+      fetchCharacters()
+
+      // Check if character has a video and play it
+      if (response.data?.character?.video) {
+        setCharacterVideoUrl(response.data.character.video)
+        setVideoModalOpen(true)
+      } else {
+        toast.success("Character summoned successfully")
+      }
+    } catch (error) {
+      toast.error("Error summoning character")
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleMultiSummon = async () => {
+    try {
+      setLoading(true)
+      const response = await multiSummonCharacter({ portal })
+      if (response.error) {
+        toast.error(response.error.message)
+        return
+      }
+
+      // Refresh characters list after successful multi-summon
+      fetchCharacters()
+
+      const characters = response.data?.summonResults.map(
+        (result) => result.character
+      )
+      setMultiSommonCharacters(characters || [])
+      setIsOpen(true)
+      toast.success("Characters summoned successfully")
+    } catch (error) {
+      toast.error("Error summoning character")
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+  return (
+    <>
+      <div className="bg-[url('/images/pages/draw-bg.png')] bg-cover bg-center bg-no-repeat w-full h-full p-3 lg:p-10 rounded-xl">
+        <div className="items-end flex justify-center gap-3 lg:gap-5    h-full z-10 relative">
+          <div className="bg-white/10 px-4 py-2 rounded-xl relative overflow-hidden border border-white/10">
+            <h3 className=" lg:text-lg font-medium">Single Summon</h3>
+            <button
+              className="group  mt-1 w-full  bg-white/10 px-3 py-2 rounded-lg relative overflow-hidden border border-white/10"
+              onClick={handleSummonCharacter}
+              disabled={loading}
+            >
+              <div className="flex items-center gap-2 justify-between z-10 w-full ">
+                <span>100</span>
+                <span className="size-6 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center border border-white/10">
+                  <Image
+                    src="/images/stars.png"
+                    alt="Star"
+                    width={16}
+                    height={16}
+                  />
+                </span>
+              </div>
+              <Image
+                src="/images/stars.png"
+                alt="Star"
+                width={100}
+                height={100}
+                className="absolute -right-7 -top-7 opacity-20"
+              />
+            </button>
+            <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[50px] blur-[15px] z-[-1] group-hover:h-[40px] duration-500 transition-all bg-[#EF9898]"></div>
+          </div>
+          <div className="bg-white/10 px-4 py-2 rounded-xl relative overflow-hidden border border-white/10">
+            <h3 className="lg:text-lg font-medium">Consecutive Summon</h3>
+            <button
+              className="group  mt-1 w-full  bg-white/10 px-3 py-2 rounded-lg relative overflow-hidden border border-white/10"
+              onClick={handleMultiSummon}
+              disabled={loading}
+            >
+              <div className="flex items-center gap-2 justify-between z-10 w-full ">
+                <span>500</span>
+                <span className="size-6 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center border border-white/10">
+                  <Image
+                    src="/images/stars.png"
+                    alt="Star"
+                    width={16}
+                    height={16}
+                  />
+                </span>
+              </div>
+              <Image
+                src="/images/stars.png"
+                alt="Star"
+                width={100}
+                height={100}
+                className="absolute -right-7 -top-7 opacity-20"
+              />
+            </button>
+            <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[50px] blur-[15px] z-[-1] group-hover:h-[40px] duration-500 transition-all bg-[#EF98E6]"></div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            background:
+              "linear-gradient(337.55deg, #000000 -0.35%, rgba(0, 0, 0, 0) 66.9%, #000000 92.55%)",
+          }}
+          className="absolute inset-0"
+        ></div>
+      </div>
+
+      <MultiSummonModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        characters={multiSommonCharacters}
+        handleMultiSummon={handleMultiSummon}
+        loading={loading}
+      />
+      <VideoPlayerModal
+        isOpen={videoModalOpen}
+        setIsOpen={setVideoModalOpen}
+        videoUrl={characterVideoUrl}
+      />
+    </>
+  )
+}
+
+export default DrawPage

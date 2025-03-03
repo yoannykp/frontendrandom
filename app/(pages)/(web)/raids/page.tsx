@@ -68,7 +68,7 @@ const Page = () => {
         </div>
       </div>
 
-      <div className="flex flex-col rounded-2xl glass-effect z-10 p-2 gap-3 lg:hidden flex-1 max-h-full">
+      <div className="flex flex-col rounded-2xl glass-effect z-10 p-2 gap-3 lg:hidden flex-1">
         <button
           onClick={() => {
             if (selectedRaid) {

@@ -7,7 +7,14 @@ import {
   fetchAliens,
   resetCreateStatus,
 } from "./slices/aliensSlice"
+import { clearCharacters, fetchCharacters } from "./slices/charactersSlice"
 import { fetchRaidHistory, fetchRaids } from "./slices/raidsSlice"
+import {
+  clearTeam,
+  fetchTeam,
+  resetUpdateStatus,
+  updateUserTeam,
+} from "./slices/teamSlice"
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch: () => AppDispatch = useDispatch
@@ -48,5 +55,43 @@ export const useAliens = () => {
     fetchAliens: () => dispatch(fetchAliens()),
     createAlien: handleCreateAlien,
     resetCreateStatus: () => dispatch(resetCreateStatus()),
+  }
+}
+
+export const useTeam = () => {
+  const dispatch = useAppDispatch()
+  const teamState = useAppSelector((state) => state.team)
+
+  const handleUpdateTeam = async ({
+    alienIds,
+    characterIds,
+  }: {
+    alienIds: number[]
+    characterIds: number[]
+  }) => {
+    try {
+      await dispatch(updateUserTeam({ alienIds, characterIds })).unwrap()
+    } catch (error) {
+      throw error
+    }
+  }
+
+  return {
+    ...teamState,
+    fetchTeam: () => dispatch(fetchTeam()),
+    updateTeam: handleUpdateTeam,
+    resetUpdateStatus: () => dispatch(resetUpdateStatus()),
+    clearTeam: () => dispatch(clearTeam()),
+  }
+}
+
+export const useCharacters = () => {
+  const dispatch = useAppDispatch()
+  const charactersState = useAppSelector((state) => state.characters)
+
+  return {
+    ...charactersState,
+    fetchCharacters: () => dispatch(fetchCharacters()),
+    clearCharacters: () => dispatch(clearCharacters()),
   }
 }

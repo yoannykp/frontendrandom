@@ -4,7 +4,9 @@ import { useEffect, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useAliens, useAppDispatch } from "@/store/hooks"
 import { fetchAliens } from "@/store/slices/aliensSlice"
+import { fetchCharacters } from "@/store/slices/charactersSlice"
 import { fetchRaidHistory, fetchRaids } from "@/store/slices/raidsSlice"
+import { fetchTeam } from "@/store/slices/teamSlice"
 import { fetchUserProfile } from "@/store/slices/userProfileSlice"
 import { usePrivy } from "@privy-io/react-auth"
 import { Loader2 } from "lucide-react"
@@ -54,6 +56,8 @@ export function Loader({ children }: { children: React.ReactNode }) {
             dispatch(fetchRaids()),
             dispatch(fetchAliens()),
             dispatch(fetchRaidHistory()),
+            dispatch(fetchTeam()),
+            dispatch(fetchCharacters()),
           ])
 
           const aliens = await getAliens()

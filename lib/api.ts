@@ -1,10 +1,12 @@
 import {
   Alien,
   AuthUserData,
+  Character,
   Pack,
   Profile,
   RaidHistoryResponse,
   RaidResponse,
+  TeamResponse,
   Traits,
 } from "@/types"
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios"
@@ -264,5 +266,62 @@ export const createCheckoutSession = async (
     itemId,
     quantity,
   })
+  return response
+}
+
+export const updateTeam = async ({
+  alienIds,
+  characterIds,
+}: {
+  alienIds: number[]
+  characterIds: number[]
+}): Promise<ApiResponse<boolean>> => {
+  return apiManager.post<boolean>("/profile/update-team", {
+    alienIds,
+    characterIds,
+  })
+}
+
+export const getTeam = async (): Promise<ApiResponse<TeamResponse>> => {
+  const response = await apiManager.get<TeamResponse>("/profile/get-team")
+  return response
+}
+
+export const summonCharacter = async ({
+  portal,
+}: {
+  portal: number
+}): Promise<ApiResponse<{ character: Character; success: boolean }>> => {
+  const response = await apiManager.post<{
+    character: Character
+    success: boolean
+  }>("/character/summon-character", {
+    portal,
+  })
+  return response
+}
+export const multiSummonCharacter = async ({
+  portal,
+}: {
+  portal: number
+}): Promise<
+  ApiResponse<{
+    summonResults: { character: Character; isNew: boolean }[]
+    success: boolean
+  }>
+> => {
+  const response = await apiManager.post<{
+    summonResults: { character: Character; isNew: boolean }[]
+    success: boolean
+  }>("/character/multi-summon-characters", {
+    portal,
+  })
+  return response
+}
+
+export const getAllCharacters = async (): Promise<ApiResponse<Character[]>> => {
+  const response = await apiManager.get<Character[]>(
+    "/character/get-user-characters"
+  )
   return response
 }

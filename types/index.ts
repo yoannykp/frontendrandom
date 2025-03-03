@@ -201,3 +201,53 @@ export interface PackReward {
   type: PackRewardType
   amount: number
 }
+
+export interface TeamResponse {
+  teamStrengthPoints: number
+  team: {
+    id: number
+    name: string
+    strengthPoints: number
+    element: Element
+    image: string | null
+    type: "character" | "alien"
+  }[]
+  synergies: Record<string, number>
+  buffs: {
+    starsBoost: number
+    xpBoost: number
+    raidTimeBoost: number
+  }
+}
+
+export interface TeamState {
+  data: TeamResponse | null
+  loading: boolean
+  error: string | null
+  updateStatus: {
+    loading: boolean
+    error: string | null
+  }
+}
+
+export interface CharactersState {
+  data: Character[] | null
+  loading: boolean
+  error: string | null
+}
+
+export interface Character {
+  id: number
+  name: string
+  rarity: CharacterRarity
+  power: number
+  image?: string
+  video?: string
+  portal: number
+  elementId: number
+  onTeam: boolean
+}
+
+export enum CharacterRarity {
+  SR = "SR",
+}
