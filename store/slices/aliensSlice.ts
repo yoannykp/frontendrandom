@@ -5,6 +5,7 @@ import { createAlien, getAliens } from "@/lib/api"
 
 const initialState: AliensState = {
   data: null,
+  alien: null,
   loading: false,
   error: null,
   createStatus: {
@@ -66,6 +67,7 @@ const aliensSlice = createSlice({
       .addCase(fetchAliens.fulfilled, (state, action) => {
         state.loading = false
         state.data = action.payload
+        state.alien = action.payload?.find((alien) => alien.selected) || null
       })
       .addCase(fetchAliens.rejected, (state, action) => {
         state.loading = false

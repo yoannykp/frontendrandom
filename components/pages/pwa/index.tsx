@@ -24,7 +24,7 @@ import { UserProgress } from "./UserProgress"
 
 export default function Home() {
   const [jackpotAmount, setJackpotAmount] = useState(0)
-  const { data: aliens } = useAliens()
+  const { data: aliens, alien } = useAliens()
   const router = useRouter()
   const { data: profile } = useProfile()
   const { logout } = useLogout()
@@ -89,12 +89,12 @@ export default function Home() {
             <div className="w-1/2 hidden lg:block">
               <div className="w-full h-full  rounded-xl overflow-hidden bg-[#2C2D30]  relative z-10">
                 <img
-                  src={aliens?.[0]?.image}
+                  src={alien?.image}
                   alt="User's alien"
                   className="w-full h-[calc(100%+130px)] object-contain z-10 relative"
                 />
                 <img
-                  src={aliens?.[0]?.element?.background}
+                  src={alien?.element?.background}
                   alt="User's alien"
                   className="w-full h-full object-cover absolute top-0 left-0"
                 />
@@ -105,15 +105,22 @@ export default function Home() {
 
               <UserProgress
                 profile={profile ?? null}
-                alien={aliens?.[0] ?? null}
+                alien={alien ?? null}
                 unseenReferralRewards={unseenReferralRewards}
               />
               <InviteCard profile={profile ?? null} />
-              <Link href={"/treasure"}>
-                <BrandButton className="w-full mt-4" blurColor="bg-[#96DFF4]">
-                  Treasure
-                </BrandButton>
-              </Link>
+              <div className="flex gap-2">
+                <Link href={"/treasure"} className="w-full">
+                  <BrandButton className="w-full mt-4" blurColor="bg-[#96DFF4]">
+                    Treasure
+                  </BrandButton>
+                </Link>
+                <Link href={"/raids"} className="w-full">
+                  <BrandButton className="w-full mt-4" blurColor="bg-[#96DFF4]">
+                    Raid
+                  </BrandButton>
+                </Link>
+              </div>
               <Link
                 href={
                   "https://app.uniswap.org/explore/tokens/arbitrum/0x888aaa48ebea87c74f690189e947d2c679705972?chain=arbitrum"

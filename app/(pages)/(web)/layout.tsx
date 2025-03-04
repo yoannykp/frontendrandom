@@ -28,7 +28,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <Loader>
         <div
           className={cn(
-            " bg-black max-lg:py-4  max-lg:h-screen relative flex flex-col lg:min-h-screen"
+            " bg-black max-lg:py-4   relative flex flex-col h-screen"
           )}
         >
           <div className=" relative z-20 pb-2 lg:hidden">

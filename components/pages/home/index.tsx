@@ -15,7 +15,7 @@ import ActivityMenu from "@/components/pages/home/ActivityMenu"
 const Page = () => {
   const [isActivityMenuOpen, setIsActivityMenuOpen] = useState(false)
   const { data: profile } = useProfile()
-  const { data: aliens } = useAliens()
+  const { data: aliens, alien } = useAliens()
   const { data: raids } = useRaids()
   const { activeRaids, mostSoonToCompleteRaid } = useRaidTimer()
 
@@ -37,7 +37,7 @@ const Page = () => {
               <div className="flex items-center gap-6 bg-white/10 rounded-lg py-1 px-2">
                 <p className="text-xs">Strengh points</p>
                 <p className="font-volkhov text-sm">
-                  {aliens?.[0]?.strengthPoints ?? 0}
+                  {alien?.strengthPoints ?? 0}
                 </p>
               </div>
             </div>

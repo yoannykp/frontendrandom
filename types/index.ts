@@ -100,12 +100,13 @@ export interface Alien {
   userId: number
   inRaid: boolean
   createdAt: string
-
+  selected: boolean
   updatedAt: string
 }
 
 export interface AliensState {
   data: Alien[] | null
+  alien: Alien | null
   loading: boolean
   error: string | null
   createStatus: {

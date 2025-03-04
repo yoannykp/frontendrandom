@@ -185,6 +185,14 @@ const AddCharacterModal = () => {
                             </svg>
                           </div>
                         )}
+                        <div className="absolute bottom-0 left-0 right-0 text-center bg-black/50 py-1 mx-1 md:mx-4">
+                          <p className="text-xs md:text-sm truncate px-1">
+                            {character.name}
+                          </p>
+                          <p className="text-xs text-white/70">
+                            {character.rarity} • {character.power}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   )

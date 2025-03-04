@@ -47,7 +47,7 @@ const SingleRaid = ({ raid }: { raid?: Raid }) => {
   }
 
   return (
-    <div className="bg-white/10 rounded-sm lg:rounded-2xl p-2 lg:p-4">
+    <div className="bg-white/10 rounded-sm lg:rounded-2xl p-2 lg:p-4 flex-1">
       <div className="lg:bg-white/10  rounded-xl lg:p-4 mb-4">
         <div className="flex lg:items-center gap-4 flex-col lg:flex-row">
           <div className="lg:bg-white/10  rounded-lg lg:p-4 max-lg:w-full ">

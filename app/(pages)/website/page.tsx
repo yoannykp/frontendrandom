@@ -15,7 +15,7 @@ import ActivityMenu from "@/components/pages/home/ActivityMenu"
 const Page = () => {
   const [isActivityMenuOpen, setIsActivityMenuOpen] = useState(false)
   const { data: profile } = useProfile()
-  const { data: aliens } = useAliens()
+  const { data: aliens, alien } = useAliens()
   const { data: raids } = useRaids()
   const { activeRaids, mostSoonToCompleteRaid } = useRaidTimer()
 
@@ -25,9 +25,9 @@ const Page = () => {
         <>
           <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden ">
             <div className="absolute inset-0 bg-[url('/images/characters/character-1-mobile.png')] bg-cover bg-center bg-no-repeat lg:bg-[url('/images/characters/character-1-main.png')]"></div>
-            {aliens?.[0]?.image && (
+            {alien?.image && (
               <img
-                src={aliens?.[0]?.image}
+                src={alien?.image}
                 alt="alien"
                 className="absolute -top-20 lg:-top-36 -left-[100vw]  lg:-left-[50vw] xl:-left-[35vw] 2xl:-left-[18vw]    px-3 py-2 rounded-xl w-[1700px] min-w-[1700px]"
               />
@@ -44,7 +44,7 @@ const Page = () => {
               <div className="flex items-center gap-6 bg-white/10 rounded-lg py-1 px-2">
                 <p className="text-xs">Strengh points</p>
                 <p className="font-volkhov text-sm">
-                  {aliens?.[0]?.strengthPoints ?? 0}
+                  {alien?.strengthPoints ?? 0}
                 </p>
               </div>
             </div>

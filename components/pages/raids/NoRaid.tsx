@@ -6,7 +6,7 @@ import { RewardType } from "@/types"
 const NoRaid = () => {
   return (
     <div className="lg:bg-white/10 rounded-sm lg:rounded-2xl  lg:p-4 flex-1">
-      <div className="lg:h-[570px] h-full rounded-lg flex flex-col p-4 lg:p-10 relative overflow-hidden">
+      <div className=" h-full rounded-lg flex flex-col p-4 lg:p-10 relative overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src={"/images/pages/raids-bg.jpg"}
