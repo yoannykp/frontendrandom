@@ -8,6 +8,7 @@ import {
   resetCreateStatus,
 } from "./slices/aliensSlice"
 import { clearCharacters, fetchCharacters } from "./slices/charactersSlice"
+import { clearInventory, fetchUserInventory } from "./slices/inventorySlice"
 import { fetchRaidHistory, fetchRaids } from "./slices/raidsSlice"
 import {
   clearTeam,
@@ -98,5 +99,14 @@ export const useCharacters = () => {
     ...charactersState,
     fetchCharacters: () => dispatch(fetchCharacters()),
     clearCharacters: () => dispatch(clearCharacters()),
+  }
+}
+
+export const useInventory = () => {
+  const dispatch = useAppDispatch()
+  return {
+    ...useAppSelector((state) => state.inventory),
+    fetchInventory: () => dispatch(fetchUserInventory()),
+    clearInventory: () => dispatch(clearInventory()),
   }
 }

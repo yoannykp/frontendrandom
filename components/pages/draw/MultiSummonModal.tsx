@@ -6,16 +6,26 @@ import { Character } from "@/types"
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 
-const MultiSummonModal = ({
+// Define a Gear type based on the API response
+interface Gear {
+  id: number
+  rarity: string
+  image: string
+  summonedCharacterId?: number
+}
+
+const SummonModal = ({
   isOpen,
   setIsOpen,
-  characters,
+  summonType,
+  summonItems,
   handleMultiSummon,
   loading,
 }: {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
-  characters: Character[]
+  summonType: "character" | "gear"
+  summonItems: Character[] | Gear[]
   handleMultiSummon: () => void
   loading: boolean
 }) => {
@@ -33,7 +43,7 @@ const MultiSummonModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="bg-[url('/images/modal-bg.jpeg')] bg-cover bg-center bg-no-repeat min-w-full  h-screen max-h-[calc(100dvh)] overflow-y-auto rounded-none ">
+      <DialogContent className="bg-[url('/images/modal-bg.jpeg')] bg-cover bg-center bg-no-repeat min-w-full h-screen max-h-[calc(100dvh)] overflow-y-auto rounded-none ">
         <div className="flex flex-col gap-4 z-10 relative justify-center items-center">
           <div className="px-20 w-max bg-white/10 border-white/10 border rounded-xl py-6 relative overflow-hidden font-volkhov text-xl">
             Summon Result
@@ -46,12 +56,12 @@ const MultiSummonModal = ({
             />
           </div>
 
-          <div className="flex flex-wrap max-w-4xl my-10 ">
-            {characters.map((character, index) => (
+          <div className="flex flex-wrap max-w-4xl my-10 justify-center">
+            {summonItems.map((item, index) => (
               <Image
                 key={index}
-                src={character.image || ""}
-                alt="Character"
+                src={item.image || ""}
+                alt={summonType === "character" ? "Character" : "Gear"}
                 width={500}
                 height={500}
                 className="size-48 -mx-4 -my-2.5"
@@ -61,7 +71,7 @@ const MultiSummonModal = ({
 
           <div className="flex gap-5 ">
             <Link
-              href="/team"
+              href={summonType === "character" ? "/team" : "/inventory"}
               className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group"
             >
               Next
@@ -74,14 +84,18 @@ const MultiSummonModal = ({
               />
             </Link>
             <div className="bg-white/10 px-4 py-2 rounded-xl relative overflow-hidden border border-white/10">
-              <h3 className="font-volkhov">Multi Summon</h3>
+              <h3 className="font-volkhov">
+                {summonType === "character"
+                  ? "Multi Summon"
+                  : "Multi Gear Summon"}
+              </h3>
               <button
                 onClick={handleMultiSummon}
                 disabled={loading}
-                className="group  mt-1 w-full  bg-white/10 px-3 py-1 rounded-lg relative overflow-hidden border border-white/10   disabled:opacity-50 disabled:cursor-not-allowed  "
+                className="group mt-1 w-full bg-white/10 px-3 py-1 rounded-lg relative overflow-hidden border border-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-2 justify-between z-10 w-full ">
-                  <span>1000</span>
+                  <span>{summonType === "character" ? "1000" : "500"}</span>
                   <Image
                     src="/images/stars.png"
                     alt="Star"
@@ -111,4 +125,4 @@ const MultiSummonModal = ({
   )
 }
 
-export default MultiSummonModal
+export default SummonModal

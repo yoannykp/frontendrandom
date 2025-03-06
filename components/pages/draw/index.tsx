@@ -1,23 +1,30 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { useCharacters, useProfile } from "@/store/hooks"
-import { Character } from "@/types"
+import { Character, Gear } from "@/types"
 import { createPortal } from "react-dom"
 import toast from "react-hot-toast"
 
-import { multiSummonCharacter, summonCharacter } from "@/lib/api"
+import {
+  multiSummonCharacter,
+  multiSummonGear,
+  summonCharacter,
+  summonGear,
+} from "@/lib/api"
 import BrandButton from "@/components/ui/brand-button"
 
-import MultiSummonModal from "./MultiSummonModal"
+import SummonModal from "./SummonModal"
 
 const VideoPlayerModal = ({
   isOpen,
   setIsOpen,
   videoUrl,
+  onEnded,
 }: {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
   videoUrl: string
+  onEnded?: () => void
 }) => {
   const [mounted, setMounted] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -46,8 +53,12 @@ const VideoPlayerModal = ({
   if (!isOpen || !mounted) return null
 
   const handleEnded = () => {
-    toast.success("Character summoned successfully")
-    handleClose()
+    if (onEnded) {
+      onEnded()
+    } else {
+      toast.success("Character summoned successfully")
+      handleClose()
+    }
   }
 
   // Using createPortal to render the modal outside the normal DOM hierarchy
@@ -122,13 +133,27 @@ const DrawPage = ({ portal }: { portal: number }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [videoModalOpen, setVideoModalOpen] = useState(false)
   const [characterVideoUrl, setCharacterVideoUrl] = useState("")
-  const [multiSommonCharacters, setMultiSommonCharacters] = useState<
-    Character[]
-  >([])
+  const [summonType, setSummonType] = useState<"character" | "gear">(
+    "character"
+  )
+  const [summonItems, setSummonItems] = useState<Character[] | Gear[]>([])
+  const [singleSummonItem, setSingleSummonItem] = useState<
+    Character | Gear | null
+  >(null)
   const { fetchUserProfile } = useProfile()
 
   // Get the fetchCharacters function from the useCharacters hook
   const { fetchCharacters } = useCharacters()
+
+  // Handle video end for single character summon
+  const handleVideoEnded = () => {
+    if (singleSummonItem) {
+      // Since we're only showing videos for characters, we know this is a Character type
+      setSummonItems([singleSummonItem as Character])
+      setIsOpen(true)
+    }
+    setVideoModalOpen(false)
+  }
 
   const handleSummonCharacter = async () => {
     try {
@@ -143,11 +168,18 @@ const DrawPage = ({ portal }: { portal: number }) => {
       fetchCharacters()
       fetchUserProfile()
 
+      // Set summon type to character
+      setSummonType("character")
+
       // Check if character has a video and play it
       if (response.data?.character?.video) {
+        setSingleSummonItem(response.data.character)
         setCharacterVideoUrl(response.data.character.video)
         setVideoModalOpen(true)
-      } else {
+      } else if (response.data?.character) {
+        // If no video, show the summon modal directly
+        setSummonItems([response.data.character])
+        setIsOpen(true)
         toast.success("Character summoned successfully")
       }
     } catch (error) {
@@ -171,10 +203,13 @@ const DrawPage = ({ portal }: { portal: number }) => {
       fetchCharacters()
       fetchUserProfile()
 
+      // Set summon type to character
+      setSummonType("character")
+
       const characters = response.data?.summonResults.map(
         (result) => result.character
       )
-      setMultiSommonCharacters(characters || [])
+      setSummonItems(characters || [])
       setIsOpen(true)
       toast.success("Characters summoned successfully")
     } catch (error) {
@@ -184,15 +219,93 @@ const DrawPage = ({ portal }: { portal: number }) => {
       setLoading(false)
     }
   }
+
+  const handleSummonGear = async () => {
+    try {
+      setLoading(true)
+      const response = await summonGear()
+      if (response.error) {
+        toast.error(response.error.message)
+        return
+      }
+
+      // Set summon type to gear
+      setSummonType("gear")
+
+      // Show the gear in the summon modal
+      if (response.data && "gear" in response.data) {
+        setSummonItems([response.data.gear as Gear])
+        setIsOpen(true)
+        toast.success("Gear summoned successfully")
+      }
+    } catch (error) {
+      toast.error("Error summoning gear")
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleMultiSummonGear = async () => {
+    try {
+      setLoading(true)
+      const response = await multiSummonGear()
+      if (response.error) {
+        toast.error(response.error.message)
+        return
+      }
+
+      // Set summon type to gear
+      setSummonType("gear")
+
+      // Show the gears in the summon modal
+      if (response.data && "gears" in response.data) {
+        setSummonItems(response.data.gears as Gear[])
+        setIsOpen(true)
+        toast.success("Gear summoned successfully")
+      }
+    } catch (error) {
+      toast.error("Error summoning gear")
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSummon = async (isMulti: boolean) => {
+    if (portal === 1) {
+      if (isMulti) {
+        handleMultiSummon()
+      } else {
+        handleSummonCharacter()
+      }
+    } else {
+      if (isMulti) {
+        handleMultiSummonGear()
+      } else {
+        handleSummonGear()
+      }
+    }
+  }
+
   return (
     <>
-      <div className="bg-[url('/images/pages/draw-bg.png')] bg-cover bg-center bg-no-repeat w-full h-full p-3 lg:p-10 rounded-xl">
+      <div
+        className={` bg-cover bg-center bg-no-repeat w-full h-full p-3 lg:p-10 rounded-xl ${
+          portal === 1
+            ? "bg-[url('/images/pages/draw-bg-1.png')]"
+            : "bg-[url('/images/pages/draw-bg-2.png')]"
+        }`}
+        style={{
+          backgroundImage: `url('/images/pages/draw-bg-${portal}.png')`,
+        }}
+      >
         <div className="items-end flex justify-center gap-3 lg:gap-5    h-full z-10 relative">
           <div className="bg-white/10 px-4 py-2 rounded-xl relative overflow-hidden border border-white/10">
             <h3 className=" lg:text-lg font-medium">Single Summon</h3>
             <button
               className="group  mt-1 w-full  bg-white/10 px-3 py-2 rounded-lg relative overflow-hidden border border-white/10"
-              onClick={handleSummonCharacter}
+              onClick={() => handleSummon(false)}
               disabled={loading}
             >
               <div className="flex items-center gap-2 justify-between z-10 w-full ">
@@ -220,7 +333,7 @@ const DrawPage = ({ portal }: { portal: number }) => {
             <h3 className="lg:text-lg font-medium">Consecutive Summon</h3>
             <button
               className="group  mt-1 w-full  bg-white/10 px-3 py-2 rounded-lg relative overflow-hidden border border-white/10"
-              onClick={handleMultiSummon}
+              onClick={() => handleSummon(true)}
               disabled={loading}
             >
               <div className="flex items-center gap-2 justify-between z-10 w-full ">
@@ -255,17 +368,19 @@ const DrawPage = ({ portal }: { portal: number }) => {
         ></div>
       </div>
 
-      <MultiSummonModal
+      <SummonModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        characters={multiSommonCharacters}
-        handleMultiSummon={handleMultiSummon}
+        summonType={summonType}
+        summonItems={summonItems}
+        handleMultiSummon={() => handleSummon(true)}
         loading={loading}
       />
       <VideoPlayerModal
         isOpen={videoModalOpen}
         setIsOpen={setVideoModalOpen}
         videoUrl={characterVideoUrl}
+        onEnded={handleVideoEnded}
       />
     </>
   )

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useAliens, useAppDispatch } from "@/store/hooks"
+import { useAliens, useAppDispatch, useInventory } from "@/store/hooks"
 import { fetchAliens } from "@/store/slices/aliensSlice"
 import { fetchCharacters } from "@/store/slices/charactersSlice"
 import { fetchRaidHistory, fetchRaids } from "@/store/slices/raidsSlice"
@@ -26,6 +26,7 @@ export function Loader({ children }: { children: React.ReactNode }) {
   const { data: aliens } = useAliens()
   const isMobile = useIsMobile()
   const pathname = usePathname()
+  const { fetchInventory } = useInventory()
 
   const searchParams = useSearchParams()
 
@@ -58,6 +59,7 @@ export function Loader({ children }: { children: React.ReactNode }) {
             dispatch(fetchRaidHistory()),
             dispatch(fetchTeam()),
             dispatch(fetchCharacters()),
+            fetchInventory(),
           ])
 
           const aliens = await getAliens()

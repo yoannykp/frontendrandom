@@ -1,7 +1,10 @@
 import {
   Alien,
   AuthUserData,
+  BurnGearResponse,
   Character,
+  Gear,
+  InventoryItem,
   Pack,
   Profile,
   RaidHistoryResponse,
@@ -315,6 +318,50 @@ export const multiSummonCharacter = async ({
 export const getAllCharacters = async (): Promise<ApiResponse<Character[]>> => {
   const response = await apiManager.get<Character[]>(
     "/character/get-user-characters"
+  )
+  return response
+}
+
+export const summonGear = async (): Promise<
+  ApiResponse<{ gear: Gear; success: boolean }>
+> => {
+  const response = await apiManager.post<{
+    gear: Gear
+    success: boolean
+  }>("/character/summon-gear")
+  return response
+}
+export const multiSummonGear = async (): Promise<
+  ApiResponse<{
+    summonResults: { gears: Gear[]; isNew: boolean }[]
+    success: boolean
+  }>
+> => {
+  const response = await apiManager.post<{
+    summonResults: { gears: Gear[]; isNew: boolean }[]
+    success: boolean
+  }>("/character/multi-summon-gear")
+  return response
+}
+
+export const getUserInventory = async (): Promise<
+  ApiResponse<InventoryItem[]>
+> => {
+  const response = await apiManager.get<InventoryItem[]>(
+    "/inventory/get-user-inventory"
+  )
+  return response
+}
+
+// /burn-gear
+export const burnGear = async (
+  gearId: number
+): Promise<ApiResponse<BurnGearResponse>> => {
+  const response = await apiManager.post<BurnGearResponse>(
+    "/character/burn-gear",
+    {
+      gearId,
+    }
   )
   return response
 }

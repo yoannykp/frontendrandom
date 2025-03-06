@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit"
 
 import aliensReducer from "./slices/aliensSlice"
 import charactersReducer from "./slices/charactersSlice"
+import inventoryReducer from "./slices/inventorySlice"
 import raidsReducer from "./slices/raidsSlice"
 import teamReducer from "./slices/teamSlice"
 import userProfileReducer from "./slices/userProfileSlice"
@@ -13,6 +14,7 @@ export const store = configureStore({
     aliens: aliensReducer,
     team: teamReducer,
     characters: charactersReducer,
+    inventory: inventoryReducer,
   },
 })
 

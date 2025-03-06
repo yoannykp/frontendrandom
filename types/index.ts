@@ -237,6 +237,10 @@ export interface CharactersState {
   error: string | null
 }
 
+export interface BurnGearResponse {
+  success: boolean
+  character: Character
+}
 export interface Character {
   id: number
   name: string
@@ -252,4 +256,20 @@ export interface Character {
 
 export enum CharacterRarity {
   SR = "SR",
+}
+
+export interface Gear {
+  id: number
+  rarity: string
+  image: string
+  summonedCharacterId?: number
+}
+
+export interface InventoryItem {
+  id: number
+  name: string
+  quantity: number
+  image: string
+  description: string
+  type: "CHARACTER" | "ELEMENT" | "ALIEN_PART" | "GEAR"
 }
