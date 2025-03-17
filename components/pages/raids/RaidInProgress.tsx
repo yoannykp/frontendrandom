@@ -19,7 +19,7 @@ const RaidInProgress = ({ raid }: RaidInProgressProps) => {
     : 0
 
   return (
-    <div className="lg:bg-white/10 rounded-sm lg:rounded-2xl  lg:p-4 flex-1">
+    <div className="lg:bg-white/10 rounded-sm lg:rounded-2xl flex-1 absolute w-full h-full top-0 left-0 z-50">
       <div className="h-full  rounded-lg flex flex-col justify-end p-4 lg:p-10 relative overflow-hidden">
         <div className="absolute inset-0">
           <Image
@@ -42,7 +42,7 @@ const RaidInProgress = ({ raid }: RaidInProgressProps) => {
             <h1 className="text-white text-3xl font-volkhov">{raid?.title}</h1>
             <div className="bg-white/10 rounded-full p-px">
               <Image
-                src={raid.icon}
+                src={raid?.element?.image}
                 alt={raid.title}
                 width={35}
                 height={35}

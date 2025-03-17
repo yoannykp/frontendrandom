@@ -5,7 +5,6 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import IconButton from "@/components/ui/icon-button"
 import ChatBox from "@/components/common/chat-box"
 import { Loader } from "@/components/common/loader"
@@ -40,30 +39,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 >
                   <AlienzoneIcon className="size-6" />
                 </Link>
-                {(pathname === "/raids" || pathname === "/hunt") && (
-                  <>
-                    <Link href="/raids">
-                      <Button
-                        className={cn(
-                          " px-5 !h-14 rounded-xl",
-                          pathname === "/raids" ? "glass-effect" : "opacity-70"
-                        )}
-                      >
-                        Raids
-                      </Button>
-                    </Link>
-                    <Link href="/hunt">
-                      <Button
-                        className={cn(
-                          " px-5 !h-14 rounded-xl",
-                          pathname === "/hunt" ? "glass-effect" : "opacity-70"
-                        )}
-                      >
-                        Hunt
-                      </Button>
-                    </Link>
-                  </>
-                )}
               </div>
               <IconButton
                 onClick={() => setIsOpenMobileMenu(!isOpenMobileMenu)}
@@ -81,7 +56,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div className="relative z-10 h-full flex-1   flex flex-col overflow-auto">
               <RightSidebar className="absolute left-8 top-10 max-lg:hidden " />
               <ChatBox className="absolute left-8 bottom-10 max-lg:hidden" />
-              <TopBar className="absolute right-8 top-10 max-lg:hidden " />
+              <TopBar className="absolute right-8  max-lg:hidden " />
 
               {children}
             </div>

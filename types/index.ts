@@ -57,8 +57,8 @@ export interface Raid {
   rewards: RaidReward[]
   createdAt: string
   updatedAt: string
-  icon: string
   image: string
+  element: Element
 }
 
 export interface RaidResponse extends Raid {
@@ -246,10 +246,12 @@ export interface Character {
   name: string
   rarity: CharacterRarity
   power: number
+  tier: number
   image?: string
   video?: string
   portal: number
   elementId: number
+  upgradeReq?: number
   onTeam: boolean
   quantity: number
 }
@@ -272,4 +274,14 @@ export interface InventoryItem {
   image: string
   description: string
   type: "CHARACTER" | "ELEMENT" | "ALIEN_PART" | "GEAR"
+}
+
+export interface Leaderboard {
+  name: string
+  country: string
+  enterprise: string
+  image: string
+  level: number
+  experience: number
+  reputation: number
 }

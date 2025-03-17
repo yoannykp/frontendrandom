@@ -27,7 +27,7 @@ const TopBar = ({ className }: { className?: string }) => {
   return (
     <div
       className={cn(
-        "absolute right-28 top-28 z-20 flex flex-col gap-2",
+        "absolute right-28 top-10 z-20 flex flex-col gap-2",
         className
       )}
     >
@@ -39,7 +39,7 @@ const TopBar = ({ className }: { className?: string }) => {
         {topbarItems.map((item, index) => (
           <IconButton
             key={index}
-            className="size-10 lg:size-11 rounded-lg opacity-50 pointer-events-none"
+            className="size-10 lg:size-6 rounded-lg opacity-50 pointer-events-none p-1"
           >
             <item.icon className="size-4 lg:size-5" />
           </IconButton>

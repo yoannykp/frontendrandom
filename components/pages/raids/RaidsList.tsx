@@ -28,7 +28,7 @@ const RaidsList = ({
         >
           <div className="absolute top-4 right-4 bg-white/10 rounded-full p-px">
             <Image
-              src={raid.icon}
+              src={raid?.element?.image}
               alt={raid.title}
               width={24}
               height={24}

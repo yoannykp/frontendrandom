@@ -674,6 +674,101 @@ export const TwitterX: React.FC<IconSvgProps> = ({
     ></path>
   </svg>
 )
+export const UserRound: React.FC<IconSvgProps> = ({
+  size = 20,
+  width,
+  height,
+  strokeWidth = 2,
+  ...props
+}) => (
+  <svg
+    height={size || height}
+    width={size || width}
+    viewBox="0 0 17 17"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M3.23723 14.0788C3.69347 13.0039 4.75869 12.25 6 12.25H10.5C11.7413 12.25 12.8066 13.0039 13.2628 14.0788M11.25 6.625C11.25 8.28183 9.90683 9.625 8.25 9.625C6.59314 9.625 5.25 8.28183 5.25 6.625C5.25 4.96814 6.59314 3.625 8.25 3.625C9.90683 3.625 11.25 4.96814 11.25 6.625ZM15.75 8.5C15.75 12.6421 12.3921 16 8.25 16C4.10786 16 0.75 12.6421 0.75 8.5C0.75 4.35786 4.10786 1 8.25 1C12.3921 1 15.75 4.35786 15.75 8.5Z"
+      stroke="white"
+      stroke-width="1.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+)
+export const EnterpriseIcon: React.FC<IconSvgProps> = ({
+  size = 20,
+  width,
+  height,
+  strokeWidth = 2,
+  ...props
+}) => (
+  <svg
+    height={size || height}
+    width={size || width}
+    viewBox="0 0 17 17"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M5.66667 1L12.3333 16M1.5 12.6667L9 8.5M5.5 16H12.5C13.9002 16 14.6002 16 15.135 15.7275C15.6054 15.4878 15.9878 15.1054 16.2275 14.635C16.5 14.1002 16.5 13.4002 16.5 12V5C16.5 3.59987 16.5 2.8998 16.2275 2.36503C15.9878 1.89462 15.6054 1.51217 15.135 1.27248C14.6002 1 13.9002 1 12.5 1H5.5C4.09987 1 3.3998 1 2.86503 1.27248C2.39462 1.51217 2.01217 1.89462 1.77248 2.36503C1.5 2.8998 1.5 3.59987 1.5 5V12C1.5 13.4002 1.5 14.1002 1.77248 14.635C2.01217 15.1054 2.39462 15.4878 2.86503 15.7275C3.3998 16 4.09987 16 5.5 16Z"
+      stroke="white"
+      stroke-width="1.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+)
+export const HeartIcon: React.FC<IconSvgProps> = ({
+  size = 20,
+  width,
+  height,
+  strokeWidth = 2,
+  ...props
+}) => (
+  <svg
+    height={size || height}
+    width={size || width}
+    viewBox="0 0 17 17"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M11.6614 2.125C14.1563 2.125 15.8327 4.49969 15.8327 6.715C15.8327 11.2014 8.87529 14.875 8.74935 14.875C8.62341 14.875 1.66602 11.2014 1.66602 6.715C1.66602 4.49969 3.34241 2.125 5.83731 2.125C7.26972 2.125 8.20627 2.85016 8.74935 3.48766C9.29243 2.85016 10.229 2.125 11.6614 2.125Z"
+      stroke="white"
+      stroke-width="1.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+)
+export const SearchIcon: React.FC<IconSvgProps> = ({
+  size = 20,
+  width,
+  height,
+  strokeWidth = 2,
+  ...props
+}) => (
+  <svg
+    height={size || height}
+    width={size || width}
+    viewBox="0 0 15 15"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M1.04074 4.51887C2.10289 2.09122 4.59155 0.507115 7.35434 0.500091C10.332 0.485166 12.9796 2.30059 13.9078 4.99366C14.836 7.68672 13.8327 10.6422 11.4244 12.3091C9.01615 13.976 5.75308 13.9735 3.34763 12.3029L1.20278 14.3445C0.984704 14.5518 0.631425 14.5518 0.413352 14.3445C0.195549 14.1369 0.195549 13.8007 0.413352 13.5931L2.49118 11.6153C0.550312 9.74377 -0.0214165 6.94653 1.04074 4.51887ZM2.03657 9.12641C2.92838 11.172 5.02757 12.5043 7.35434 12.5014V12.4731C10.5123 12.4692 13.0758 10.0418 13.0963 7.03596C13.0993 4.82124 11.6996 2.82312 9.55054 1.97426C7.40146 1.12539 4.92673 1.59315 3.28146 3.1592C1.63618 4.72525 1.14476 7.08081 2.03657 9.12641Z"
+      fill="white"
+    />
+  </svg>
+)
 
 export {
   LockIcon,

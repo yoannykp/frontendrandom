@@ -25,7 +25,7 @@ export const fetchCharacters = createAsyncThunk(
       if (response.error) {
         return rejectWithValue(response.error.message)
       }
-      return response.data
+      return response.data?.userCharacters
     } catch (error) {
       return rejectWithValue("Failed to fetch characters")
     }
@@ -51,7 +51,7 @@ const charactersSlice = createSlice({
       })
       .addCase(fetchCharacters.fulfilled, (state, action) => {
         state.loading = false
-        state.data = action.payload
+        state.data = action.payload as Character[]
       })
       .addCase(fetchCharacters.rejected, (state, action) => {
         state.loading = false

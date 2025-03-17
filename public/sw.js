@@ -1,30 +1,30 @@
 if (!self.define) {
   let e,
     a = {}
-  const i = (i, s) => (
-    (i = new URL(i + ".js", s).href),
-    a[i] ||
+  const s = (s, i) => (
+    (s = new URL(s + ".js", i).href),
+    a[s] ||
       new Promise((a) => {
         if ("document" in self) {
           const e = document.createElement("script")
-          ;(e.src = i), (e.onload = a), document.head.appendChild(e)
-        } else (e = i), importScripts(i), a()
+          ;(e.src = s), (e.onload = a), document.head.appendChild(e)
+        } else (e = s), importScripts(s), a()
       }).then(() => {
-        let e = a[i]
-        if (!e) throw new Error(`Module ${i} didn’t register its module`)
+        let e = a[s]
+        if (!e) throw new Error(`Module ${s} didn’t register its module`)
         return e
       })
   )
-  self.define = (s, c) => {
+  self.define = (i, c) => {
     const n =
       e ||
       ("document" in self ? document.currentScript.src : "") ||
       location.href
     if (a[n]) return
     let r = {}
-    const t = (e) => i(e, n),
-      d = { module: { uri: n }, exports: r, require: t }
-    a[n] = Promise.all(s.map((e) => d[e] || t(e))).then((e) => (c(...e), r))
+    const d = (e) => s(e, n),
+      o = { module: { uri: n }, exports: r, require: d }
+    a[n] = Promise.all(i.map((e) => o[e] || d(e))).then((e) => (c(...e), r))
   }
 }
 define(["./workbox-1bb06f5e"], function (e) {
@@ -36,55 +36,67 @@ define(["./workbox-1bb06f5e"], function (e) {
       [
         {
           url: "/_next/app-build-manifest.json",
-          revision: "d1bb00569d40b1b6291cc36fea83b710",
+          revision: "bb469865cc377c8bce9c05519938abfc",
+        },
+        {
+          url: "/_next/static/5CU9Iqo71hJ4djDrZ1u6h/_buildManifest.js",
+          revision: "6310079bf1ae7bebeb6a2135896e4564",
+        },
+        {
+          url: "/_next/static/5CU9Iqo71hJ4djDrZ1u6h/_ssgManifest.js",
+          revision: "b6652df95db52feb4daf4eca35380933",
         },
         {
           url: "/_next/static/chunks/0e5ce63c-ef72d0858f179dd6.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/1091-4cba3a43d4baae7a.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/1735.b6cec72d272dc07e.js",
           revision: "b6cec72d272dc07e",
         },
         {
-          url: "/_next/static/chunks/2057-c71167eb99db2fdc.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/2117-13e91ea47f6e538f.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/2117-13e91ea47f6e538f.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/2519-e9643922f9ccaba7.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/3145-c1ec96eca4981d8b.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/3157-f47510dfb5ab5b8e.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/3276-78ecc48589c0a6b0.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/3467-7c64844a17c3f692.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/4208-e671a7d0434d7ad2.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/3825-addc2039fdb6053e.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/4310-35b8e4dfb6095913.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/4208-281483f247d9c3a9.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
+        },
+        {
+          url: "/_next/static/chunks/4310-4cf1740cdc425cb2.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/4357-f47b44203e18e6cd.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/4884-7149fe8329ca990a.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/4978.f19de5daea982214.js",
@@ -92,15 +104,15 @@ define(["./workbox-1bb06f5e"], function (e) {
         },
         {
           url: "/_next/static/chunks/5089-b1b23c6ae5510afe.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/53c13509-19870a1e36b301ad.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/6175-4016685bed4718a9.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/6275.f5bc990c149abf8a.js",
@@ -108,27 +120,31 @@ define(["./workbox-1bb06f5e"], function (e) {
         },
         {
           url: "/_next/static/chunks/6333-739e03e170812644.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/7610-c0fa9ab582d1af1c.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/7508-186c186e206ede40.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
+        },
+        {
+          url: "/_next/static/chunks/7610-0a0074c2774578aa.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/7648-c307a2ff52a8050b.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/781-a7c2008d71ffb834.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/7952-2845806a3fc91288.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/7952-85df40552aa05dd9.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/7976-38b348165575dc69.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/8488.dc5f8f77bb493a48.js",
@@ -136,111 +152,123 @@ define(["./workbox-1bb06f5e"], function (e) {
         },
         {
           url: "/_next/static/chunks/8567-b1d41ac3a58508a6.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/9012-571d769384964a8b.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/9056-d12592e064b357f9.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/9044-e6bdcb4d671b9355.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/9313-d72bbd3bba9e869e.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/(pages)/(web)/draw/page-747a86de595e0155.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/(pages)/(web)/draw/page-aa72db9e8a5767ae.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/(pages)/(web)/inventory/page-a2cb270fc3fe97f5.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/(pages)/(web)/inventory/page-84ee4d019fd9840b.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/(pages)/(web)/layout-5f4c09d558bfa1fd.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/(pages)/(web)/layout-de9db8de145491b6.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/(pages)/(web)/raids/page-d7e8ac0daaa65c51.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/(pages)/(web)/leaderboard/page-30dddd411b79ab91.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/(pages)/(web)/team/page-ddf7388c1403471a.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/(pages)/(web)/raids/page-f36a21662ae27633.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/(pages)/(web)/treasure/page-ab44536b65944109.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/(pages)/(web)/team/page-2e5dcfda901c2aed.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/(pages)/auth/page-04c9a3f1ea9d7ad2.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/(pages)/(web)/treasure/page-cd47337f41ed4b3e.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/(pages)/purchase/page-9e2701858a8c1506.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/(pages)/auth/page-abd675c77aef7270.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/(pages)/website/hunt/page-1430232cd3cbf2e6.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/(pages)/dojo/page-81bb8dd8054230d7.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/(pages)/website/layout-22852a09002e69ac.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/(pages)/forge/page-f442af90d57c3525.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/(pages)/website/page-6388b6685e8739b0.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/(pages)/purchase/page-f3dec3ba26a112a9.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/(pwa)/layout-43028233c8591277.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/(pages)/website/hunt/page-18b03355d9385a1f.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/(pwa)/page-205a55e18f2d42b0.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/(pages)/website/layout-6b44407e2cb3f391.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
+        },
+        {
+          url: "/_next/static/chunks/app/(pages)/website/page-7719486a27ceedab.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
+        },
+        {
+          url: "/_next/static/chunks/app/(pwa)/layout-7b7ed21f070f8681.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
+        },
+        {
+          url: "/_next/static/chunks/app/(pwa)/page-6c31f637749fa6d2.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/app/_not-found/page-f7931a9da2ac4330.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/layout-30e7f284d2aa29b9.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/layout-0af5259621eefcfa.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/app/not-found-3b7e03b3c2841d78.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/app/not-found-14b91a7b0e6117b2.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/c16f53c3-6981fdfabbf6d4c5.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/fd9d1056-89b8f38588a4b2ad.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/framework-8e0e0f4a6b83a956.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/chunks/main-628929665728c6fc.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          url: "/_next/static/chunks/main-9c0ed2448fb8bc06.js",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/main-app-da36af68fdc0d768.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/pages/_app-3c9ca398d360b709.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/pages/_error-cf5ca766ac8f493f.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
           url: "/_next/static/chunks/polyfills-42372ed130431b0a.js",
@@ -248,11 +276,11 @@ define(["./workbox-1bb06f5e"], function (e) {
         },
         {
           url: "/_next/static/chunks/webpack-5cccf0456d410c50.js",
-          revision: "pqLaVGSqzEi0ci-HSHyP3",
+          revision: "5CU9Iqo71hJ4djDrZ1u6h",
         },
         {
-          url: "/_next/static/css/708d210c9faaa309.css",
-          revision: "708d210c9faaa309",
+          url: "/_next/static/css/b40c61c158671f50.css",
+          revision: "b40c61c158671f50",
         },
         {
           url: "/_next/static/media/26a46d62cd723877-s.woff2",
@@ -289,14 +317,6 @@ define(["./workbox-1bb06f5e"], function (e) {
         {
           url: "/_next/static/media/f4d88d1e9def2b83-s.p.woff2",
           revision: "dd2afafc1e862a72ef12f838a3a32ebe",
-        },
-        {
-          url: "/_next/static/pqLaVGSqzEi0ci-HSHyP3/_buildManifest.js",
-          revision: "6310079bf1ae7bebeb6a2135896e4564",
-        },
-        {
-          url: "/_next/static/pqLaVGSqzEi0ci-HSHyP3/_ssgManifest.js",
-          revision: "b6652df95db52feb4daf4eca35380933",
         },
         {
           url: "/icons/apple-touch-icon.png",
@@ -375,8 +395,16 @@ define(["./workbox-1bb06f5e"], function (e) {
           revision: "67e0576b9929ddc1942e343113feb93a",
         },
         {
+          url: "/images/badge.png",
+          revision: "71955f60d216810d2e34f643bf1d145b",
+        },
+        {
           url: "/images/carousel/slide-1.jpg",
           revision: "2268ce101eff5865e1d13fd08e3ddc94",
+        },
+        {
+          url: "/images/cat.jpeg",
+          revision: "0b02fafadfc2b5b3608d5891af10d2ec",
         },
         {
           url: "/images/character-img.png",
@@ -443,6 +471,10 @@ define(["./workbox-1bb06f5e"], function (e) {
           revision: "1c082a0becc10c707769cda46504a032",
         },
         {
+          url: "/images/girl.jpeg",
+          revision: "2dd4e83dfb54e6a3e1da6a562d6af84a",
+        },
+        {
           url: "/images/image1.png",
           revision: "3868c0fa994a2cd272def6c317e85e1e",
         },
@@ -475,12 +507,52 @@ define(["./workbox-1bb06f5e"], function (e) {
           revision: "d18fc1edd9fe513c43d7386996b730b9",
         },
         {
-          url: "/images/pages/draw-bg.png",
-          revision: "77ba42c58aa2527bfd15e482983ecf7e",
+          url: "/images/pages/dojo/accessories.png",
+          revision: "49d503212d800aa92965b213b015baee",
+        },
+        {
+          url: "/images/pages/dojo/background.png",
+          revision: "c5444b60a796eae892056bb46a1986a1",
+        },
+        {
+          url: "/images/pages/dojo/body.png",
+          revision: "0e0129807a8d2dd78276d8c208d925c1",
+        },
+        {
+          url: "/images/pages/dojo/eyes.png",
+          revision: "e11a584fd571a7680d1e7bb6da138d19",
+        },
+        {
+          url: "/images/pages/dojo/hairs.png",
+          revision: "fe055ca1cd66e0fe7657996aa741bb66",
+        },
+        {
+          url: "/images/pages/dojo/marks.png",
+          revision: "9e1c67f3e5a5b4af96db1fc461a89a30",
+        },
+        {
+          url: "/images/pages/dojo/mouth.png",
+          revision: "560243054842435001cd99416aa3610c",
+        },
+        {
+          url: "/images/pages/dojo/power.png",
+          revision: "f0b953f658308201fb12d8372a6fab0d",
+        },
+        {
+          url: "/images/pages/draw-bg-1.png",
+          revision: "609bd87ea06ab25ae1ecc9cbb2a7621a",
+        },
+        {
+          url: "/images/pages/draw-bg-2.png",
+          revision: "a084d87d2d57cbb9fefae461d3bfc311",
         },
         {
           url: "/images/pages/draw.png",
           revision: "2a11bb4a3249328602180289019bab8c",
+        },
+        {
+          url: "/images/pages/forge.jpeg",
+          revision: "4857ddc3a61dca24fc2460bdbf79e54e",
         },
         {
           url: "/images/pages/journal.png",
@@ -543,6 +615,18 @@ define(["./workbox-1bb06f5e"], function (e) {
           revision: "8951f432f7e7c7870598d67514c900f8",
         },
         {
+          url: "/images/rank-1.png",
+          revision: "9a13fe1e73f9b7f57ace67eed2708f65",
+        },
+        {
+          url: "/images/rank-2.png",
+          revision: "d7cfb4d270014726206eed3e510268d1",
+        },
+        {
+          url: "/images/rank-3.png",
+          revision: "71849baba03d3b14bd32311d2c48f5e7",
+        },
+        {
           url: "/images/rep.png",
           revision: "77a1b879f6289f61a1d727c6c954ecfe",
         },
@@ -586,8 +670,8 @@ define(["./workbox-1bb06f5e"], function (e) {
             cacheWillUpdate: async ({
               request: e,
               response: a,
-              event: i,
-              state: s,
+              event: s,
+              state: i,
             }) =>
               a && "opaqueredirect" === a.type
                 ? new Response(a.body, {

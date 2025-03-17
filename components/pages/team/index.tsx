@@ -57,7 +57,7 @@ const TeamPage = () => {
   }
 
   return (
-    <div className="flex flex-col gap-8 w-full h-full overflow-y-auto">
+    <div className="flex flex-col gap-8 w-full h-full overflow-y-auto justify-center">
       <div className="flex lg:items-end gap-2 lg:gap-4  w-full flex-col lg:flex-row">
         <div className="flex flex-col justify-end gap-2 lg:gap-4 flex-1 items-end">
           <div className="glass-effect p-4 rounded-2xl lg:max-w-[200px] w-full">

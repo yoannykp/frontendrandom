@@ -1,7 +1,12 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
+import { Trophy } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+import DailyLoginModal from "../DailyLoginReward/Modal"
 import {
   DoubleArrowIcon,
   FlagIcon,
@@ -24,6 +29,7 @@ const sidebarItems = [
 ]
 
 const RightSidebar = ({ className }: { className?: string }) => {
+  const [isRewardModalOpen, setIsRewardModalOpen] = useState(false)
   return (
     <div
       className={cn(
@@ -49,6 +55,13 @@ const RightSidebar = ({ className }: { className?: string }) => {
           </Link>
         ))}
       </div>
+      <button onClick={() => setIsRewardModalOpen(true)}>
+        <Trophy className="size-5" />
+      </button>
+      <DailyLoginModal
+        isOpen={isRewardModalOpen}
+        onClose={() => setIsRewardModalOpen(false)}
+      />
     </div>
   )
 }

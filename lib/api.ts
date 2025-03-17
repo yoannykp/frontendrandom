@@ -5,6 +5,7 @@ import {
   Character,
   Gear,
   InventoryItem,
+  Leaderboard,
   Pack,
   Profile,
   RaidHistoryResponse,
@@ -315,10 +316,13 @@ export const multiSummonCharacter = async ({
   return response
 }
 
-export const getAllCharacters = async (): Promise<ApiResponse<Character[]>> => {
-  const response = await apiManager.get<Character[]>(
-    "/character/get-user-characters"
-  )
+export const getAllCharacters = async (): Promise<
+  ApiResponse<{ userCharacters: Character[]; success: boolean }>
+> => {
+  const response = await apiManager.get<{
+    userCharacters: Character[]
+    success: boolean
+  }>("/character/get-user-characters")
   return response
 }
 
@@ -353,7 +357,6 @@ export const getUserInventory = async (): Promise<
   return response
 }
 
-// /burn-gear
 export const burnGear = async (
   gearId: number
 ): Promise<ApiResponse<BurnGearResponse>> => {
@@ -362,6 +365,24 @@ export const burnGear = async (
     {
       gearId,
     }
+  )
+  return response
+}
+export const getCharacterTiers = async (
+  characterId: number
+): Promise<ApiResponse<{ characters: Character[]; success: boolean }>> => {
+  const response = await apiManager.get<{
+    characters: Character[]
+    success: boolean
+  }>("/character/tiers", {
+    characterId,
+  })
+  return response
+}
+
+export const getLeaderboard = async (): Promise<ApiResponse<Leaderboard[]>> => {
+  const response = await apiManager.get<Leaderboard[]>(
+    "/profile/get-leaderboard"
   )
   return response
 }

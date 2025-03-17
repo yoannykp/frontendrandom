@@ -72,7 +72,7 @@ const SingleRaid = ({ raid }: { raid?: Raid }) => {
               </div>
               <div className=" bg-white/10 rounded-full p-px">
                 <Image
-                  src={raid.icon}
+                  src={raid?.element?.image}
                   alt={raid.title}
                   width={30}
                   height={30}

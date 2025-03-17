@@ -1,6 +1,6 @@
 "use client"
 
-import TeamPage from "@/components/pages/team"
+import LeaderboardPage from "@/components/pages/leaderboard"
 
 const Page = () => {
   return (
@@ -10,13 +10,13 @@ const Page = () => {
           <div className="absolute inset-0 bg-[#181818CC]"></div>
         </div>
 
-        <div className=" w-full z-10 pb-12 pr-8 pl-24 pt-10 relative flex flex-col items-center justify-center gap-8  mx-auto max-w-[1050px] ">
-          <TeamPage />
+        <div className=" w-full z-10 pb-12 pr-8 pl-24 pt-28 relative flex flex-col items-center justify-center gap-8  mx-auto ">
+          <LeaderboardPage />
         </div>
       </div>
 
-      <div className="flex flex-col rounded-2xl glass-effect z-10 p-2 gap-3 lg:hidden flex-1 ">
-        <TeamPage />
+      <div className="flex flex-col rounded-2xl glass-effect z-10 p-2 gap-3 lg:hidden flex-1">
+        <LeaderboardPage />
       </div>
 
       {/* Background Gradients */}

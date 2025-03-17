@@ -159,6 +159,7 @@ const DrawPage = ({ portal }: { portal: number }) => {
     try {
       setLoading(true)
       const response = await summonCharacter({ portal })
+      console.log(response)
       if (response.error) {
         toast.error(response.error.message)
         return
@@ -337,7 +338,7 @@ const DrawPage = ({ portal }: { portal: number }) => {
               disabled={loading}
             >
               <div className="flex items-center gap-2 justify-between z-10 w-full ">
-                <span>500</span>
+                <span>1000</span>
                 <span className="size-6 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center border border-white/10">
                   <Image
                     src="/images/stars.png"

@@ -27,7 +27,7 @@ export function GradientBorder({
           height="77"
           rx="8"
           stroke="url(#paint0_linear_73_140)"
-          strokeWidth="2"
+          strokeWidth="1.5"
         />
         <defs>
           <linearGradient

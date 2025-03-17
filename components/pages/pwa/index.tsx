@@ -88,15 +88,19 @@ export default function Home() {
           <div className="flex gap-4 items-stretch w-full max-w-screen-lg">
             <div className="w-1/2 hidden lg:block">
               <div className="w-full h-full  rounded-xl overflow-hidden bg-[#2C2D30]  relative z-10">
-                <img
-                  src={alien?.image}
+                <Image
+                  src={alien?.image ?? ""}
                   alt="User's alien"
                   className="w-full h-[calc(100%+130px)] object-contain z-10 relative"
+                  width={100}
+                  height={100}
                 />
-                <img
-                  src={alien?.element?.background}
+                <Image
+                  src={alien?.element?.background ?? ""}
                   alt="User's alien"
                   className="w-full h-full object-cover absolute top-0 left-0"
+                  width={100}
+                  height={100}
                 />
               </div>
             </div>

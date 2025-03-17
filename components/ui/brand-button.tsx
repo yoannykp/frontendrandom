@@ -18,7 +18,7 @@ interface BrandButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const BrandButton: FC<BrandButtonProps> = ({
   children,
   className = "",
-  blurColor,
+  blurColor = "bg-[#5FFF9580]",
   isLink = false,
   href = "#",
   target = "_self",
