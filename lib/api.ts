@@ -3,7 +3,7 @@ import {
   AuthUserData,
   BurnGearResponse,
   Character,
-  DailyReward,
+  DailyRewardsResponse,
   Gear,
   InventoryItem,
   Leaderboard,
@@ -11,6 +11,7 @@ import {
   Profile,
   RaidHistoryResponse,
   RaidResponse,
+  SpinResult,
   TeamResponse,
   Traits,
 } from "@/types"
@@ -390,6 +391,22 @@ export const getCharacterTiers = async (
   })
   return response
 }
+export const upgradeCharacter = async (
+  characterId: number
+): Promise<
+  ApiResponse<{
+    success: boolean
+    serverSignature: string
+  }>
+> => {
+  const response = await apiManager.get<{
+    success: boolean
+    serverSignature: string
+  }>("/character/upgrade-character", {
+    characterId,
+  })
+  return response
+}
 
 export const getLeaderboard = async ({
   offset,
@@ -446,22 +463,6 @@ export const mintCharacters = async (
   return response
 }
 
-export const verifyMintTransaction = async (
-  mintTransactionId: number,
-  serverSignature: string,
-  txHash: string
-): Promise<ApiResponse<boolean>> => {
-  const response = await apiManager.post<boolean>(
-    "/character/verify-mint-transaction",
-    {
-      mintTransactionId,
-      serverSignature,
-      txHash,
-    }
-  )
-  return response
-}
-
 export const likeUser = async (
   userId: number
 ): Promise<ApiResponse<{ liked: boolean }>> => {
@@ -475,17 +476,50 @@ export const likeUser = async (
 }
 
 export const getDailyRewards = async (): Promise<
-  ApiResponse<DailyReward[]>
+  ApiResponse<DailyRewardsResponse>
 > => {
-  const response = await apiManager.get<DailyReward[]>(
+  const response = await apiManager.get<DailyRewardsResponse>(
     "/profile/get-daily-rewards"
   )
   return response
 }
 
 export const awardDailyRewards = async (): Promise<ApiResponse<boolean>> => {
-  const response = await apiManager.post<boolean>(
-    "/profile/award-daily-rewards"
+  const response = await apiManager.get<boolean>("/profile/claim-daily-reward")
+  return response
+}
+
+export const spinWheel = async (): Promise<
+  ApiResponse<{ success: true; result: SpinResult }>
+> => {
+  const response = await apiManager.get<{ success: true; result: SpinResult }>(
+    "/wheel/spin"
   )
+  return response
+}
+
+export const canSpin = async (): Promise<
+  ApiResponse<{ success: boolean; canSpin: boolean }>
+> => {
+  const response = await apiManager.get<{ success: boolean; canSpin: boolean }>(
+    "/wheel/can-spin"
+  )
+  return response
+}
+
+export const getSpinHistory = async (): Promise<
+  ApiResponse<{ success: boolean; spinTimes: string[] }>
+> => {
+  const response = await apiManager.get<{
+    success: boolean
+    spinTimes: string[]
+  }>("/wheel/spin-history")
+  return response
+}
+
+export const getWheelItems = async (): Promise<
+  ApiResponse<{ name: string }[]>
+> => {
+  const response = await apiManager.get<{ name: string }[]>("/wheel/rewards")
   return response
 }

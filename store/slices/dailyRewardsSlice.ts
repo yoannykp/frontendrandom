@@ -1,10 +1,10 @@
-import { DailyReward } from "@/types"
+import { DailyReward, DailyRewardsResponse } from "@/types"
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 
 import { awardDailyRewards, getDailyRewards } from "@/lib/api"
 
 interface DailyRewardsState {
-  data: DailyReward[] | null
+  data: DailyRewardsResponse | null
   loading: boolean
   error: string | null
   awardStatus: {

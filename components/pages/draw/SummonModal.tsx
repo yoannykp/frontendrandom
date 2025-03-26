@@ -7,7 +7,7 @@ import { usePrivy, useWallets } from "@privy-io/react-auth"
 import { ethers } from "ethers"
 import toast from "react-hot-toast"
 
-import { mintCharacters, verifyMintTransaction } from "@/lib/api"
+import { mintCharacters } from "@/lib/api"
 import { cn, handleSignMessage } from "@/lib/utils"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import CONTRACT_ABI from "@/app/assets/abi.json"
@@ -108,18 +108,6 @@ const SummonModal = ({
       const receipt = await tx.wait()
 
       console.log(receipt)
-
-      // Step 3: Verify the transaction
-      const verifyResponse = await verifyMintTransaction(
-        transactionId,
-        serverSignature,
-        receipt.hash
-      )
-
-      if (verifyResponse.error) {
-        toast.error(verifyResponse.error.message)
-        return
-      }
 
       toast.success("Minted successfully")
       fetchCharacters() // Refresh the characters list

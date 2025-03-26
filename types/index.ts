@@ -310,11 +310,12 @@ export enum DailyRewardType {
 export interface DailyReward {
   id: number
   type: DailyRewardType
+  itemId: number | null
   item?: Item
-  itemId: number
   amount: number
-  claimed: boolean
-  current: boolean
+  alienPartId: number | null
+  gearItemId: number | null
+  rewardDate: string
   createdAt: string
   updatedAt: string
 }
@@ -348,4 +349,27 @@ export interface UserItem {
   quantity: number
   user: Profile
   item: Item
+}
+
+export interface DailyRewardsResponse {
+  success: true
+  dailyRewards: DailyReward[]
+  dailyStreak: number
+  lastDailyClaimed: string
+  claimedDailyRewards: DailyReward[]
+}
+export interface SpinResult {
+  type: string
+  amount: number
+  itemType?: ItemType
+  itemQuality?: ItemQuality
+  runeType?: RuneType
+}
+
+export enum RuneType {
+  COMMON = "COMMON",
+  UNCOMMON = "UNCOMMON",
+  RARE = "RARE",
+  EPIC = "EPIC",
+  LEGENDARY = "LEGENDARY",
 }
