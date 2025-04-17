@@ -600,12 +600,12 @@ export const getFriendsList = async (): Promise<ApiResponse<any>> => {
   return response
 }
 
-export const addFriend = async (): Promise<
-  ApiResponse<{ success: boolean }>
-> => {
-  const response = await apiManager.post<{ success: boolean }>(
-    "/friends/add-friend"
-  )
+export const addFriend = async (
+  userIds: number[]
+): Promise<ApiResponse<{ success: boolean }>> => {
+  const response = await apiManager.post<{ success: boolean }>("/friends/add", {
+    userIds,
+  })
   return response
 }
 
@@ -625,6 +625,15 @@ export const sendMessage = async (
   const response = await apiManager.post<any>("/chat/send", {
     receiverId,
     content,
+  })
+  return response
+}
+
+export const searchFriend = async (
+  query: string
+): Promise<ApiResponse<any>> => {
+  const response = await apiManager.get<any>("/friends/search", {
+    query,
   })
   return response
 }
