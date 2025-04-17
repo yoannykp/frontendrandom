@@ -237,6 +237,15 @@ const DojoPage = () => {
       toast.error("No alien selected")
       return
     }
+    if (
+      selectedTraits.hairId === 0 ||
+      selectedTraits.eyesId === 0 ||
+      selectedTraits.mouthId === 0 ||
+      selectedTraits.elementId === 0
+    ) {
+      toast.error("No traits selected")
+      return
+    }
 
     // Get the part IDs directly from the selectedTraits object
     const selectedPartIds = []
@@ -349,8 +358,37 @@ const DojoPage = () => {
                   <Popover key={item.id}>
                     <PopoverTrigger asChild>
                       <button
-                        className="flex items-center flex-col gap-2 bg-white/10 rounded-xl p-2 border border-white/10 aspect-square relative hover:bg-white/20 transition-all duration-300 shadow-lg"
-                        onClick={() => setSelectedCategory(item.value)}
+                        className={cn(
+                          "flex items-center flex-col gap-2 bg-white/10 rounded-xl p-2 border border-white/10 aspect-square relative hover:bg-white/20 transition-all duration-300 shadow-lg",
+                          // Disable hover effect when no traits are available
+                          (item.value === "hairs" &&
+                            traits.HAIR.length === 0) ||
+                            (item.value === "eyes" &&
+                              traits.EYES.length === 0) ||
+                            (item.value === "mouth" &&
+                              traits.MOUTH.length === 0) ||
+                            (item.value === "background" &&
+                              traits.ELEMENT.length === 0)
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        )}
+                        onClick={() => {
+                          // Only set selected category if traits are available
+                          if (
+                            (item.value === "hairs" &&
+                              traits.HAIR.length > 0) ||
+                            (item.value === "eyes" && traits.EYES.length > 0) ||
+                            (item.value === "mouth" &&
+                              traits.MOUTH.length > 0) ||
+                            (item.value === "background" &&
+                              traits.ELEMENT.length > 0) ||
+                            !["hairs", "eyes", "mouth", "background"].includes(
+                              item.value
+                            )
+                          ) {
+                            setSelectedCategory(item.value)
+                          }
+                        }}
                       >
                         <Image
                           src={item.image || "/placeholder.svg"}
@@ -364,164 +402,174 @@ const DojoPage = () => {
                         </span>
                       </button>
                     </PopoverTrigger>
-                    <PopoverContent
-                      // className="w-64 bg-black/60 backdrop-blur-md border border-white/10 p-3 rounded-xl"
-                      className="w-64 p-3 rounded-xl border border-gray-light backdrop-blur-[40px] glass-effect"
-                      side="right"
-                      align="start"
-                    >
-                      <ScrollArea className="h-[150px]">
-                        <div className="grid grid-cols-3 gap-2">
-                          {item.value === "hairs" &&
-                            traits?.HAIR?.map((hair, index) => (
-                              <GradientBorder
-                                key={index}
-                                isSelected={selectedTraits.hairId === hair.id}
-                                className=" transition-colors duration-300"
-                              >
-                                <div
+                    {((item.value === "hairs" && traits.HAIR.length > 0) ||
+                      (item.value === "eyes" && traits.EYES.length > 0) ||
+                      (item.value === "mouth" && traits.MOUTH.length > 0) ||
+                      (item.value === "background" &&
+                        traits.ELEMENT.length > 0) ||
+                      !["hairs", "eyes", "mouth", "background"].includes(
+                        item.value
+                      )) && (
+                      <PopoverContent
+                        className="w-64 p-3 rounded-xl border border-gray-light backdrop-blur-[40px] glass-effect"
+                        side="right"
+                        align="start"
+                      >
+                        <ScrollArea className="h-[150px]">
+                          <div className="grid grid-cols-3 gap-2">
+                            {item.value === "hairs" &&
+                              traits?.HAIR?.map((hair, index) => (
+                                <GradientBorder
                                   key={index}
-                                  className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
-                                  onClick={() =>
-                                    setSelectedTraits({
-                                      ...selectedTraits,
-                                      hair: hair.image,
-                                      hairId: hair.id,
-                                    })
-                                  }
+                                  isSelected={selectedTraits.hairId === hair.id}
+                                  className=" transition-colors duration-300"
                                 >
-                                  <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
-                                    <Image
-                                      src={hair.image}
-                                      alt={hair.name}
-                                      width={50}
-                                      height={50}
-                                      className="object-cover"
-                                      crossOrigin="anonymous"
-                                    />
+                                  <div
+                                    key={index}
+                                    className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
+                                    onClick={() =>
+                                      setSelectedTraits({
+                                        ...selectedTraits,
+                                        hair: hair.image,
+                                        hairId: hair.id,
+                                      })
+                                    }
+                                  >
+                                    <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
+                                      <Image
+                                        src={hair.image}
+                                        alt={hair.name}
+                                        width={50}
+                                        height={50}
+                                        className="object-cover"
+                                        crossOrigin="anonymous"
+                                      />
+                                    </div>
+                                  </div>
+                                </GradientBorder>
+                              ))}
+
+                            {item.value === "eyes" &&
+                              traits?.EYES?.map((eyes, index) => (
+                                <GradientBorder
+                                  key={index}
+                                  isSelected={selectedTraits.eyesId === eyes.id}
+                                  className=" transition-colors duration-300"
+                                >
+                                  <div
+                                    key={index}
+                                    className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
+                                    onClick={() =>
+                                      setSelectedTraits({
+                                        ...selectedTraits,
+                                        eyes: eyes.image,
+                                        eyesId: eyes.id,
+                                      })
+                                    }
+                                  >
+                                    <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
+                                      <Image
+                                        src={eyes.image}
+                                        alt={eyes.name}
+                                        width={50}
+                                        height={50}
+                                        className="object-cover"
+                                        crossOrigin="anonymous"
+                                      />
+                                    </div>
+                                  </div>
+                                </GradientBorder>
+                              ))}
+
+                            {item.value === "mouth" &&
+                              traits?.MOUTH?.map((mouth, index) => (
+                                <GradientBorder
+                                  key={index}
+                                  isSelected={
+                                    selectedTraits.mouthId === mouth.id
+                                  }
+                                  className=" transition-colors duration-300"
+                                >
+                                  <div
+                                    key={index}
+                                    className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
+                                    onClick={() =>
+                                      setSelectedTraits({
+                                        ...selectedTraits,
+                                        mouth: mouth.image,
+                                        mouthId: mouth.id,
+                                      })
+                                    }
+                                  >
+                                    <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
+                                      <Image
+                                        src={mouth.image}
+                                        alt={mouth.name}
+                                        width={50}
+                                        height={50}
+                                        className="object-cover"
+                                        crossOrigin="anonymous"
+                                      />
+                                    </div>
+                                  </div>
+                                </GradientBorder>
+                              ))}
+
+                            {item.value === "background" &&
+                              traits?.ELEMENT?.map((element, index) => (
+                                <GradientBorder
+                                  key={index}
+                                  isSelected={
+                                    selectedTraits.elementId === element.id
+                                  }
+                                  className=" transition-colors duration-300"
+                                >
+                                  <div
+                                    key={index}
+                                    className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
+                                    onClick={() =>
+                                      setSelectedTraits({
+                                        ...selectedTraits,
+                                        element: element.image,
+                                        elementId: element.id,
+                                      })
+                                    }
+                                  >
+                                    <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
+                                      <Image
+                                        src={element.image}
+                                        alt={element.name}
+                                        width={50}
+                                        height={50}
+                                        className="object-cover"
+                                        crossOrigin="anonymous"
+                                      />
+                                    </div>
+                                  </div>
+                                </GradientBorder>
+                              ))}
+
+                            {/* Example items - replace with actual data */}
+                            {!["hairs", "eyes", "mouth", "background"].includes(
+                              item.value
+                            ) &&
+                              [1, 2, 3, 4, 5, 6].map((i) => (
+                                <div
+                                  key={i}
+                                  className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
+                                >
+                                  <div className="w-full h-full flex items-center justify-center">
+                                    <span className="text-xs">
+                                      {item.label} {i}
+                                    </span>
                                   </div>
                                 </div>
-                              </GradientBorder>
-                            ))}
-
-                          {item.value === "eyes" &&
-                            traits?.EYES?.map((eyes, index) => (
-                              <GradientBorder
-                                key={index}
-                                isSelected={selectedTraits.eyesId === eyes.id}
-                                className=" transition-colors duration-300"
-                              >
-                                <div
-                                  key={index}
-                                  className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
-                                  onClick={() =>
-                                    setSelectedTraits({
-                                      ...selectedTraits,
-                                      eyes: eyes.image,
-                                      eyesId: eyes.id,
-                                    })
-                                  }
-                                >
-                                  <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
-                                    <Image
-                                      src={eyes.image}
-                                      alt={eyes.name}
-                                      width={50}
-                                      height={50}
-                                      className="object-cover"
-                                      crossOrigin="anonymous"
-                                    />
-                                  </div>
-                                </div>
-                              </GradientBorder>
-                            ))}
-
-                          {item.value === "mouth" &&
-                            traits?.MOUTH?.map((mouth, index) => (
-                              <GradientBorder
-                                key={index}
-                                isSelected={selectedTraits.mouthId === mouth.id}
-                                className=" transition-colors duration-300"
-                              >
-                                <div
-                                  key={index}
-                                  className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
-                                  onClick={() =>
-                                    setSelectedTraits({
-                                      ...selectedTraits,
-                                      mouth: mouth.image,
-                                      mouthId: mouth.id,
-                                    })
-                                  }
-                                >
-                                  <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
-                                    <Image
-                                      src={mouth.image}
-                                      alt={mouth.name}
-                                      width={50}
-                                      height={50}
-                                      className="object-cover"
-                                      crossOrigin="anonymous"
-                                    />
-                                  </div>
-                                </div>
-                              </GradientBorder>
-                            ))}
-
-                          {item.value === "background" &&
-                            traits?.ELEMENT?.map((element, index) => (
-                              <GradientBorder
-                                key={index}
-                                isSelected={
-                                  selectedTraits.elementId === element.id
-                                }
-                                className=" transition-colors duration-300"
-                              >
-                                <div
-                                  key={index}
-                                  className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
-                                  onClick={() =>
-                                    setSelectedTraits({
-                                      ...selectedTraits,
-                                      element: element.image,
-                                      elementId: element.id,
-                                    })
-                                  }
-                                >
-                                  <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
-                                    <Image
-                                      src={element.image}
-                                      alt={element.name}
-                                      width={50}
-                                      height={50}
-                                      className="object-cover"
-                                      crossOrigin="anonymous"
-                                    />
-                                  </div>
-                                </div>
-                              </GradientBorder>
-                            ))}
-
-                          {/* Example items - replace with actual data */}
-                          {!["hairs", "eyes", "mouth", "background"].includes(
-                            item.value
-                          ) &&
-                            [1, 2, 3, 4, 5, 6].map((i) => (
-                              <div
-                                key={i}
-                                className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
-                              >
-                                <div className="w-full h-full flex items-center justify-center">
-                                  <span className="text-xs">
-                                    {item.label} {i}
-                                  </span>
-                                </div>
-                              </div>
-                            ))}
-                        </div>
-                        <ScrollBar orientation="vertical" />
-                      </ScrollArea>
-                    </PopoverContent>
+                              ))}
+                          </div>
+                          <ScrollBar orientation="vertical" />
+                        </ScrollArea>
+                      </PopoverContent>
+                    )}
                   </Popover>
                 ))}
               </div>
