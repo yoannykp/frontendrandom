@@ -9,8 +9,12 @@ import { Plus } from "lucide-react"
 import { levelRequirements } from "@/config/constants"
 import { formatNumber, formatRemainingTime } from "@/lib/utils"
 import { Progress } from "@/components/ui/progress"
+import RightSidebar from "@/components/common/right-sidebar"
+import TopBar from "@/components/common/top-bar"
 import { ArrowBack, FranceIcon } from "@/components/icons"
 import ActivityMenu from "@/components/pages/home/ActivityMenu"
+
+import Chat from "./Chat"
 
 const Page = () => {
   const [isActivityMenuOpen, setIsActivityMenuOpen] = useState(false)
@@ -23,9 +27,9 @@ const Page = () => {
     <>
       {!isActivityMenuOpen && (
         <>
-          <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden ">
+          <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden">
             <div className="absolute inset-0 bg-[url('/images/characters/character-1-mobile.png')] bg-cover bg-center bg-no-repeat lg:bg-[url('/images/characters/character-1-main.png')]"></div>
-            <div className="absolute top-4 lg:top-10 right-4 lg:left-[23%]  glass-effect  z-10  px-3 py-2 rounded-xl w-max">
+            <div className="absolute top-4 lg:top-10 right-4 lg:left-[23%] glass-effect z-10 px-3 py-2 rounded-xl w-max">
               <div className="flex items-center gap-2">
                 <div className="glass-effect p-1 rounded-lg">
                   <FranceIcon size={13} />
@@ -67,6 +71,11 @@ const Page = () => {
                 </p>
               </div>
             )}
+            <TopBar className="absolute right-8  max-lg:hidden " />
+            <RightSidebar className="absolute left-8 top-10 max-lg:hidden " />
+            {/* <div className="absolute left-8 bottom-10 max-lg:hidden"> */}
+            <Chat />
+            {/* </div> */}
             <ActivityMenu />
           </div>
           <div className="lg:hidden space-y-4 relative z-10 mt-4">

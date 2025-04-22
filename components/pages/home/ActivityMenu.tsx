@@ -77,7 +77,7 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
   return (
     <div
       className={cn(
-        " w-full  z-10  ",
+        "w-full z-10",
         isMobile
           ? "flex items-center justify-center left-0 lg:hidden"
           : "max-lg:hidden relative pb-12 px-8 pt-32 "
@@ -116,7 +116,7 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
         </div>
 
         {/* Footer */}
-        <div className=" gap-4 mt-10 w-full justify-end hidden lg:flex">
+        <div className="gap-4 mt-10 w-full justify-end hidden lg:flex">
           {/* Profile Image */}
           <div className="glass-effect p-2 rounded-xl ">
             <div className="relative size-[100px] rounded-lg overflow-hidden">
@@ -130,7 +130,7 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
           </div>
 
           {/* Stats */}
-          <div className="flex-1 glass-effect rounded-xl  max-w-[390px] w-full ">
+          <div className="flex-1 glass-effect rounded-xl max-w-[390px] w-full">
             <div className="h-1/2 p-4 flex items-center gap-5">
               <div className="glass-effect flex w-max rounded-lg">
                 <p className="glass-effect py-1 px-3 rounded-lg text-xs">

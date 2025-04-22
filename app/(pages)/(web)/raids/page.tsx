@@ -45,6 +45,7 @@ const Page = () => {
         </div>
       </div>
 
+      {/* Mobile */}
       <div className="lg:hidden flex-1 flex flex-col">
         <RaidsPage />
       </div>

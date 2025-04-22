@@ -600,31 +600,45 @@ export const getFriendsList = async (): Promise<ApiResponse<any>> => {
   return response
 }
 
-export const addFriend = async (): Promise<
-  ApiResponse<{ success: boolean }>
-> => {
-  const response = await apiManager.post<{ success: boolean }>(
-    "/friends/add-friend"
-  )
+export const addFriend = async (
+  userIds: number[]
+): Promise<ApiResponse<{ success: boolean }>> => {
+  const response = await apiManager.post<{ success: boolean }>("/friends/add", {
+    userIds,
+  })
   return response
 }
 
 export const getMessages = async (
-  friendId: number
+  friendId?: number
 ): Promise<ApiResponse<any>> => {
   const response = await apiManager.get<any>("/chat/messages", {
-    friendId,
+    friendId: friendId || "",
   })
   return response
 }
 
 export const sendMessage = async (
-  receiverId: number,
-  content: string
+  receiverId?: number | string,
+  content?: string
 ): Promise<ApiResponse<any>> => {
   const response = await apiManager.post<any>("/chat/send", {
-    receiverId,
+    receiverId: receiverId || "",
     content,
   })
+  return response
+}
+
+export const searchFriend = async (
+  query: string
+): Promise<ApiResponse<any>> => {
+  const response = await apiManager.get<any>("/friends/search", {
+    query,
+  })
+  return response
+}
+
+export const getQuestList = async (): Promise<ApiResponse<any>> => {
+  const response = await apiManager.get<any>("/quests/list")
   return response
 }

@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import { MessageSquare, Plus } from "lucide-react"
 
+import { getQuestList } from "@/lib/api"
 import { cn } from "@/lib/utils"
 
 interface Quest {
@@ -13,6 +14,11 @@ interface Quest {
   type: "claim" | "action" | "progress"
   progress?: string
   completed?: boolean
+  frequency?: string
+  description?: string
+  currentProgress?: number
+  requiredNumber?: number
+  isCompleted?: boolean
 }
 
 interface Reward {
@@ -154,15 +160,160 @@ const REWARDS: Reward[] = [
   },
 ]
 
+const formatTimeRemaining = (
+  timestamp: string | number,
+  frequency: "daily" | "weekly"
+): string => {
+  if (!timestamp) return "Time remaining"
+
+  let targetTime: Date
+
+  if (typeof timestamp === "string") {
+    targetTime = new Date(timestamp)
+  } else {
+    // If timestamp is a number (seconds since epoch)
+    targetTime = new Date(timestamp * 1000)
+  }
+
+  const now = new Date()
+  let diffInSeconds = Math.floor((targetTime.getTime() - now.getTime()) / 1000)
+
+  // Don't go below zero
+  diffInSeconds = Math.max(0, diffInSeconds)
+
+  // Calculate time units
+  const days = Math.floor(diffInSeconds / (3600 * 24))
+  const hours = Math.floor((diffInSeconds % (3600 * 24)) / 3600)
+  const minutes = Math.floor((diffInSeconds % 3600) / 60)
+
+  // Format based on time remaining
+  if (days > 0) {
+    return days === 1 ? "1 day left" : `${days} days left`
+  } else if (hours > 0) {
+    return `${hours}h left`
+  } else if (minutes > 0) {
+    return minutes === 1 ? "1 min left" : `${minutes} mins left`
+  } else {
+    return "Less than 1 min"
+  }
+}
+
+// Format time from seconds to HH:MM:SS
+const formatTime = (timestamp: string | number): string => {
+  if (!timestamp) return "00:00:00"
+
+  let targetTime: Date
+
+  if (typeof timestamp === "string") {
+    targetTime = new Date(timestamp)
+  } else {
+    // If timestamp is a number (seconds since epoch)
+    targetTime = new Date(timestamp * 1000)
+  }
+
+  const now = new Date()
+  let diffInSeconds = Math.floor((targetTime.getTime() - now.getTime()) / 1000)
+
+  // Don't go below zero
+  diffInSeconds = Math.max(0, diffInSeconds)
+
+  const hours = Math.floor(diffInSeconds / 3600)
+  const minutes = Math.floor((diffInSeconds % 3600) / 60)
+  const seconds = diffInSeconds % 60
+
+  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+}
+
+// Format weekly reset time to show days remaining when > 1 day
+const formatWeeklyTime = (timestamp: string | number): string => {
+  if (!timestamp) return "00:00:00"
+
+  let targetTime: Date
+
+  if (typeof timestamp === "string") {
+    targetTime = new Date(timestamp)
+  } else {
+    // If timestamp is a number (seconds since epoch)
+    targetTime = new Date(timestamp * 1000)
+  }
+
+  const now = new Date()
+  let diffInSeconds = Math.floor((targetTime.getTime() - now.getTime()) / 1000)
+
+  // Don't go below zero
+  diffInSeconds = Math.max(0, diffInSeconds)
+
+  // Calculate days
+  const days = Math.floor(diffInSeconds / (3600 * 24))
+
+  // If less than 1 day, use the regular format time
+  if (days < 1) {
+    return formatTime(timestamp)
+  }
+
+  // Return days format
+  return days === 1 ? "1 day" : `${days} days`
+}
+
 const QuestsPage = () => {
   const [activeTab, setActiveTab] = useState<"daily" | "weekly">("weekly")
-  const [timer, setTimer] = useState("06:54:09")
+  const [timer, setTimer] = useState("")
+  const [quests, setQuests] = useState<Quest[]>([])
+  const [dailyResetTime, setDailyResetTime] = useState<number>(0)
+  const [weeklyResetTime, setWeeklyResetTime] = useState<number>(0)
 
-  const currentQuests = activeTab === "daily" ? DAILY_QUESTS : WEEKLY_QUESTS
+  // Filter quests based on active tab
+  const filteredQuests = quests.filter((quest) => quest.frequency === activeTab)
+
+  // Fallback to mock data if no quests from API
+  const currentQuests =
+    filteredQuests.length > 0
+      ? filteredQuests
+      : activeTab === "daily"
+        ? DAILY_QUESTS
+        : WEEKLY_QUESTS
 
   // Calculate progress percentage based on claimed rewards
   const claimedCount = REWARDS.filter((reward) => reward.claimed).length
   const progressPercentage = (claimedCount / REWARDS.length) * 100
+
+  useEffect(() => {
+    getQuestList().then((res) => {
+      console.log("getQuestList response ===>", res)
+      if (res.data.quests) {
+        setQuests(res.data.quests)
+      }
+      if (res.data.dailyResetTime) {
+        setDailyResetTime(res.data.dailyResetTime)
+      }
+      if (res.data.weeklyResetTime) {
+        setWeeklyResetTime(res.data.weeklyResetTime)
+      }
+    })
+  }, [])
+
+  // Update timer every second
+  useEffect(() => {
+    const resetTime = activeTab === "daily" ? dailyResetTime : weeklyResetTime
+    if (!resetTime) return
+
+    // Set initial timer value
+    const updateTimer = () => {
+      if (activeTab === "daily") {
+        setTimer(formatTime(resetTime))
+      } else {
+        setTimer(formatWeeklyTime(resetTime))
+      }
+    }
+
+    // Initial update
+    updateTimer()
+
+    // Update timer every second
+    const interval = setInterval(updateTimer, 1000)
+
+    return () => clearInterval(interval)
+  }, [activeTab, dailyResetTime, weeklyResetTime])
 
   return (
     <div className="w-full h-full rounded-xl backdrop-blur-xl border border-white/10 p-3 flex flex-col gap-3">
@@ -171,7 +322,7 @@ const QuestsPage = () => {
         <button
           onClick={() => setActiveTab("daily")}
           className={cn(
-            "flex items-center gap-3 min-w-32 px-4 py-3 rounded-lg  border border-white/10 transition-all duration-200 font-inter justify-between",
+            "flex items-center gap-3 min-w-32 px-4 py-3 rounded-lg cursor-pointer border border-white/10 transition-all duration-200 font-inter justify-between",
             activeTab === "daily" ? "bg-white/20" : "bg-white/5"
           )}
         >
@@ -181,7 +332,7 @@ const QuestsPage = () => {
         <button
           onClick={() => setActiveTab("weekly")}
           className={cn(
-            "flex items-center gap-3 min-w-32 px-4 py-3 rounded-lg  border border-white/10 transition-all duration-200 font-inter justify-between",
+            "flex items-center gap-3 min-w-32 px-4 py-3 rounded-lg cursor-pointer border border-white/10 transition-all duration-200 font-inter justify-between",
             activeTab === "weekly" ? "bg-white/20" : "bg-white/5"
           )}
         >
@@ -199,7 +350,7 @@ const QuestsPage = () => {
           </h2>
           <p className="text-sm text-[#8E9297]">
             New Quests in{" "}
-            <span className="text-white font-medium tracking-wider">
+            <span className="text-white font-medium tracking-wider min-w-[4.5rem] inline-block">
               {timer}
             </span>
           </p>
@@ -262,7 +413,7 @@ const QuestsPage = () => {
 
       {/* Quests List */}
       <div className="flex-1 overflow-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-        {currentQuests.map((quest) => (
+        {/* {currentQuests.map((quest) => (
           <div
             key={quest.id}
             className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10"
@@ -301,6 +452,58 @@ const QuestsPage = () => {
               )}
             >
               {quest.action}
+            </button>
+          </div>
+        ))} */}
+
+        {currentQuests.map((quest) => (
+          <div
+            key={quest.id}
+            className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10"
+          >
+            <div className="w-12 h-12 rounded-lg overflow-hidden">
+              <Image
+                src={quest.icon || "/images/cat.jpeg"}
+                alt={quest.title || quest.description || "Quest"}
+                width={48}
+                height={48}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div className="flex-1">
+              <h3 className="text-white">{quest.title || quest.description}</h3>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-white/50">
+                  {formatTimeRemaining(
+                    activeTab == "daily" ? dailyResetTime : weeklyResetTime,
+                    activeTab
+                  )}
+                </span>
+                {(quest.progress ||
+                  (quest.currentProgress !== undefined &&
+                    quest.requiredNumber)) && (
+                  <>
+                    <span className="text-white/20">•</span>
+                    <span className="text-sm text-white/50">
+                      {quest.progress ||
+                        `${quest.currentProgress}/${quest.requiredNumber}`}
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <button
+              className={cn(
+                "px-6 py-2 rounded-lg",
+                (quest.type === "progress" && quest.completed) ||
+                  quest.isCompleted
+                  ? "bg-[#62B67C] text-white"
+                  : "bg-white/10 text-white hover:bg-white/20"
+              )}
+            >
+              {quest.action || (quest.isCompleted ? "Claim" : "Go")}
             </button>
           </div>
         ))}
