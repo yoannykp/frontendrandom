@@ -243,7 +243,7 @@ const DojoPage = () => {
       selectedTraits.mouthId === 0 ||
       selectedTraits.elementId === 0
     ) {
-      toast.error("No traits selected")
+      toast.error("Some traits are not selected")
       return
     }
 
@@ -257,7 +257,7 @@ const DojoPage = () => {
     if (selectedTraits.elementId) selectedPartIds.push(selectedTraits.elementId)
 
     if (selectedPartIds.length === 0) {
-      toast.error("No traits selected")
+      toast.error("Some traits are not selected")
       return
     }
 
