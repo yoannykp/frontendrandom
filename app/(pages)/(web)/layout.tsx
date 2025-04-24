@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation"
 
 import { cn } from "@/lib/utils"
 import IconButton from "@/components/ui/icon-button"
-import ChatBox from "@/components/common/chat-box"
 import { Loader } from "@/components/common/loader"
 import RightSidebar from "@/components/common/right-sidebar"
 import TopBar from "@/components/common/top-bar"
@@ -16,6 +15,9 @@ import AlienzoneIcon from "@/components/icons/alienzone"
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false)
   const pathname = usePathname()
+
+  const isHomePage = pathname === "/home"
+
   return (
     <Suspense
       fallback={
@@ -27,7 +29,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <Loader>
         <div
           className={cn(
-            " bg-black max-lg:py-4   relative flex flex-col h-screen"
+            " bg-black max-lg:py-4 relative flex flex-col h-screen"
           )}
         >
           <div className=" relative z-20 pb-2 lg:hidden">
@@ -49,13 +51,18 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </IconButton>
             </div>
             {isOpenMobileMenu && (
-              <TopBar className="relative  top-auto right-auto lg:hidden items-center" />
+              <TopBar className="relative top-auto right-auto lg:hidden items-center" />
             )}
           </div>
-          <div className="relative flex-1  w-full   overflow-hidden flex flex-col ">
+          <div
+            className={cn(
+              "relative flex-1 w-full flex flex-col",
+              isHomePage ? "" : "overflow-hidden"
+            )}
+          >
             <div className="relative z-10 h-full flex-1   flex flex-col overflow-auto">
               <RightSidebar className="absolute left-8 top-10 max-lg:hidden " />
-              <ChatBox className="absolute left-8 bottom-10 max-lg:hidden" />
+              {/* <ChatBox className="absolute left-8 bottom-10 max-lg:hidden" /> */}
               <TopBar className="absolute right-8  max-lg:hidden " />
 
               {children}

@@ -72,8 +72,19 @@ export const links = [
   },
 ]
 
-const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
+const ActivityMenu = ({
+  alien,
+  isMobile,
+  zoneBalance,
+}: {
+  alien: any
+  isMobile?: boolean
+  zoneBalance?: string | number | undefined
+}) => {
   const { data: profile } = useProfile()
+
+  console.log(alien)
+
   return (
     <div
       className={cn(
@@ -119,12 +130,24 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
         <div className="gap-4 mt-10 w-full justify-end hidden lg:flex">
           {/* Profile Image */}
           <div className="glass-effect p-2 rounded-xl ">
-            <div className="relative size-[100px] rounded-lg overflow-hidden">
-              <Image
+            <div
+              className="relative flex items-center justify-center size-[100px] rounded-lg overflow-hidden"
+              style={{
+                backgroundImage: `url(${alien?.element?.image.replace(".png", "-bg.png") || ""})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              {/* <Image
                 src="/images/characters/character-1-avatar.png"
                 alt="Profile"
                 className="object-cover"
                 fill
+              /> */}
+              <img
+                src={alien?.image}
+                alt={alien?.name}
+                className="size-22 rounded"
               />
             </div>
           </div>
@@ -164,7 +187,7 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
                     height={50}
                   />
                 </div>
-                <p className="text-xs font-volkhov">3,621,000 ZONE</p>
+                <p className="text-xs font-volkhov">{zoneBalance} ZONE</p>
                 <button className="glass-effect size-5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
                   <Plus className="size-3" />
                 </button>

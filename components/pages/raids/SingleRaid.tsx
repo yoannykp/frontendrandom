@@ -26,17 +26,23 @@ const SingleRaid = ({ raid }: { raid?: Raid }) => {
 
   const handleLaunchRaid = async () => {
     if (!raid?.id) return
-    const response = await launchRaid({
-      raidId: raid?.id,
-      alienIds: aliens?.map((alien) => alien.id) || [],
-    })
-    if (response.error) {
-      toast.error(response.error.message)
-    } else {
-      if (response.data) {
-        dispatch(addRaidHistory(response.data))
+
+    try {
+      const response = await launchRaid({
+        raidId: raid?.id,
+        alienIds: aliens?.map((alien) => alien.id) || [],
+      })
+
+      if (response.data && response.data.success) {
+        if (response.data) {
+          dispatch(addRaidHistory(response.data))
+        }
+        toast.success("Raid launched successfully")
+      } else {
+        toast.error(response.data?.error?.message)
       }
-      toast.success("Raid launched successfully")
+    } catch (error) {
+      console.log("error", error)
     }
   }
 

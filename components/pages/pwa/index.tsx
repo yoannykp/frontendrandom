@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation"
 import { useAliens, useProfile } from "@/store/hooks"
 import { useLogout } from "@privy-io/react-auth"
 import { Copy, CopyCheck, Loader2, LogOut } from "lucide-react"
-import { FaTelegram } from "react-icons/fa6"
 
 import { getUnseenReferralRewards, markReferralRewardsAsSeen } from "@/lib/api"
 import {
@@ -16,7 +15,7 @@ import {
   getTokenPrice,
 } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
-import { TwitterX } from "@/components/icons"
+import RightSidebar from "@/components/common/right-sidebar"
 
 import { InviteCard } from "./InviteCard"
 import { JackpotCard } from "./JackpotCard"
@@ -85,6 +84,8 @@ export default function Home() {
         }}
       >
         <div className="flex-1 flex flex-col items-center justify-center">
+          <RightSidebar className="absolute left-8 top-10 max-lg:hidden " />
+
           <div className="flex gap-4 items-stretch w-full max-w-screen-lg">
             <div className="w-1/2 hidden lg:block">
               <div className="w-full h-full  rounded-xl overflow-hidden bg-[#2C2D30]  relative z-10">
@@ -172,7 +173,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="py-4  z-20 relative flex flex-col items-center justify-center text-white/50 gap-4">
+        {/* <div className="py-4  z-20 relative flex flex-col items-center justify-center text-white/50 gap-4">
           <div className="flex gap-4">
             <Link
               href="https://taap.it/alienzone2"
@@ -196,7 +197,7 @@ export default function Home() {
               team@alienzone.io
             </a>
           </p>
-        </div>
+        </div> */}
       </div>
 
       <div

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Trophy } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -17,19 +18,36 @@ import {
 } from "../icons"
 import AlienzoneIcon from "../icons/alienzone"
 import IconButton from "../ui/icon-button"
-import ChatBox from "./chat-box"
+import Chat from "./Chat"
+
+// const sidebarItems = [
+//   { label: "Home", href: "/home", icon: HomeIcon },
+//   { label: "Raids", href: "/raids", icon: DoubleArrowIcon },
+//   { label: "Team", href: "/team", icon: PeopleIcon },
+//   { label: "Inventory", href: "/inventory", icon: FlagIcon },
+//   { label: "", href: "", icon: StackIcon },
+//   { label: "", href: "", icon: InfoIcon },
+// ]
 
 const sidebarItems = [
-  { label: "Home", href: "/", icon: HomeIcon },
-  { label: "Raids", href: "/raids", icon: DoubleArrowIcon },
-  { label: "Team", href: "/team", icon: PeopleIcon },
-  { label: "Inventory", href: "/inventory", icon: FlagIcon },
-  { label: "", href: "", icon: StackIcon },
-  { label: "", href: "", icon: InfoIcon },
+  { label: "Home", href: "/home", icon: HomeIcon },
+  { label: "Leaderboard", href: "/leaderboard", icon: DoubleArrowIcon },
+  { label: "Friends", href: "/friends", icon: PeopleIcon },
+  { label: "Quests", href: "/quests", icon: FlagIcon },
+  { label: "Inventory", href: "/inventory", icon: StackIcon },
+  {
+    label: "Docs",
+    href: "https://docs.alienzone.io",
+    icon: InfoIcon,
+    isExternal: true,
+  },
 ]
 
 const RightSidebar = ({ className }: { className?: string }) => {
   const [isRewardModalOpen, setIsRewardModalOpen] = useState(false)
+  const pathname = usePathname()
+
+  console.log("pathname ===>", pathname)
   return (
     <div
       className={cn(
@@ -38,22 +56,41 @@ const RightSidebar = ({ className }: { className?: string }) => {
       )}
     >
       <Link
-        href={"/"}
-        className="border border-gray-light rounded-normal cursor-pointer backdrop-blur-[40px] flex justify-center items-center size-14 max-lg:hidden"
+        href="/"
+        className={cn(
+          "border border-gray-light rounded-normal cursor-pointer backdrop-blur-[40px] flex justify-center items-center size-14 max-lg:hidden",
+          pathname === "/" ? "bg-white/20" : ""
+        )}
       >
         <AlienzoneIcon className="size-6" />
       </Link>
 
-      <ChatBox className="lg:hidden" />
+      {pathname === "/home" && (
+        <Chat className="lg:hidden absolute left-8 bottom-10" btnClassName="" />
+      )}
 
       <div className="glass-effect  flex justify-center rounded-normal flex-row lg:flex-col items-center gap-1.5 lg:gap-2.5 max-lg:h-14 lg:w-14 p-2 max-lg:backdrop-blur-0 max-lg:border-none">
-        {sidebarItems.map((item, index) => (
-          <Link href={item.href} key={index} title={item.label}>
-            <IconButton className="size-10 lg:size-11 rounded-lg">
-              <item.icon className="size-4 lg:size-5" />
-            </IconButton>
-          </Link>
-        ))}
+        {sidebarItems.map((item, index) => {
+          const isActive = pathname === item.href
+
+          return (
+            <Link
+              href={item.href}
+              key={index}
+              title={item.label}
+              target={item.isExternal ? "_blank" : ""}
+            >
+              <IconButton
+                className={cn(
+                  "size-10 lg:size-11 rounded-lg",
+                  isActive ? "!bg-white/30" : ""
+                )}
+              >
+                <item.icon className="size-4 lg:size-5" />
+              </IconButton>
+            </Link>
+          )
+        })}
       </div>
       <button onClick={() => setIsRewardModalOpen(true)}>
         <Trophy className="size-5" />

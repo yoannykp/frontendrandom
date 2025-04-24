@@ -3,24 +3,25 @@
 import React, { useState } from "react"
 import Image from "next/image"
 import { useRaidTimer } from "@/context/raidTimer"
+import { useWallet } from "@/context/wallet"
 import { useAliens, useProfile, useRaids } from "@/store/hooks"
 import { Plus } from "lucide-react"
 
 import { levelRequirements } from "@/config/constants"
 import { formatNumber, formatRemainingTime } from "@/lib/utils"
 import { Progress } from "@/components/ui/progress"
+import Chat from "@/components/common/Chat"
 import RightSidebar from "@/components/common/right-sidebar"
 import TopBar from "@/components/common/top-bar"
 import { ArrowBack, FranceIcon } from "@/components/icons"
 import ActivityMenu from "@/components/pages/home/ActivityMenu"
-
-import Chat from "./Chat"
 
 const Page = () => {
   const [isActivityMenuOpen, setIsActivityMenuOpen] = useState(false)
   const { data: profile } = useProfile()
   const { data: aliens, alien } = useAliens()
   const { data: raids } = useRaids()
+  const { user } = useWallet()
   const { activeRaids, mostSoonToCompleteRaid } = useRaidTimer()
 
   return (
@@ -73,15 +74,16 @@ const Page = () => {
             )}
             <TopBar className="absolute right-8  max-lg:hidden " />
             <RightSidebar className="absolute left-8 top-10 max-lg:hidden " />
-            {/* <div className="absolute left-8 bottom-10 max-lg:hidden"> */}
-            <Chat />
-            {/* </div> */}
-            <ActivityMenu />
+            <Chat
+              className="hidden lg:block absolute left-8 bottom-10"
+              btnClassName="absolute left-8 bottom-10"
+            />
+            <ActivityMenu zoneBalance={user?.zoneBalance} alien={alien} />
           </div>
           <div className="lg:hidden space-y-4 relative z-10 mt-4">
             <div className="flex gap-4  w-full justify-end">
               {/* Stats */}
-              <div className="flex-1 glass-effect rounded-xl   w-full ">
+              <div className="flex-1 glass-effect rounded-xl w-full ">
                 <div className="h-1/2 p-4 flex items-center gap-5">
                   <div className="glass-effect flex w-max rounded-lg">
                     <p className="glass-effect py-1 px-3 rounded-lg text-xs">
@@ -119,7 +121,9 @@ const Page = () => {
                         height={50}
                       />
                     </div>
-                    <p className="text-xs font-volkhov">3,621,000 ZONE</p>
+                    <p className="text-xs font-volkhov">
+                      {user?.zoneBalance} ZONE
+                    </p>
                     <button className="glass-effect size-5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
                       <Plus className="size-3" />
                     </button>
@@ -163,7 +167,11 @@ const Page = () => {
             Back to Home
             <ArrowBack className="size-4" />
           </button>
-          <ActivityMenu isMobile />
+          <ActivityMenu
+            isMobile
+            zoneBalance={user?.zoneBalance}
+            alien={alien}
+          />
         </>
       )}
 
