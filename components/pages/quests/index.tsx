@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { MessageSquare, Plus } from "lucide-react"
+import { useDailyRewards, useProfile } from "@/store/hooks"
+import { DailyReward } from "@/types"
+import { CheckCircle, Loader2, MessageSquare, Plus } from "lucide-react"
+import toast from "react-hot-toast"
 
-import { getQuestList } from "@/lib/api"
+import { claimQuest, getDailyRewards, getQuestList } from "@/lib/api"
 import { cn } from "@/lib/utils"
 
 interface Quest {
@@ -19,6 +22,7 @@ interface Quest {
   currentProgress?: number
   requiredNumber?: number
   isCompleted?: boolean
+  isClaimed?: boolean
 }
 
 interface Reward {
@@ -261,9 +265,20 @@ const QuestsPage = () => {
   const [quests, setQuests] = useState<Quest[]>([])
   const [dailyResetTime, setDailyResetTime] = useState<number>(0)
   const [weeklyResetTime, setWeeklyResetTime] = useState<number>(0)
-
+  const [claimQuestId, setClaimQuestId] = useState<number>(0)
+  const { fetchUserProfile } = useProfile()
+  const {
+    data: rewards,
+    loading,
+    claimRewards,
+    fetchDailyRewards,
+  } = useDailyRewards()
   // Filter quests based on active tab
   const filteredQuests = quests.filter((quest) => quest.frequency === activeTab)
+
+  useEffect(() => {
+    fetchDailyRewards()
+  }, [])
 
   // Fallback to mock data if no quests from API
   const currentQuests =
@@ -279,7 +294,6 @@ const QuestsPage = () => {
 
   useEffect(() => {
     getQuestList().then((res) => {
-      console.log("getQuestList response ===>", res)
       if (res.data.quests) {
         setQuests(res.data.quests)
       }
@@ -314,6 +328,41 @@ const QuestsPage = () => {
 
     return () => clearInterval(interval)
   }, [activeTab, dailyResetTime, weeklyResetTime])
+
+  const handleClaimQuest = (questId: number) => {
+    setClaimQuestId(questId)
+    claimQuest(questId).then((res) => {
+      console.log("claimQuest response ===>", res)
+      if (res.data.success) {
+        toast.success("Quest claimed successfully")
+        fetchUserProfile()
+
+        setClaimQuestId(0)
+        currentQuests.map((quest) => {
+          if (quest.id === questId) {
+            quest.isClaimed = true
+          }
+        })
+      }
+    })
+  }
+
+  console.log("claimQuestId ===>", currentQuests)
+
+  const getRewardImage = (reward: DailyReward) => {
+    switch (reward.type) {
+      case "STARS":
+        return "/images/stars.png"
+      case "ITEM":
+        return reward.item?.image
+      case "XP":
+        return "/images/xp.png"
+    }
+  }
+
+  const isClaimed = (reward: DailyReward) => {
+    return rewards?.claimedDailyRewards.some((r) => r.id === reward.id)
+  }
 
   return (
     <div className="w-full h-full rounded-xl backdrop-blur-xl border border-white/10 p-3 flex flex-col gap-3">
@@ -360,11 +409,9 @@ const QuestsPage = () => {
         <div className="flex-1 bg-white/5 rounded-lg p-3">
           {/* Reward Points */}
           <div className="flex justify-between mt-4">
-            {REWARDS.map((reward, index) => (
+            {/* {REWARDS.map((reward, index) => (
               <div key={index} className="flex flex-col  gap-2">
-                {/* Reward Box */}
                 <div className="relative flex items-center gap-3 rounded-xl lg:min-w-[120px]">
-                  {/* Icon Container */}
                   <div className="relative max-lg:hidden">
                     <div className="w-10 h-10 rounded bg-white/5 border border-white/10 flex items-center justify-center p-1.5">
                       <Image
@@ -377,7 +424,6 @@ const QuestsPage = () => {
                     </div>
                   </div>
 
-                  {/* Amount */}
                   <div className="flex flex-col">
                     <span className="text-[11px] text-[#8E9297]">
                       Day {reward.day}
@@ -388,7 +434,6 @@ const QuestsPage = () => {
                   </div>
                 </div>
 
-                {/* Progress Indicator */}
                 <div className="ml-4">
                   <div
                     className={cn(
@@ -398,14 +443,54 @@ const QuestsPage = () => {
                   />
                 </div>
               </div>
-            ))}
+            ))} */}
+            {rewards?.dailyRewards &&
+              rewards?.dailyRewards.map((reward, index) => (
+                <div key={index} className="flex flex-col  gap-2">
+                  {/* Reward Box */}
+                  <div className="relative flex items-center gap-3 rounded-xl lg:min-w-[120px]">
+                    {/* Icon Container */}
+                    <div className="relative max-lg:hidden">
+                      <div className="w-10 h-10 rounded bg-white/5 border border-white/10 flex items-center justify-center p-1.5">
+                        <Image
+                          src={getRewardImage(reward) || ""}
+                          alt={reward.type}
+                          width={32}
+                          height={32}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Amount */}
+                    <div className="flex flex-col">
+                      <span className="text-[11px] text-white">
+                        Day {reward.id}
+                      </span>
+                      <span className="text-sm text-white font-medium">
+                        {reward.amount}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Progress Indicator */}
+                  <div className="ml-4">
+                    <div
+                      className={cn(
+                        "size-2.5 rounded-full border-2  border-white/10",
+                        isClaimed(reward) ? "bg-[#EA66FF]" : "bg-white/10"
+                      )}
+                    />
+                  </div>
+                </div>
+              ))}
           </div>
 
           {/* Progress Bar */}
           <div className="relative h-1.5 bg-white/10 rounded-full mt-4">
             <div
               className="absolute left-0 top-0 h-full bg-[#EA66FF] rounded-full"
-              style={{ width: `${progressPercentage}%` }}
+              style={{ width: `${rewards?.dailyStreak}%` }}
             />
           </div>
         </div>
@@ -496,14 +581,28 @@ const QuestsPage = () => {
 
             <button
               className={cn(
-                "px-6 py-2 rounded-lg",
+                "h-12 w-20 flex justify-center items-center rounded-lg",
                 (quest.type === "progress" && quest.completed) ||
                   quest.isCompleted
                   ? "bg-[#62B67C] text-white"
                   : "bg-white/10 text-white hover:bg-white/20"
               )}
+              onClick={() => {
+                if (quest.isCompleted && !quest.isClaimed) {
+                  handleClaimQuest(quest.id)
+                }
+              }}
+              disabled={
+                quest.isClaimed || claimQuestId === quest.id || !!claimQuestId
+              }
             >
-              {quest.action || (quest.isCompleted ? "Claim" : "Go")}
+              {quest.isClaimed ? (
+                <CheckCircle className="w-4 h-4" />
+              ) : claimQuestId === quest.id ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                quest.action || (quest.isCompleted ? "Claim" : "Go")
+              )}
             </button>
           </div>
         ))}

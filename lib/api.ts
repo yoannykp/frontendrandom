@@ -642,3 +642,12 @@ export const getQuestList = async (): Promise<ApiResponse<any>> => {
   const response = await apiManager.get<any>("/quests/list")
   return response
 }
+
+export const claimQuest = async (
+  questId: number
+): Promise<ApiResponse<any>> => {
+  const response = await apiManager.post<any>("/quests/claim-rewards", {
+    questId,
+  })
+  return response
+}
