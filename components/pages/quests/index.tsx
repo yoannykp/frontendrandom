@@ -5,7 +5,7 @@ import { DailyReward } from "@/types"
 import { CheckCircle, Loader2, MessageSquare, Plus } from "lucide-react"
 import toast from "react-hot-toast"
 
-import { claimQuest, getDailyRewards, getQuestList } from "@/lib/api"
+import { claimQuest, getQuestList } from "@/lib/api"
 import { cn } from "@/lib/utils"
 
 interface Quest {
