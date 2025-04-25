@@ -27,15 +27,19 @@ interface CreateAlienProps {
   selectedTraits: {
     hair: string
     hairId: number
-    face: string
-    faceId: number
+    eyes: string
+    eyesId: number
+    mouth: string
+    mouthId: number
   }
   setSelectedTraits: Dispatch<
     SetStateAction<{
       hair: string
       hairId: number
-      face: string
-      faceId: number
+      eyes: string
+      eyesId: number
+      mouth: string
+      mouthId: number
     }>
   >
 }
@@ -65,12 +69,16 @@ const CreateAlien = ({
       toast.error("Please select an element for your alien")
       return
     }
-    if (!selectedTraits.hair) {
+    if (!selectedTraits.hairId) {
       toast.error("Please select a hair style for your alien")
       return
     }
-    if (!selectedTraits.face) {
-      toast.error("Please select a face for your alien")
+    if (!selectedTraits.eyesId) {
+      toast.error("Please select a eyes for your alien")
+      return
+    }
+    if (!selectedTraits.mouthId) {
+      toast.error("Please select a mouth for your alien")
       return
     }
 
@@ -110,8 +118,12 @@ const CreateAlien = ({
       formData.append("elementId", createAlienData.elementId?.toString() || "")
       formData.append("image", file)
       formData.append("hairId", selectedTraits.hairId?.toString() || "")
-      formData.append("faceId", selectedTraits.faceId?.toString() || "")
+      formData.append("eyesId", selectedTraits.eyesId?.toString() || "")
+      formData.append("mouthId", selectedTraits.mouthId?.toString() || "")
       formData.append("strengthPoints", "100") // Default strength points
+
+      console.log("File ===>", file)
+      console.log("formData ===>", formData)
 
       await createAlien(formData)
 
@@ -251,14 +263,14 @@ const CreateAlien = ({
               </ScrollArea>
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl max-lg:hidden">Choose your Face</h3>
+              <h3 className="text-xl max-lg:hidden">Choose your Eyes</h3>
 
               <ScrollArea>
                 <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap max-w-full no-scrollbar">
-                  {traits?.alienParts?.FACE?.map((face, index) => (
+                  {traits?.alienParts?.EYES?.map((eyes, index) => (
                     <GradientBorder
                       key={index}
-                      isSelected={selectedTraits.face === face.image}
+                      isSelected={selectedTraits.eyes === eyes.image}
                       className=" transition-colors duration-300"
                     >
                       <div
@@ -266,15 +278,53 @@ const CreateAlien = ({
                         onClick={() =>
                           setSelectedTraits({
                             ...selectedTraits,
-                            face: face.image,
-                            faceId: face.id,
+                            eyes: eyes.image,
+                            eyesId: eyes.id,
                           })
                         }
                       >
                         <div className="w-full h-full bg-white/20 rounded-lg flex items-center justify-center relative overflow-hidden">
                           <Image
-                            src={face.image}
-                            alt="face image"
+                            src={eyes.image}
+                            alt="eyes image"
+                            width={200}
+                            height={200}
+                            className="size-[calc(100%+150px)] object-cover absolute -top-9 -left-1"
+                            crossOrigin="anonymous"
+                          />
+                        </div>
+                      </div>
+                    </GradientBorder>
+                  ))}
+                </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-xl max-lg:hidden">Choose your Mouth</h3>
+
+              <ScrollArea>
+                <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap max-w-full no-scrollbar">
+                  {traits?.alienParts?.MOUTH?.map((mouth, index) => (
+                    <GradientBorder
+                      key={index}
+                      isSelected={selectedTraits.mouth === mouth.image}
+                      className=" transition-colors duration-300"
+                    >
+                      <div
+                        className="min-w-20 h-20 p-0.5 rounded-lg cursor-pointer"
+                        onClick={() =>
+                          setSelectedTraits({
+                            ...selectedTraits,
+                            mouth: mouth.image,
+                            mouthId: mouth.id,
+                          })
+                        }
+                      >
+                        <div className="w-full h-full bg-white/20 rounded-lg flex items-center justify-center relative overflow-hidden">
+                          <Image
+                            src={mouth.image}
+                            alt="mouth image"
                             width={200}
                             height={200}
                             className="size-[calc(100%+150px)] object-cover absolute -top-9 -left-1"

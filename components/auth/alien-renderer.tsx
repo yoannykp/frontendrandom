@@ -5,7 +5,8 @@ import { useIsMobile } from "@/hooks/useIsMobile"
 interface AlienRendererProps {
   selectedTraits: {
     hair: string
-    face: string
+    eyes: string
+    mouth: string
   }
   element: string
 }
@@ -75,8 +76,9 @@ export const AlienRenderer = forwardRef<HTMLCanvasElement, AlienRendererProps>(
           // Create a new array of all image sources
           const allImageSources = [
             ...baseImages,
-            ...(selectedTraits.face ? [selectedTraits.face] : []),
             ...(selectedTraits.hair ? [selectedTraits.hair] : []),
+            ...(selectedTraits.eyes ? [selectedTraits.eyes] : []),
+            ...(selectedTraits.mouth ? [selectedTraits.mouth] : []),
             ...(element ? [element] : []),
           ]
 
@@ -108,7 +110,12 @@ export const AlienRenderer = forwardRef<HTMLCanvasElement, AlienRendererProps>(
       }
 
       loadAllImages()
-    }, [selectedTraits.face, selectedTraits.hair, element])
+    }, [
+      selectedTraits.eyes,
+      selectedTraits.hair,
+      selectedTraits.mouth,
+      element,
+    ])
 
     useEffect(() => {
       if (!isImagesLoaded) return
@@ -180,9 +187,14 @@ export const AlienRenderer = forwardRef<HTMLCanvasElement, AlienRendererProps>(
             drawImage(imageCache[headPath])
           }
 
-          // Draw selected face traits
-          if (selectedTraits.face && imageCache[selectedTraits.face]) {
-            drawImage(imageCache[selectedTraits.face])
+          // Draw selected eyes traits
+          if (selectedTraits.eyes && imageCache[selectedTraits.eyes]) {
+            drawImage(imageCache[selectedTraits.eyes])
+          }
+
+          // Draw selected mouth traits
+          if (selectedTraits.mouth && imageCache[selectedTraits.mouth]) {
+            drawImage(imageCache[selectedTraits.mouth])
           }
 
           // Draw selected hair

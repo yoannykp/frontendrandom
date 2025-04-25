@@ -206,24 +206,44 @@ const DojoPage = () => {
             element: [],
           }
 
+          // Track IDs to prevent duplicates
+          const seenIds: Record<string, Set<number>> = {
+            hair: new Set(),
+            eyes: new Set(),
+            mouth: new Set(),
+            element: new Set(),
+          }
+
           // Process all objects in the array and collect their parts
           res.data.userAlienParts.forEach((collection) => {
             if (collection.parts && Array.isArray(collection.parts)) {
               collection.parts.forEach((part: any) => {
                 const type = part.type.toLowerCase()
-                if (partsMap[type] !== undefined) {
+                if (
+                  partsMap[type] !== undefined &&
+                  !seenIds[type].has(part.id)
+                ) {
+                  seenIds[type].add(part.id)
                   partsMap[type].push(part)
                 }
               })
             }
           })
 
+          // For elements, also check for duplicates
+          const uniqueElements = res.data?.elements
+            ? res.data.elements.filter(
+                (element: any, index: number, self: any[]) =>
+                  index === self.findIndex((e: any) => e.id === element.id)
+              )
+            : []
+
           // Update traits with the grouped parts
           setTraits({
             HAIR: partsMap.hair || [],
             EYES: partsMap.eyes || [],
             MOUTH: partsMap.mouth || [],
-            ELEMENT: res.data?.elements || [],
+            ELEMENT: uniqueElements || [],
           })
         }
       })

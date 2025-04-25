@@ -69,14 +69,18 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
 
   const [selectedTraits, setSelectedTraits] = useState<{
     hair: string
-    face: string
+    eyes: string
+    mouth: string
     hairId: number
-    faceId: number
+    eyesId: number
+    mouthId: number
   }>({
     hair: "",
-    face: "",
+    eyes: "",
+    mouth: "",
     hairId: 0,
-    faceId: 0,
+    eyesId: 0,
+    mouthId: 0,
   })
 
   const [isTwitterLinked, setIsTwitterLinked] = useState(false)
@@ -90,9 +94,11 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
         })
         setSelectedTraits({
           hair: res.data.alienParts.HAIR[0].image,
-          face: res.data.alienParts.FACE[0].image,
+          eyes: res.data.alienParts.EYES[0].image,
+          mouth: res.data.alienParts.MOUTH[0].image,
           hairId: res.data.alienParts.HAIR[0].id,
-          faceId: res.data.alienParts.FACE[0].id,
+          eyesId: res.data.alienParts.EYES[0].id,
+          mouthId: res.data.alienParts.MOUTH[0].id,
         })
       }
     })

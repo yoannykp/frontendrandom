@@ -184,9 +184,6 @@ export const createAlien = async (
     url: "/profile/create-alien",
     method: "POST",
     data,
-    // headers: {
-    //   "Content-Type": "multipart/form-data",
-    // },
   })
 }
 
