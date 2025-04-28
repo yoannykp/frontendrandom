@@ -648,3 +648,17 @@ export const claimQuest = async (
   })
   return response
 }
+
+export const getForgeList = async (): Promise<ApiResponse<any>> => {
+  const response = await apiManager.get<any>("/profile/get-forge-parts")
+  return response
+}
+
+export const forgeAlienPart = async (
+  alienPartId: number
+): Promise<ApiResponse<any>> => {
+  const response = await apiManager.post<any>("/profile/forge-parts", {
+    alienPartId,
+  })
+  return response
+}
