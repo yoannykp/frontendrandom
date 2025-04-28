@@ -115,7 +115,7 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
 
   const moveToNextStep = () => {
     if (currentStep === 3) {
-      router.push("/")
+      router.push("/?showDailyReward=true")
       return
     }
 

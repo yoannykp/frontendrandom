@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { ForgeTabs } from "@/types"
 import { ArrowLeft, ArrowRight, Check, Lock } from "lucide-react"
@@ -11,6 +11,9 @@ import "swiper/css"
 import "swiper/css/effect-coverflow"
 import "swiper/css/navigation"
 
+import toast from "react-hot-toast"
+
+import { forgeAlienPart, getForgeList } from "@/lib/api"
 import { cn } from "@/lib/utils"
 
 const CustomArrow = ({
@@ -34,7 +37,9 @@ const CustomArrow = ({
 
 const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [activeItemId, setActiveItemId] = useState<string | null>(null)
   const swiperRef = useRef<SwiperType>()
+  const [forgeList, setForgeList] = useState<any[]>([])
 
   // Example items - replace with your actual data
   const items = [
@@ -59,6 +64,39 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
       image: "/images/girl.jpeg",
     },
   ]
+
+  useEffect(() => {
+    getForgeList().then((res) => {
+      setForgeList(res.data?.alienParts)
+      // Set initial active item ID if data is available
+      if (res.data?.alienParts?.length > 0) {
+        setActiveItemId(res.data.alienParts[0].id)
+      }
+    })
+  }, [])
+
+  // Function to handle forge request
+  const handleForge = async () => {
+    if (!activeItemId) return
+
+    try {
+      forgeAlienPart(Number(activeItemId)).then((res) => {
+        console.log("Forge response:", res)
+        if (res.data?.success) {
+          toast.success("Forge successful")
+        } else {
+          toast.error("Forge failed")
+        }
+      })
+
+      // Handle success/error as needed
+    } catch (error) {
+      console.error("Error forging item:", error)
+    }
+  }
+
+  console.log("activeItemId ===>", activeItemId)
+  console.log("forgeList ===>", forgeList)
 
   return (
     <div className="w-full h-full rounded-lg backdrop-blur-xl border border-white/10 p-2">
@@ -211,6 +249,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
             </div>
           </div>
         )}
+
         {activeTab === ForgeTabs.FORGE && (
           <div className="h-full w-full flex items-center justify-center">
             <div className="relative w-full  ">
@@ -233,9 +272,17 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                 }}
                 modules={[EffectCoverflow, Navigation]}
                 className="w-full py-10 "
-                onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+                onSlideChange={(swiper) => {
+                  setActiveIndex(swiper.activeIndex)
+                  // Get the real index considering loop mode
+                  const realIndex = swiper.realIndex
+                  // Update active item ID when slide changes
+                  if (forgeList[realIndex]?.id) {
+                    setActiveItemId(forgeList[realIndex].id)
+                  }
+                }}
               >
-                {items.map((item, index) => (
+                {forgeList.map((item, index) => (
                   <SwiperSlide key={index} className="w-full">
                     {({ isActive }) => (
                       <div
@@ -300,13 +347,17 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                   </div>
                 </div>
               </div>
-              <button className="w-full h-14 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center relative group overflow-hidden">
+              <button
+                onClick={handleForge}
+                className="w-full h-14 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center relative group overflow-hidden"
+              >
                 <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all group-disabled:group-hover:h-[30px] bg-[#5FD7FF]" />
                 <span className="text-white text-xl">Forge</span>
               </button>
             </div>
           </div>
         )}
+
         {activeTab === ForgeTabs.PROMOTION && (
           <div className="h-full w-full max-w-max mx-auto flex flex-col">
             {/* Main content */}

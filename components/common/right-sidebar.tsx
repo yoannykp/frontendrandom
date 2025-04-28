@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Trophy } from "lucide-react"
@@ -43,11 +43,24 @@ const sidebarItems = [
   },
 ]
 
-const RightSidebar = ({ className }: { className?: string }) => {
-  const [isRewardModalOpen, setIsRewardModalOpen] = useState(false)
+const RightSidebar = ({
+  className,
+  queryIsRewardModalOpen,
+}: {
+  className?: string
+  queryIsRewardModalOpen?: boolean
+}) => {
+  const [isRewardModalOpen, setIsRewardModalOpen] = useState(
+    queryIsRewardModalOpen || false
+  )
   const pathname = usePathname()
 
-  console.log("pathname ===>", pathname)
+  useEffect(() => {
+    if (queryIsRewardModalOpen) {
+      setIsRewardModalOpen(true)
+    }
+  }, [queryIsRewardModalOpen])
+
   return (
     <div
       className={cn(

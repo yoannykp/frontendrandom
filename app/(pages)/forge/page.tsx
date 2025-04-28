@@ -32,7 +32,7 @@ const TABS = [
 
 const Page = () => {
   const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false)
-  const [activeTab, setActiveTab] = useState<ForgeTabs>(ForgeTabs.ENHANCEMENT)
+  const [activeTab, setActiveTab] = useState<ForgeTabs>(ForgeTabs.FORGE)
   return (
     <Loader>
       <Suspense

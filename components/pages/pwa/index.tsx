@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useAliens, useProfile } from "@/store/hooks"
 import { useLogout } from "@privy-io/react-auth"
 import { Copy, CopyCheck, Loader2, LogOut } from "lucide-react"
@@ -30,6 +30,15 @@ export default function Home() {
   const [unseenReferralRewards, setUnseenReferralRewards] = useState(0)
   const [isCopied, setIsCopied] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  const searchParams = useSearchParams()
+  const [isRewardModalOpen, setIsRewardModalOpen] = useState(false)
+
+  useEffect(() => {
+    if (searchParams.get("showDailyReward")) {
+      setIsRewardModalOpen(true)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     const fetchJackpotAmount = async () => {
@@ -72,6 +81,8 @@ export default function Home() {
     }, 2000)
   }
 
+  console.log("profile ===>", profile)
+
   return (
     <>
       <div
@@ -84,7 +95,10 @@ export default function Home() {
         }}
       >
         <div className="flex-1 flex flex-col items-center justify-center">
-          <RightSidebar className="absolute left-8 top-10 max-lg:hidden " />
+          <RightSidebar
+            className="absolute left-8 top-10 max-lg:hidden"
+            queryIsRewardModalOpen={isRewardModalOpen}
+          />
 
           <div className="flex gap-4 items-stretch w-full max-w-screen-lg">
             <div className="w-1/2 hidden lg:block">

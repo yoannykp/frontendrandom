@@ -122,9 +122,6 @@ const CreateAlien = ({
       formData.append("mouthId", selectedTraits.mouthId?.toString() || "")
       formData.append("strengthPoints", "100") // Default strength points
 
-      console.log("File ===>", file)
-      console.log("formData ===>", formData)
-
       await createAlien(formData)
 
       if (!createStatus.error) {
