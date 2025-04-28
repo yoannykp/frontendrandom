@@ -78,9 +78,9 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
     hair: "",
     eyes: "",
     mouth: "",
-    hairId: 0,
-    eyesId: 0,
-    mouthId: 0,
+    hairId: -1,
+    eyesId: -1,
+    mouthId: -1,
   })
 
   const [isTwitterLinked, setIsTwitterLinked] = useState(false)

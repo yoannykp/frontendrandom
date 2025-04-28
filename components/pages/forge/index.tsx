@@ -37,9 +37,11 @@ const CustomArrow = ({
 
 const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [activeItem, setActiveItem] = useState<any>(null)
   const [activeItemId, setActiveItemId] = useState<string | null>(null)
   const swiperRef = useRef<SwiperType>()
   const [forgeList, setForgeList] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
   // Example items - replace with your actual data
   const items = [
@@ -70,6 +72,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
       setForgeList(res.data?.alienParts)
       // Set initial active item ID if data is available
       if (res.data?.alienParts?.length > 0) {
+        setActiveItem(res.data.alienParts[0])
         setActiveItemId(res.data.alienParts[0].id)
       }
     })
@@ -78,20 +81,22 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
   // Function to handle forge request
   const handleForge = async () => {
     if (!activeItemId) return
-
+    setIsLoading(true)
     try {
       forgeAlienPart(Number(activeItemId)).then((res) => {
         console.log("Forge response:", res)
         if (res.data?.success) {
           toast.success("Forge successful")
         } else {
-          toast.error("Forge failed")
+          toast.error(res.data?.error?.message || "Forge failed")
         }
       })
 
       // Handle success/error as needed
     } catch (error) {
       console.error("Error forging item:", error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -278,6 +283,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                   const realIndex = swiper.realIndex
                   // Update active item ID when slide changes
                   if (forgeList[realIndex]?.id) {
+                    setActiveItem(forgeList[realIndex])
                     setActiveItemId(forgeList[realIndex].id)
                   }
                 }}
@@ -300,7 +306,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                             className="object-cover w-full h-full"
                           />
                         </div>
-                        {isActive && (
+                        {/* {isActive && (
                           <>
                             <h3 className="text-center text-[#5FD7FF] text-xl mt-4">
                               {item.name}
@@ -309,7 +315,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                               Power {item.power}
                             </p>
                           </>
-                        )}
+                        )} */}
                       </div>
                     )}
                   </SwiperSlide>
@@ -335,7 +341,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
             <div className="absolute bottom-0 right-0 flex flex-col gap-2 w-[300px] p-4">
               <div className="w-full h-14 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center">
                 <span className="text-[#5FD7FF] text-xl">
-                  {items[activeIndex]?.name}
+                  {activeItem?.name}
                 </span>
               </div>
               <div className="w-full h-14 rounded-xl bg-[#1A1D1F]/60 backdrop-blur-md border border-white/10 flex items-center justify-between px-4">
@@ -349,10 +355,13 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
               </div>
               <button
                 onClick={handleForge}
+                disabled={!activeItemId || isLoading}
                 className="w-full h-14 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center relative group overflow-hidden"
               >
                 <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all group-disabled:group-hover:h-[30px] bg-[#5FD7FF]" />
-                <span className="text-white text-xl">Forge</span>
+                <span className="text-white text-xl">
+                  {isLoading ? "Forging..." : "Forge"}
+                </span>
               </button>
             </div>
           </div>
