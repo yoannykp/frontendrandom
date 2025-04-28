@@ -69,15 +69,15 @@ const CreateAlien = ({
       toast.error("Please select an element for your alien")
       return
     }
-    if (!selectedTraits.hairId) {
+    if (selectedTraits?.hairId === -1 || !selectedTraits?.hairId) {
       toast.error("Please select a hair style for your alien")
       return
     }
-    if (!selectedTraits.eyesId) {
+    if (selectedTraits?.eyesId === -1 || !selectedTraits?.eyesId) {
       toast.error("Please select a eyes for your alien")
       return
     }
-    if (!selectedTraits.mouthId) {
+    if (selectedTraits?.mouthId === -1 || !selectedTraits?.mouthId) {
       toast.error("Please select a mouth for your alien")
       return
     }
