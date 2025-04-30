@@ -134,7 +134,8 @@ export const useDailyRewards = () => {
 
   const handleClaimRewards = async () => {
     try {
-      await dispatch(claimDailyRewards()).unwrap()
+      const response = await dispatch(claimDailyRewards()).unwrap()
+      return response
     } catch (error) {
       throw error
     }

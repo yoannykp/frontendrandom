@@ -274,3 +274,46 @@ export const handleSignMessage = async (
 
   return sign
 }
+
+/**
+ * Checks if a wallet is an external wallet (MetaMask, Rainbow, Coinbase Wallet, etc.)
+ * @param wallet The wallet object to check
+ * @param supportedWallets List of supported external wallet names (lowercase)
+ * @returns Boolean indicating if the wallet is an external wallet
+ */
+export const isExternalWallet = (
+  wallet: any,
+  supportedWallets: string[] = [
+    "metamask",
+    "rainbow",
+    "coinbase_wallet",
+    "phantom",
+  ]
+): boolean => {
+  // Check if wallet has the expected structure
+  if (!wallet || typeof wallet !== "object") return false
+
+  // Check if it's an Ethereum wallet
+  if (wallet.type !== "ethereum") return false
+
+  // Check if it has meta information
+  if (!wallet.meta || !wallet.meta.name) return false
+
+  // Check if the wallet is from an external connector
+  if (
+    wallet.connectorType === "injected" ||
+    wallet.connectorType === "walletconnect"
+  ) {
+    // Check if the wallet name matches any in our supported list
+    const walletName = wallet.meta.name.toLowerCase()
+    return supportedWallets.some((name) => walletName.includes(name))
+  }
+
+  // Check wallet client type as fallback
+  if (wallet.walletClientType) {
+    const clientType = wallet.walletClientType.toLowerCase()
+    return supportedWallets.some((name) => clientType.includes(name))
+  }
+
+  return false
+}

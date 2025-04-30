@@ -36,6 +36,36 @@ const Chat = ({
   const { data: profile } = useProfile()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
+  const [messagePollingInterval, setMessagePollingInterval] =
+    useState<NodeJS.Timeout | null>(null)
+
+  // Update polling when chat open/close state changes
+  useEffect(() => {
+    if (isChatOpen) {
+      // Initial fetch when chat opens
+      fetchMessages()
+
+      // Set up polling every 30 seconds
+      const interval = setInterval(() => {
+        fetchMessages()
+      }, 30000) // 30 seconds
+
+      setMessagePollingInterval(interval)
+    } else {
+      // Clear interval when chat closes
+      if (messagePollingInterval) {
+        clearInterval(messagePollingInterval)
+        setMessagePollingInterval(null)
+      }
+    }
+
+    // Clean up interval on component unmount or when effect re-runs
+    return () => {
+      if (messagePollingInterval) {
+        clearInterval(messagePollingInterval)
+      }
+    }
+  }, [isChatOpen]) // Dependency on isChatOpen
 
   // Helper function to fetch messages
   const fetchMessages = async () => {

@@ -493,8 +493,8 @@ export const getDailyRewards = async (): Promise<
   return response
 }
 
-export const awardDailyRewards = async (): Promise<ApiResponse<boolean>> => {
-  const response = await apiManager.get<boolean>("/profile/claim-daily-reward")
+export const awardDailyRewards = async (): Promise<ApiResponse<any>> => {
+  const response = await apiManager.get<any>("/profile/claim-daily-reward")
   return response
 }
 

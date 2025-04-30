@@ -8,7 +8,11 @@ import { useAliens, useProfile, useRaids } from "@/store/hooks"
 import { Plus } from "lucide-react"
 
 import { levelRequirements } from "@/config/constants"
-import { formatNumber, formatRemainingTime } from "@/lib/utils"
+import {
+  formateWalletAddress,
+  formatNumber,
+  formatRemainingTime,
+} from "@/lib/utils"
 import { Progress } from "@/components/ui/progress"
 import Chat from "@/components/common/Chat"
 import RightSidebar from "@/components/common/right-sidebar"
@@ -29,18 +33,48 @@ const Page = () => {
       {!isActivityMenuOpen && (
         <>
           <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden">
-            <div className="absolute inset-0 bg-[url('/images/characters/character-1-mobile.png')] bg-cover bg-center bg-no-repeat lg:bg-[url('/images/characters/character-1-main.png')]"></div>
+            {/* <div className="absolute inset-0 bg-[url('/images/characters/character-1-mobile.png')] bg-cover bg-center bg-no-repeat lg:bg-[url('/images/characters/character-1-main.png')]"></div> */}
+
+            <div
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              style={{
+                backgroundImage: `url(${alien?.element?.image.replace(".png", "-bg.png") || ""})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+            {/* <div
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat left-1/2 -translate-x-1/2"
+              style={{
+                backgroundImage: `url(${alien?.image || ""})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            ></div> */}
+
+            <div
+              className="absolute inset-0 bg-cover bg-no-repeat"
+              style={{
+                backgroundImage: `url(${alien?.image || ""})`,
+                backgroundSize: "cover",
+                backgroundPosition: "25% center", // Position at 25% from left instead of center
+                left: "25%", // Position at 25% from left
+                transform: "translateX(-50%)", // Center the image at that 25% point
+                width: "50%", // Control the width of the image
+              }}
+            ></div>
+
             <div className="absolute top-4 lg:top-10 right-4 lg:left-[23%] glass-effect z-10 px-3 py-2 rounded-xl w-max">
               <div className="flex items-center gap-2">
                 <div className="glass-effect p-1 rounded-lg">
                   <FranceIcon size={13} />
                 </div>
                 <p className="text-lg font-volkhov">
-                  {profile?.walletAddress.slice(0, 6)}
+                  {formateWalletAddress(profile?.walletAddress ?? "")}
                 </p>
               </div>
               <div className="flex items-center gap-6 bg-white/10 rounded-lg py-1 px-2">
-                <p className="text-xs">Strengh points</p>
+                <p className="text-xs">Strength points</p>
                 <p className="font-volkhov text-sm">
                   {alien?.strengthPoints ?? 0}
                 </p>

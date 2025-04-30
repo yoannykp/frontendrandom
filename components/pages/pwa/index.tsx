@@ -134,11 +134,11 @@ export default function Home() {
                     Treasure
                   </BrandButton>
                 </Link>
-                <Link href={"/raids"} className="w-full">
+                {/* <Link href={"/raids"} className="w-full">
                   <BrandButton className="w-full " blurColor="bg-[#96DFF4]">
                     Raid
                   </BrandButton>
-                </Link>
+                </Link> */}
               </div>
               <Link
                 href={

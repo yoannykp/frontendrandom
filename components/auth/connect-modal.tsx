@@ -21,11 +21,9 @@ const ConnectModal = ({
   moveToPreviousStep: () => void
   moveToStep: (step: number) => void
 }) => {
-  const { login, ready, authenticated, signMessage } = usePrivy()
+  const { login, ready, authenticated, signMessage, connectWallet } = usePrivy()
   const { logout } = useLogout()
-
   const { wallets } = useWallets()
-
   const router = useRouter()
   const options = [
     {
@@ -57,6 +55,14 @@ const ConnectModal = ({
     // },
   ]
 
+  const getEthWallet = () => {
+    const wallet = wallets.find((wallet) => wallet.connectorType !== "embedded")
+    if (wallet) {
+      return wallet
+    }
+    return null
+  }
+
   const handleOptionClick = (option: (typeof options)[0]) => {
     if (ready && authenticated) {
       logout()
@@ -65,8 +71,60 @@ const ConnectModal = ({
     }
   }
 
+  // const handleAuthenticate = async () => {
+  //   const wallet = wallets[0]
+  //   if (!wallet) {
+  //     toast.error("Please connect a wallet")
+  //     return
+  //   }
+
+  //   const chain = getChain(parseInt(wallet.chainId.split(":")[1]))
+
+  //   if (chain.id !== parseInt(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID!)) {
+  //     await wallet.switchChain(
+  //       parseInt(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID!)
+  //     )
+  //   }
+
+  //   let sign = null
+
+  //   sign = await handleSignMessage(
+  //     process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
+  //     wallet,
+  //     signMessage
+  //   )
+
+  //   if (!sign) {
+  //     toast.error("Please connect a wallet")
+  //     return
+  //   }
+
+  //   const res = await authenticate({
+  //     signature: sign,
+  //     signedMessage: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
+  //   })
+  //   if (res.data) {
+  //     router.push("/?showDailyReward=true")
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   const checkUser = async () => {
+  //     if (authenticated && ready && wallets[0]) {
+  //       const res = await checkUserExist(wallets[0].address)
+
+  //       if (res.data) {
+  //         handleAuthenticate()
+  //       } else {
+  //         moveToStep(2)
+  //       }
+  //     }
+  //   }
+  //   checkUser()
+  // }, [authenticated, ready, wallets[0]])
+
   const handleAuthenticate = async () => {
-    const wallet = wallets[0]
+    const wallet = getEthWallet()
     if (!wallet) {
       toast.error("Please connect a wallet")
       return
@@ -98,23 +156,31 @@ const ConnectModal = ({
       signedMessage: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
     })
     if (res.data) {
-      router.push("/")
+      router.push("/?showDailyReward=true")
     }
   }
 
   useEffect(() => {
     const checkUser = async () => {
-      if (authenticated && ready && wallets[0]) {
-        const res = await checkUserExist(wallets[0].address)
-        if (res.data) {
-          handleAuthenticate()
+      if (authenticated && ready && wallets.length > 0) {
+        const ethWallet = getEthWallet()
+        if (ethWallet) {
+          const res = await checkUserExist(ethWallet.address)
+
+          if (res.data) {
+            handleAuthenticate()
+          } else {
+            moveToStep(2)
+          }
         } else {
-          moveToStep(2)
+          connectWallet({
+            walletList: ["metamask", "rainbow", "coinbase_wallet", "phantom"],
+          })
         }
       }
     }
     checkUser()
-  }, [authenticated, ready, wallets[0]])
+  }, [authenticated, ready, wallets])
 
   return (
     <div className="w-full md:w-[35rem] space-y-6 z-20">

@@ -16,7 +16,7 @@ const TeamRecap = () => {
 
           <div className="space-y-2 ">
             <div className="flex items-center justify-between bg-white/5 rounded px-2 py-1">
-              <span className="text-xs  font-inter">Strengh points</span>
+              <span className="text-xs  font-inter">Strength points</span>
               <span className="font-volkhov text-2xs">
                 {team?.teamStrengthPoints}
               </span>
@@ -25,13 +25,13 @@ const TeamRecap = () => {
               <div className="flex items-center justify-between bg-white/5 rounded px-2 py-1 flex-1">
                 <span className="text-xs  font-inter uppercase">XP</span>
                 <span className="font-volkhov text-2xs ">
-                  +{team?.buffs.xpBoost}%
+                  +{team?.buffs?.xpBoost}%
                 </span>
               </div>
               <div className="flex items-center justify-between bg-white/5 rounded px-2 py-1 flex-1">
                 <span className="text-xs  font-inter uppercase">Star</span>
                 <span className="font-volkhov text-2xs">
-                  +{team?.buffs.starsBoost}%
+                  +{team?.buffs?.starsBoost}%
                 </span>
               </div>
             </div>

@@ -37,9 +37,14 @@ const DailyLoginReward = () => {
   const handleClaim = async () => {
     if (currentReward && isClaimed(currentReward)) return
     try {
-      await claimRewards()
-      toast.success("Daily rewards claimed successfully!")
-      fetchDailyRewards() // Refresh the rewards data
+      const res = await claimRewards()
+
+      if (res?.success) {
+        toast.success("Daily rewards claimed successfully!")
+        fetchDailyRewards()
+      } else {
+        toast.error(res?.error?.message || "Failed to claim rewards")
+      }
     } catch (error) {
       toast.error("Failed to claim rewards")
     }
