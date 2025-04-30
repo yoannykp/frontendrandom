@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation"
 import { Trophy } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useIsMobile } from "@/hooks/useIsMobile"
 
 import DailyLoginModal from "../DailyLoginReward/Modal"
 import {
@@ -54,6 +55,7 @@ const RightSidebar = ({
     queryIsRewardModalOpen || false
   )
   const pathname = usePathname()
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     if (queryIsRewardModalOpen) {
@@ -78,7 +80,7 @@ const RightSidebar = ({
         <AlienzoneIcon className="size-6" />
       </Link>
 
-      {pathname === "/home" && (
+      {pathname === "/home" && isMobile && (
         <Chat className="lg:hidden absolute left-8 bottom-10" btnClassName="" />
       )}
 

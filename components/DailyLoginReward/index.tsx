@@ -20,14 +20,35 @@ const DailyLoginReward = () => {
   const [currentReward, setCurrentReward] = useState<DailyReward | null>(null)
   const [timeLeft, setTimeLeft] = useState("")
 
+  // const isClaimed = (reward: DailyReward) => {
+  //   return rewards?.claimedDailyRewards.some((r) => r.id === reward.id)
+  // }
+
+  const formatDate = (date: Date): string => {
+    const day = date.getUTCDate()
+    const month = date.getUTCMonth() + 1 // Months are 0-based
+    const year = date.getUTCFullYear()
+    return `${day}-${month}-${year}`
+  }
+
   const isClaimed = (reward: DailyReward) => {
-    return rewards?.claimedDailyRewards.some((r) => r.id === reward.id)
+    const rewardPresent = rewards?.claimedDailyRewards.some(
+      (r) => r.id === reward.id
+    )
+    const lastDailyClaimed = rewards?.lastDailyClaimed
+    if (!lastDailyClaimed) return false
+
+    const todayStr = formatDate(new Date())
+    const claimedStr = formatDate(new Date(lastDailyClaimed))
+
+    return rewardPresent && todayStr === claimedStr
   }
 
   const isCurrent = (reward: DailyReward) => {
-    const today = new Date()
-    const rewardDay = new Date(reward.rewardDate)
-    return rewardDay.toDateString() === today.toDateString()
+    const todayStr = formatDate(new Date())
+    const rewardDay = formatDate(new Date(reward.rewardDate))
+
+    return todayStr === rewardDay
   }
 
   useEffect(() => {
@@ -104,12 +125,14 @@ const DailyLoginReward = () => {
     }
   }
 
+  console.log("Rewards ===>", rewards)
+
   return (
     <div>
-      <h2 className="font-medium mb-5 bg-white/5 border border-white/10 w-max rounded-xl p-4">
+      <h2 className="font-medium mb-5 bg-white/15 border border-white/10 w-max rounded-xl p-4">
         Daily Login Bonus
       </h2>
-      <div className="w-full mx-auto bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl p-6">
+      <div className="w-full mx-auto bg-white/15 border border-white/10 backdrop-blur-md rounded-2xl p-6">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Grid of rewards */}
           <div className="flex-1">
@@ -124,10 +147,10 @@ const DailyLoginReward = () => {
                       className={cn(
                         "relative aspect-square rounded-xl overflow-hidden flex flex-col",
                         isClaimed(reward)
-                          ? "bg-white/5"
+                          ? "bg-white/10"
                           : isCurrent(reward)
                             ? "bg-white/10 cursor-pointer"
-                            : "bg-white/5 opacity-50"
+                            : "bg-white/10 opacity-50"
                       )}
                       onClick={() => {
                         if (isCurrent(reward)) {
@@ -185,7 +208,7 @@ const DailyLoginReward = () => {
           </div>
 
           <div className="lg:w-[240px] flex-shrink-0">
-            <div className="bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col gap-4 h-full">
+            <div className="bg-white/15 border border-white/10 rounded-xl p-4 flex flex-col gap-4 h-full">
               <div className="flex flex-col gap-2 bg-white/5 p-3 rounded text-center">
                 <div className="text-lg font-medium">Today&apos;s Claim</div>
                 <div className="font-inter text-sm">
