@@ -66,7 +66,7 @@ const RightSidebar = ({
   return (
     <div
       className={cn(
-        " z-20 flex  lg:flex-col gap-2 max-lg:justify-between",
+        "z-20 flex lg:flex-col gap-2 max-lg:justify-between",
         className
       )}
     >
@@ -84,7 +84,7 @@ const RightSidebar = ({
         <Chat className="lg:hidden absolute left-8 bottom-10" btnClassName="" />
       )}
 
-      <div className="glass-effect  flex justify-center rounded-normal flex-row lg:flex-col items-center gap-1.5 lg:gap-2.5 max-lg:h-14 lg:w-14 p-2 max-lg:backdrop-blur-0 max-lg:border-none">
+      <div className="glass-effect flex justify-center rounded-normal flex-row lg:flex-col items-center gap-1.5 lg:gap-2.5 max-lg:h-14 lg:w-14 p-2 max-lg:backdrop-blur-0 max-lg:border-none">
         {sidebarItems.map((item, index) => {
           const isActive = pathname === item.href
 

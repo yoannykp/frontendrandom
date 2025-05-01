@@ -32,7 +32,7 @@ const Page = () => {
     <>
       {!isActivityMenuOpen && (
         <>
-          <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden">
+          <div className="flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden">
             {/* <div className="absolute inset-0 bg-[url('/images/characters/character-1-mobile.png')] bg-cover bg-center bg-no-repeat lg:bg-[url('/images/characters/character-1-main.png')]"></div> */}
 
             <div
@@ -62,7 +62,7 @@ const Page = () => {
                 transform: "translateX(-50%)", // Center the image at that 25% point
                 width: "50%", // Control the width of the image
               }}
-            ></div>
+            />
 
             <div className="absolute top-4 lg:top-10 right-4 lg:left-[23%] glass-effect z-10 px-3 py-2 rounded-xl w-max">
               <div className="flex items-center gap-2">

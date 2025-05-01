@@ -20,7 +20,7 @@ const RaidsPage = () => {
   const { data: histories } = useRaidHistory()
   return (
     <>
-      <div className="hidden lg:flex w-full relative  gap-3 ">
+      <div className="hidden lg:flex w-full relative gap-3">
         <RaidsList
           selectedRaid={selectedRaid}
           setSelectedRaid={setSelectedRaid}

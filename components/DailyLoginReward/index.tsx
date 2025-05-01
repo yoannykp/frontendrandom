@@ -20,9 +20,9 @@ const DailyLoginReward = () => {
   const [currentReward, setCurrentReward] = useState<DailyReward | null>(null)
   const [timeLeft, setTimeLeft] = useState("")
 
-  // const isClaimed = (reward: DailyReward) => {
-  //   return rewards?.claimedDailyRewards.some((r) => r.id === reward.id)
-  // }
+  const isClaimed = (reward: DailyReward) => {
+    return rewards?.claimedDailyRewards.some((r) => r.id === reward.id)
+  }
 
   const formatDate = (date: Date): string => {
     const day = date.getUTCDate()
@@ -31,7 +31,7 @@ const DailyLoginReward = () => {
     return `${day}-${month}-${year}`
   }
 
-  const isClaimed = (reward: DailyReward) => {
+  const isClaimedTodayReward = (reward: DailyReward) => {
     const rewardPresent = rewards?.claimedDailyRewards.some(
       (r) => r.id === reward.id
     )
@@ -57,6 +57,7 @@ const DailyLoginReward = () => {
 
   const handleClaim = async () => {
     if (currentReward && isClaimed(currentReward)) return
+
     try {
       const res = await claimRewards()
 
@@ -272,9 +273,11 @@ const DailyLoginReward = () => {
         <BrandButton
           className="w-full mt-4"
           onClick={handleClaim}
-          disabled={loading}
+          disabled={
+            loading || (!!currentReward && isClaimedTodayReward(currentReward))
+          }
         >
-          {currentReward && !isClaimed(currentReward)
+          {currentReward && !isClaimedTodayReward(currentReward)
             ? "Claim Reward"
             : "Already Claimed"}
         </BrandButton>
