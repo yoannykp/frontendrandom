@@ -350,8 +350,11 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                 <span className="text-white/80">Requested to promote</span>
                 <div className="flex items-center gap-2">
                   <span className="text-[#5FD7FF]">
-                    {userRuneAmounts[activeItem?.forgeRuneType]}/
-                    {activeItem?.forgeRuneAmount}
+                    {activeItem?.forgeRuneType &&
+                    userRuneAmounts[activeItem.forgeRuneType] !== undefined
+                      ? userRuneAmounts[activeItem.forgeRuneType]
+                      : 0}
+                    /{activeItem?.forgeRuneAmount || 0}
                   </span>
                   <div className="w-6 h-6 rounded-full bg-[#5FD7FF]/20 flex items-center justify-center">
                     <div className="w-4 h-4 rounded-full bg-[#5FD7FF]" />
@@ -363,8 +366,12 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                 disabled={
                   !activeItemId ||
                   isLoading ||
-                  Number(userRuneAmounts[activeItem?.forgeRuneType] || 0) <
-                    Number(activeItem?.forgeRuneAmount || 0)
+                  Number(
+                    activeItem?.forgeRuneType &&
+                      userRuneAmounts[activeItem.forgeRuneType] !== undefined
+                      ? userRuneAmounts[activeItem.forgeRuneType]
+                      : 0
+                  ) < Number(activeItem?.forgeRuneAmount || 0)
                 }
                 className="w-full h-14 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center relative group overflow-hidden"
               >
