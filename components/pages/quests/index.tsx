@@ -332,7 +332,6 @@ const QuestsPage = () => {
   const handleClaimQuest = (questId: number) => {
     setClaimQuestId(questId)
     claimQuest(questId).then((res) => {
-      console.log("claimQuest response ===>", res)
       if (res.data.success) {
         toast.success("Quest claimed successfully")
         fetchUserProfile()
@@ -346,8 +345,6 @@ const QuestsPage = () => {
       }
     })
   }
-
-  console.log("claimQuestId ===>", currentQuests)
 
   const getRewardImage = (reward: DailyReward) => {
     switch (reward.type) {
@@ -490,7 +487,11 @@ const QuestsPage = () => {
           <div className="relative h-1.5 bg-white/10 rounded-full mt-4">
             <div
               className="absolute left-0 top-0 h-full bg-[#EA66FF] rounded-full"
-              style={{ width: `${rewards?.dailyStreak}%` }}
+              style={{
+                width: rewards?.dailyRewards?.length
+                  ? `${(rewards?.dailyStreak / rewards.dailyRewards.length) * 100}%`
+                  : "0%",
+              }}
             />
           </div>
         </div>

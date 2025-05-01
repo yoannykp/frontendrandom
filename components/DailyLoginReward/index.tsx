@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { useDailyRewards } from "@/store/hooks"
+import { fetchUserProfile } from "@/store/slices/userProfileSlice"
 import { DailyReward } from "@/types"
 import { Check, Lock } from "lucide-react"
 import toast from "react-hot-toast"
@@ -64,6 +65,7 @@ const DailyLoginReward = () => {
       if (res?.success) {
         toast.success("Daily rewards claimed successfully!")
         fetchDailyRewards()
+        fetchUserProfile()
       } else {
         toast.error(res?.error?.message || "Failed to claim rewards")
       }
@@ -125,8 +127,6 @@ const DailyLoginReward = () => {
         return "/images/xp.png"
     }
   }
-
-  console.log("Rewards ===>", rewards)
 
   return (
     <div>

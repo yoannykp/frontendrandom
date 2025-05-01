@@ -25,7 +25,7 @@ const CustomArrow = ({
 }) => (
   <button
     onClick={onClick}
-    className="size-12 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-white"
+    className="size-12 rounded-xl bg-white/15 hover:bg-white/20 border border-white/10 flex items-center justify-center text-white"
   >
     {direction === "left" ? (
       <ArrowLeft className="w-5 h-5" />
@@ -42,6 +42,12 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
   const swiperRef = useRef<SwiperType>()
   const [forgeList, setForgeList] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [userRuneAmounts, setUserRuneAmounts] = useState<any>({
+    COMMON: 0,
+    RARE: 0,
+    EPIC: 0,
+    LEGENDARY: 0,
+  })
 
   // Example items - replace with your actual data
   const items = [
@@ -70,6 +76,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
   useEffect(() => {
     getForgeList().then((res) => {
       setForgeList(res.data?.alienParts)
+      setUserRuneAmounts(res.data?.userRuneAmounts)
       // Set initial active item ID if data is available
       if (res.data?.alienParts?.length > 0) {
         setActiveItem(res.data.alienParts[0])
@@ -257,7 +264,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
 
         {activeTab === ForgeTabs.FORGE && (
           <div className="h-full w-full flex items-center justify-center">
-            <div className="relative w-full  ">
+            <div className="relative w-full h-full">
               <Swiper
                 effect="coverflow"
                 grabCursor={true}
@@ -276,7 +283,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                   swiperRef.current = swiper
                 }}
                 modules={[EffectCoverflow, Navigation]}
-                className="w-full py-10 "
+                className="w-full py-10"
                 onSlideChange={(swiper) => {
                   setActiveIndex(swiper.activeIndex)
                   // Get the real index considering loop mode
@@ -291,22 +298,17 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                 {forgeList.map((item, index) => (
                   <SwiperSlide key={index} className="w-full">
                     {({ isActive }) => (
-                      <div
-                        className={cn(
-                          "forge-item rounded-xl transition-all duration-300",
-                          "p-2"
-                        )}
-                      >
-                        <div className="aspect-square  relative rounded-lg overflow-hidden">
+                      <div className="rounded-xl transition-all duration-300 p-2">
+                        <div className="aspect-square relative overflow-hidden">
                           <Image
                             src={item.image}
                             alt={item.name}
                             width={400}
                             height={400}
-                            className="object-cover w-full h-full"
+                            className="object-cover w-full h-full rounded-lg"
                           />
                         </div>
-                        {/* {isActive && (
+                        {isActive && (
                           <>
                             <h3 className="text-center text-[#5FD7FF] text-xl mt-4">
                               {item.name}
@@ -315,7 +317,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                               Power {item.power}
                             </p>
                           </>
-                        )} */}
+                        )}
                       </div>
                     )}
                   </SwiperSlide>
@@ -323,13 +325,13 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
               </Swiper>
 
               {/* Custom Navigation Buttons */}
-              <div className="absolute -left-16 top-1/2 -translate-y-1/2 z-10">
+              <div className="absolute -left-22 top-1/2 -translate-y-1/2 z-10">
                 <CustomArrow
                   direction="left"
                   onClick={() => swiperRef.current?.slidePrev()}
                 />
               </div>
-              <div className="absolute -right-16 top-1/2 -translate-y-1/2 z-10">
+              <div className="absolute -right-6 top-1/2 -translate-y-1/2 z-10">
                 <CustomArrow
                   direction="right"
                   onClick={() => swiperRef.current?.slideNext()}
@@ -347,7 +349,10 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
               <div className="w-full h-14 rounded-xl bg-[#1A1D1F]/60 backdrop-blur-md border border-white/10 flex items-center justify-between px-4">
                 <span className="text-white/80">Requested to promote</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-[#5FD7FF]">11/15</span>
+                  <span className="text-[#5FD7FF]">
+                    {userRuneAmounts[activeItem?.forgeRuneType]}/
+                    {activeItem?.forgeRuneAmount}
+                  </span>
                   <div className="w-6 h-6 rounded-full bg-[#5FD7FF]/20 flex items-center justify-center">
                     <div className="w-4 h-4 rounded-full bg-[#5FD7FF]" />
                   </div>
@@ -355,7 +360,12 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
               </div>
               <button
                 onClick={handleForge}
-                disabled={!activeItemId || isLoading}
+                disabled={
+                  !activeItemId ||
+                  isLoading ||
+                  Number(userRuneAmounts[activeItem?.forgeRuneType] || 0) <
+                    Number(activeItem?.forgeRuneAmount || 0)
+                }
                 className="w-full h-14 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center relative group overflow-hidden"
               >
                 <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all group-disabled:group-hover:h-[30px] bg-[#5FD7FF]" />
