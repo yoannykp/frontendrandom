@@ -42,7 +42,7 @@ export const links = [
 
   {
     title: "Upgrade",
-    href: "/upgrade",
+    href: "/forge",
     icon: UpgradeIcon,
     image: "/images/pages/upgrade.png",
   },

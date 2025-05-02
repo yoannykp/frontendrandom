@@ -123,11 +123,11 @@ const InventoryPage = () => {
 
   return (
     <div className="relative w-full h-full">
-      <div className="relative w-full h-full bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col lg:flex-row gap-3">
+      <div className="relative w-full h-full bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col lg:flex-row gap-3 overflow-hidden">
         {/* Main content area - hidden on mobile when item is selected */}
         <div
           className={cn(
-            "w-full h-full bg-white/5 backdrop-blur-lg rounded p-4",
+            "w-full h-full bg-white/5 backdrop-blur-lg rounded p-4 overflow-hidden",
             selectedItem ? "hidden lg:block" : "block"
           )}
         >
@@ -148,7 +148,7 @@ const InventoryPage = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3 mt-4">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3 mt-4 pb-20 h-full overflow-y-auto">
             {filteredItems.length > 0 ? (
               filteredItems.map((item, index) => (
                 <div
