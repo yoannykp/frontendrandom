@@ -44,6 +44,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [userRuneAmounts, setUserRuneAmounts] = useState<any>({
     COMMON: 0,
+    UNCOMMON: 0,
     RARE: 0,
     EPIC: 0,
     LEGENDARY: 0,
