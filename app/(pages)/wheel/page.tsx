@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react"
 import Link from "next/link"
 import { useAliens } from "@/store/hooks"
 
-import { canSpin, getWheelItems } from "@/lib/api"
+import { canSpin, getSpinHistory, getWheelItems } from "@/lib/api"
 import { cn } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import IconButton from "@/components/ui/icon-button"
@@ -17,6 +17,28 @@ import AlienzoneIcon from "@/components/icons/alienzone"
 import WheelPage from "@/components/pages/wheel/page"
 import Wheel from "@/components/pages/wheel/Wheel"
 
+const colors = [
+  "#FF8A00", // Stars
+  "#FFD600", // Bronze Cut
+  "#FF69B4", // Silver Knife
+  "#FF99CC", // Golden Shears
+  "#FF4444", // Uncommon Rune
+  "#7FFF00", // Common Rune
+  "#00BFFF", // Rare Rune
+  "#4169E1", // Epic Rune
+  "#FF0000", // Legendary Rune
+  // Additional colors if needed
+  // "#9400D3",
+  // "#00FF7F",
+  // "#FF1493",
+  // "#1E90FF",
+  // "#FFB6C1",
+  // "#32CD32",
+  // "#FF6347",
+  // "#8A2BE2",
+  // "#20B2AA",
+]
+
 const Page = () => {
   const [isOpenMobileMenu, setIsOpenMobileMenu] = useState(false)
   const [isSpinning, setIsSpinning] = useState(false)
@@ -27,27 +49,9 @@ const Page = () => {
     }[]
   >([])
   const [userCanSpin, setUserCanSpin] = useState(false)
+  const [spinHistory, setSpinHistory] = useState<string[]>([])
+  const [isError, setIsError] = useState(false)
 
-  const colors = [
-    "#FF8A00",
-    "#FFD600",
-    "#FF69B4",
-    "#FF99CC",
-    "#FF4444",
-    "#7FFF00",
-    "#00BFFF",
-    "#4169E1",
-    "#FF0000",
-    "#9400D3",
-    "#00FF7F",
-    "#FF1493",
-    "#1E90FF",
-    "#FFB6C1",
-    "#32CD32",
-    "#FF6347",
-    "#8A2BE2",
-    "#20B2AA",
-  ]
   const [winningItem, setWinningItem] = useState<{
     color: string
     name: string
@@ -55,15 +59,18 @@ const Page = () => {
   const { alien } = useAliens()
 
   useEffect(() => {
-    const fetchCanSpin = async () => {
-      const response = await canSpin()
-      // setUserCanSpin(response.data?.canSpin || false)
-      setUserCanSpin(true)
-    }
     fetchCanSpin()
+    fetchWheelItems()
+    fetchSpinHistory()
   }, [])
 
-  useEffect(() => {
+  const fetchCanSpin = async () => {
+    const response = await canSpin()
+    setUserCanSpin(response.data?.canSpin || false)
+    // setUserCanSpin(true)
+  }
+
+  const fetchWheelItems = async () => {
     getWheelItems().then((res) => {
       const items = res.data?.map((item, index) => ({
         ...item,
@@ -71,15 +78,28 @@ const Page = () => {
       }))
       setWheelItems(items || [])
     })
-  }, [])
+  }
+
+  const fetchSpinHistory = async () => {
+    const response = await getSpinHistory()
+    setSpinHistory(response.data?.spinTimes ?? [])
+  }
 
   const handleSpinComplete = (item: { color: string; name: string }) => {
+    console.log("spin completed!!!!")
+    if (!isError) {
+      setSpinHistory([...spinHistory, new Date().toISOString()])
+    }
     setWinningItem(item)
     setIsSpinning(false)
+
+    fetchCanSpin()
+    fetchWheelItems()
   }
 
   const handleSpin = async () => {
     if (!userCanSpin || isSpinning) return
+    setIsError(false)
     setIsSpinning(true)
   }
 
@@ -142,6 +162,7 @@ const Page = () => {
                     isSpinning={isSpinning}
                     onSpinComplete={handleSpinComplete}
                     items={wheelItems}
+                    setIsError={setIsError}
                   />
                 </div>
 
@@ -149,6 +170,9 @@ const Page = () => {
                   <WheelPage
                     wheelItems={wheelItems}
                     userCanSpin={userCanSpin}
+                    spinHistory={spinHistory}
+                    handleSpinComplete={handleSpinComplete}
+                    setIsError={setIsError}
                   />
                   <div className="absolute bottom-5 left-1/2 -translate-x-1/2 max-lg:hidden">
                     <BrandButton
@@ -164,7 +188,13 @@ const Page = () => {
               </div>
 
               <div className="flex flex-col rounded-2xl  z-10  gap-3 lg:hidden flex-1">
-                <WheelPage wheelItems={wheelItems} userCanSpin={userCanSpin} />
+                <WheelPage
+                  wheelItems={wheelItems}
+                  userCanSpin={userCanSpin}
+                  spinHistory={spinHistory}
+                  handleSpinComplete={handleSpinComplete}
+                  setIsError={setIsError}
+                />
               </div>
 
               {/* Background Gradients */}

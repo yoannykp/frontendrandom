@@ -2,6 +2,26 @@ import { useEffect, useRef, useState } from "react"
 import frameImageSrc from "@/public/images/wheel/frame.png"
 import toast from "react-hot-toast"
 
+import { spinWheel } from "@/lib/api"
+
+// Define a mapping between item types and colors
+const itemColorMap = {
+  // Basic types
+  STARS: "#FF8A00",
+
+  // Item types
+  CUT: "#FFD600", // Bronze Cut
+  KNIFE: "#FF69B4", // Silver Knife
+  SHEARS: "#FF99CC", // Golden Shears
+
+  // Rune types
+  UNCOMMON: "#FF4444",
+  COMMON: "#7FFF00",
+  RARE: "#00BFFF",
+  EPIC: "#4169E1",
+  LEGENDARY: "#FF0000",
+}
+
 // Simulate API call to get winning item
 const getWinningItem = async (
   items: Array<{ color: string; name: string }>
@@ -24,9 +44,15 @@ interface WheelProps {
   isSpinning?: boolean
   onSpinComplete?: (item: { color: string; name: string }) => void
   items?: Array<{ color: string; name: string }>
+  setIsError: (isError: boolean) => void
 }
 
-const Wheel = ({ isSpinning, onSpinComplete, items }: WheelProps) => {
+const Wheel = ({
+  isSpinning,
+  onSpinComplete,
+  items,
+  setIsError,
+}: WheelProps) => {
   const [currentItem, setCurrentItem] = useState<{
     color: string
     name: string
@@ -34,6 +60,7 @@ const Wheel = ({ isSpinning, onSpinComplete, items }: WheelProps) => {
   const [isFinished, setFinished] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const [frameImage, setFrameImage] = useState<HTMLImageElement | null>(null)
+  const [spinWheelResponse, setSpinWheelResponse] = useState<any>(null)
 
   // Configuration constants
   const WINNING_ANGLE = Math.PI * 2 // 180 degrees (bottom of wheel)
@@ -89,22 +116,22 @@ const Wheel = ({ isSpinning, onSpinComplete, items }: WheelProps) => {
   }, [segmentItems])
 
   // Handle spin state change
-  useEffect(() => {
-    if (isSpinning && !isAnimating && !spinRequestedRef.current) {
-      // Set flag to prevent multiple calls
-      spinRequestedRef.current = true
+  // useEffect(() => {
+  //   if (isSpinning && !isAnimating && !spinRequestedRef.current) {
+  //     // Set flag to prevent multiple calls
+  //     spinRequestedRef.current = true
 
-      // Call startSpin but don't wait for it to complete in the effect
-      startSpin().catch((error) => {
-        console.error("Error in spin effect:", error)
-        // Reset flag on error
-        spinRequestedRef.current = false
-      })
-    } else if (!isSpinning) {
-      // Reset flag when spinning state is turned off
-      spinRequestedRef.current = false
-    }
-  }, [isSpinning, isAnimating])
+  //     // Call startSpin but don't wait for it to complete in the effect
+  //     startSpin().catch((error) => {
+  //       console.error("Error in spin effect:", error)
+  //       // Reset flag on error
+  //       spinRequestedRef.current = false
+  //     })
+  //   } else if (!isSpinning) {
+  //     // Reset flag when spinning state is turned off
+  //     spinRequestedRef.current = false
+  //   }
+  // }, [isSpinning, isAnimating])
 
   const drawWheel = () => {
     const canvas = canvasRef.current
@@ -199,6 +226,108 @@ const Wheel = ({ isSpinning, onSpinComplete, items }: WheelProps) => {
     // ctx.stroke()
   }
 
+  // Handle spin state change
+  useEffect(() => {
+    if (isSpinning && !isAnimating && !spinRequestedRef.current) {
+      // Set flag to prevent multiple calls
+      spinRequestedRef.current = true
+
+      // Call startSpin without the API call here
+      startSpinWithoutAPI().catch((error) => {
+        console.error("Error in spin effect:", error)
+        // Reset flag on error
+        spinRequestedRef.current = false
+      })
+    } else if (!isSpinning) {
+      // Reset flag when spinning state is turned off
+      spinRequestedRef.current = false
+    }
+  }, [isSpinning, isAnimating])
+
+  // New method that starts the animation without calling the API
+  const startSpinWithoutAPI = async () => {
+    // Don't start spinning if already in progress
+    if (isAnimating) {
+      spinRequestedRef.current = false
+      return
+    }
+
+    setIsAnimating(true)
+
+    try {
+      // Set the winning segment based on a random index for now
+      // The actual result will be fetched in finishSpin
+      const randomIndex = Math.floor(Math.random() * segmentsRef.current.length)
+      winningSegmentIndexRef.current = randomIndex
+      setCurrentItem(null) // Clear any previous result
+      setFinished(false)
+
+      // Determine the winning segment based on the winning angle
+      const segmentAngle = (2 * Math.PI) / segmentsRef.current.length
+
+      // Randomize starting position to make it unpredictable
+      const randomStartAngle = Math.random() * 2 * Math.PI
+      angleCurrent.current = randomStartAngle
+
+      // Generate random position within segment (0 to segmentAngle)
+      randomPositionRef.current = Math.random() * segmentAngle
+
+      // Start animation
+      startTimeRef.current = performance.now()
+      requestRef.current = requestAnimationFrame(animateSpin)
+    } catch (error) {
+      setIsAnimating(false)
+      spinRequestedRef.current = false
+      console.error("Error starting spin:", error)
+    }
+  }
+
+  const finishSpin = async () => {
+    try {
+      // Call the API when the animation is finishing
+      const response = await spinWheel()
+      setSpinWheelResponse(response.data)
+
+      // Use the API response to determine the actual winning item
+      if (response?.data?.success) {
+        // If API provides a winning index, update it
+        // if (response.data?.winningIndex !== undefined) {
+        const randomIndex = Math.floor(Math.random() * 9)
+        winningSegmentIndexRef.current = randomIndex
+        // }
+        if (response?.data?.result) {
+          // @ts-expect-error 'error' is not defined in the response
+          toast.success(response?.data?.result?.message)
+        }
+      } else {
+        toast.error(
+          // @ts-expect-error 'error' is not defined in the response
+          response?.data?.error ||
+            "An error occurred while retrieving your prize"
+        )
+        setIsError(true)
+      }
+    } catch (error) {
+      console.error("Error getting winning item:", error)
+      toast.error("An error occurred while retrieving your prize")
+    } finally {
+      setIsAnimating(false)
+      setFinished(true)
+
+      // Reset spin request flag
+      spinRequestedRef.current = false
+
+      // Get winning item
+      const winningItem = segmentsRef.current[winningSegmentIndexRef.current]
+
+      setCurrentItem(winningItem)
+
+      if (onSpinComplete) {
+        onSpinComplete(winningItem)
+      }
+    }
+  }
+
   const startSpin = async () => {
     // Don't start spinning if already in progress
     if (isAnimating) {
@@ -209,12 +338,14 @@ const Wheel = ({ isSpinning, onSpinComplete, items }: WheelProps) => {
     setIsAnimating(true)
 
     try {
-      // Get winning item from API (simulated)
-      const response = await getWinningItem(segmentsRef.current)
-      console.log("response", response)
-      if (response.success && response.data) {
+      const response = await spinWheel()
+
+      if (response?.data?.success && response.data) {
+        setSpinWheelResponse(response.data)
+
         // Set the winning segment based on API response
-        winningSegmentIndexRef.current = response.data.winningIndex
+        const randomIndex = Math.floor(Math.random() * 9)
+        winningSegmentIndexRef.current = randomIndex
         setCurrentItem(null) // Clear any previous result
         setFinished(false)
 
@@ -237,6 +368,35 @@ const Wheel = ({ isSpinning, onSpinComplete, items }: WheelProps) => {
         spinRequestedRef.current = false
         console.error("Failed to get winning item from API")
       }
+
+      // Get winning item from API (simulated)
+      // const response = await getWinningItem(segmentsRef.current)
+      // console.log("response", response)
+      // if (response.success && response.data) {
+      //   // Set the winning segment based on API response
+      //   winningSegmentIndexRef.current = response.data.winningIndex
+      //   setCurrentItem(null) // Clear any previous result
+      //   setFinished(false)
+
+      //   // Determine the winning segment based on the winning angle
+      //   const segmentAngle = (2 * Math.PI) / segmentsRef.current.length
+
+      //   // Randomize starting position to make it unpredictable
+      //   const randomStartAngle = Math.random() * 2 * Math.PI
+      //   angleCurrent.current = randomStartAngle
+
+      //   // Generate random position within segment (0 to segmentAngle)
+      //   randomPositionRef.current = Math.random() * segmentAngle
+
+      //   // Start animation
+      //   startTimeRef.current = performance.now()
+      //   requestRef.current = requestAnimationFrame(animateSpin)
+      // } else {
+      //   // Handle API error
+      //   setIsAnimating(false)
+      //   spinRequestedRef.current = false
+      //   console.error("Failed to get winning item from API")
+      // }
     } catch (error) {
       setIsAnimating(false)
       spinRequestedRef.current = false
@@ -278,23 +438,24 @@ const Wheel = ({ isSpinning, onSpinComplete, items }: WheelProps) => {
     }
   }
 
-  const finishSpin = () => {
-    setIsAnimating(false)
-    setFinished(true)
+  // const finishSpin = () => {
+  //   setIsAnimating(false)
+  //   setFinished(true)
 
-    // Reset spin request flag
-    spinRequestedRef.current = false
+  //   // Reset spin request flag
+  //   spinRequestedRef.current = false
 
-    // Get winning item
-    const winningItem = segmentsRef.current[winningSegmentIndexRef.current]
-    console.log("winningItem", winningItem.name)
-    toast.success(`You won ${winningItem.name}`)
-    setCurrentItem(winningItem)
+  //   // Get winning item
+  //   const winningItem = segmentsRef.current[winningSegmentIndexRef.current]
+  //   console.log("winningItem", winningItem.name)
+  //   // toast.success(`You won ${winningItem.name}`)
+  //   toast.success(`You won ${spinWheelResponse.data.message}`)
+  //   setCurrentItem(winningItem)
 
-    if (onSpinComplete) {
-      onSpinComplete(winningItem)
-    }
-  }
+  //   if (onSpinComplete) {
+  //     onSpinComplete(winningItem)
+  //   }
+  // }
 
   return (
     <div
