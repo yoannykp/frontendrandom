@@ -1,5 +1,8 @@
+"use client"
+
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { useDailyRewards, useProfile } from "@/store/hooks"
 import { DailyReward } from "@/types"
 import { CheckCircle, Loader2, MessageSquare, Plus } from "lucide-react"
@@ -14,7 +17,7 @@ interface Quest {
   title: string
   timeLeft: string
   action: string
-  type: "claim" | "action" | "progress"
+  type: "login" | "raid" | "buy" | "message" | "wheel"
   progress?: string
   completed?: boolean
   frequency?: string
@@ -23,6 +26,9 @@ interface Quest {
   requiredNumber?: number
   isCompleted?: boolean
   isClaimed?: boolean
+  rewards?: {
+    stars: number
+  }
 }
 
 interface Reward {
@@ -41,7 +47,7 @@ const DAILY_QUESTS: Quest[] = [
     title: "Daily Login Bonus",
     timeLeft: "1h left",
     action: "Claim",
-    type: "claim",
+    type: "login",
   },
   {
     id: 2,
@@ -50,7 +56,7 @@ const DAILY_QUESTS: Quest[] = [
     timeLeft: "3h left",
     progress: "2/3",
     action: "Go",
-    type: "action",
+    type: "raid",
   },
   {
     id: 3,
@@ -59,7 +65,7 @@ const DAILY_QUESTS: Quest[] = [
     timeLeft: "5h left",
     progress: "750/1000",
     action: "Go",
-    type: "progress",
+    type: "buy",
   },
 ]
 
@@ -71,7 +77,7 @@ const WEEKLY_QUESTS: Quest[] = [
     title: "Connect on AlienRaids",
     timeLeft: "1h left",
     action: "Claim",
-    type: "claim",
+    type: "message",
   },
   {
     id: 2,
@@ -80,7 +86,7 @@ const WEEKLY_QUESTS: Quest[] = [
     timeLeft: "1h left",
     progress: "20/20",
     action: "Go",
-    type: "action",
+    type: "wheel",
   },
   {
     id: 3,
@@ -89,7 +95,7 @@ const WEEKLY_QUESTS: Quest[] = [
     timeLeft: "6h left",
     progress: "5/5",
     action: "Go",
-    type: "progress",
+    type: "buy",
     completed: true,
   },
   {
@@ -99,7 +105,7 @@ const WEEKLY_QUESTS: Quest[] = [
     timeLeft: "12h left",
     progress: "5/5",
     action: "Go",
-    type: "action",
+    type: "wheel",
   },
   {
     id: 5,
@@ -107,7 +113,7 @@ const WEEKLY_QUESTS: Quest[] = [
     title: "Collect your first Raids rewards",
     timeLeft: "24h left",
     action: "Claim",
-    type: "claim",
+    type: "wheel",
   },
   {
     id: 6,
@@ -115,7 +121,7 @@ const WEEKLY_QUESTS: Quest[] = [
     title: "Send your team on a Raid",
     timeLeft: "36h left",
     action: "Go",
-    type: "progress",
+    type: "raid",
   },
 ]
 
@@ -275,6 +281,7 @@ const QuestsPage = () => {
   } = useDailyRewards()
   // Filter quests based on active tab
   const filteredQuests = quests.filter((quest) => quest.frequency === activeTab)
+  const router = useRouter()
 
   useEffect(() => {
     fetchDailyRewards()
@@ -357,8 +364,41 @@ const QuestsPage = () => {
     }
   }
 
+  const redirectTo = (type: Quest["type"]) => {
+    let link = ""
+    switch (type) {
+      case "login":
+        link = "/login"
+        break
+      case "raid":
+        link = "/raids"
+        break
+      case "buy":
+        link = "/store"
+        break
+      case "message":
+        link = "/friends"
+        break
+      case "wheel":
+        link = "/wheel"
+        break
+    }
+
+    router.push(link)
+  }
+
   const isClaimed = (reward: DailyReward) => {
     return rewards?.claimedDailyRewards.some((r) => r.id === reward.id)
+  }
+
+  const showGoButton = (quest: Quest) => {
+    const types = ["login", "buy"]
+
+    return types.includes(quest.type)
+      ? quest.currentProgress !== undefined &&
+          quest.requiredNumber !== undefined &&
+          Number(quest.currentProgress) >= Number(quest.requiredNumber)
+      : true
   }
 
   return (
@@ -406,41 +446,6 @@ const QuestsPage = () => {
         <div className="flex-1 bg-white/5 rounded-lg p-3">
           {/* Reward Points */}
           <div className="flex justify-between mt-4">
-            {/* {REWARDS.map((reward, index) => (
-              <div key={index} className="flex flex-col  gap-2">
-                <div className="relative flex items-center gap-3 rounded-xl lg:min-w-[120px]">
-                  <div className="relative max-lg:hidden">
-                    <div className="w-10 h-10 rounded bg-white/5 border border-white/10 flex items-center justify-center p-1.5">
-                      <Image
-                        src={reward.icon}
-                        alt={reward.type}
-                        width={32}
-                        height={32}
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col">
-                    <span className="text-[11px] text-[#8E9297]">
-                      Day {reward.day}
-                    </span>
-                    <span className="text-sm text-white font-medium">
-                      {reward.amount}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="ml-4">
-                  <div
-                    className={cn(
-                      "size-2.5 rounded-full border-2  border-white/10",
-                      reward.claimed ? "bg-[#EA66FF]" : "bg-white/10"
-                    )}
-                  />
-                </div>
-              </div>
-            ))} */}
             {rewards?.dailyRewards &&
               rewards?.dailyRewards.map((reward, index) => (
                 <div key={index} className="flex flex-col  gap-2">
@@ -499,49 +504,6 @@ const QuestsPage = () => {
 
       {/* Quests List */}
       <div className="flex-1 overflow-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-        {/* {currentQuests.map((quest) => (
-          <div
-            key={quest.id}
-            className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10"
-          >
-            <div className="w-12 h-12 rounded-lg overflow-hidden">
-              <Image
-                src={quest.icon}
-                alt={quest.title}
-                width={48}
-                height={48}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            <div className="flex-1">
-              <h3 className="text-white">{quest.title}</h3>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-white/50">{quest.timeLeft}</span>
-                {quest.progress && (
-                  <>
-                    <span className="text-white/20">•</span>
-                    <span className="text-sm text-white/50">
-                      {quest.progress}
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
-
-            <button
-              className={cn(
-                "px-6 py-2 rounded-lg",
-                quest.type === "progress" && quest.completed
-                  ? "bg-[#62B67C] text-white"
-                  : "bg-white/10 text-white hover:bg-white/20"
-              )}
-            >
-              {quest.action}
-            </button>
-          </div>
-        ))} */}
-
         {currentQuests.map((quest) => (
           <div
             key={quest.id}
@@ -580,31 +542,51 @@ const QuestsPage = () => {
               </div>
             </div>
 
-            <button
-              className={cn(
-                "h-12 w-20 flex justify-center items-center rounded-lg",
-                (quest.type === "progress" && quest.completed) ||
-                  quest.isCompleted
-                  ? "bg-[#62B67C] text-white"
-                  : "bg-white/10 text-white hover:bg-white/20"
+            <div className="flex items-center gap-4">
+              <div className="rounded bg-white/5 border border-white/10 flex justify-center p-1.5 items-center gap-1">
+                <Image
+                  src="/images/stars.png"
+                  alt="stars"
+                  width={26}
+                  height={26}
+                />
+                <span className="text-sm text-white font-medium">
+                  {quest?.rewards?.stars}
+                </span>
+              </div>
+              {showGoButton(quest) && (
+                <button
+                  className={cn(
+                    "h-12 w-20 flex justify-center items-center rounded-lg",
+                    quest.isCompleted
+                      ? "bg-[#62B67C] text-white"
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  )}
+                  onClick={() => {
+                    if (quest.isCompleted && !quest.isClaimed) {
+                      handleClaimQuest(quest.id)
+                    } else {
+                      redirectTo(quest.type)
+                    }
+                  }}
+                  disabled={
+                    quest.isClaimed ||
+                    claimQuestId === quest.id ||
+                    !!claimQuestId
+                  }
+                >
+                  {quest.isClaimed ? (
+                    <CheckCircle className="w-4 h-4" />
+                  ) : claimQuestId === quest.id ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : quest.isCompleted ? (
+                    "Claim"
+                  ) : (
+                    "Go"
+                  )}
+                </button>
               )}
-              onClick={() => {
-                if (quest.isCompleted && !quest.isClaimed) {
-                  handleClaimQuest(quest.id)
-                }
-              }}
-              disabled={
-                quest.isClaimed || claimQuestId === quest.id || !!claimQuestId
-              }
-            >
-              {quest.isClaimed ? (
-                <CheckCircle className="w-4 h-4" />
-              ) : claimQuestId === quest.id ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                quest.action || (quest.isCompleted ? "Claim" : "Go")
-              )}
-            </button>
+            </div>
           </div>
         ))}
       </div>

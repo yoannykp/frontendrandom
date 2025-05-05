@@ -26,6 +26,7 @@ const preloadImage = (src: string): Promise<HTMLImageElement> => {
     img.crossOrigin = "anonymous"
     img.onload = () => {
       imageCache[src] = img
+
       console.log(`Successfully loaded image: ${src}`)
       resolve(img)
     }

@@ -775,7 +775,7 @@ const FriendsPage = () => {
                       <h3 className="text-white font-medium">
                         {selectedFriend.name}
                       </h3>
-                      <div className="flex items-center gap-1">
+                      {/* <div className="flex items-center gap-1">
                         <div
                           className={cn(
                             "w-2 h-2 rounded-full",
@@ -789,7 +789,7 @@ const FriendsPage = () => {
                             ? "Currently online"
                             : "Currently offline"}
                         </p>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <button className="text-xs font-inter border border-white/10 px-3 py-1 rounded bg-white/5">
@@ -940,7 +940,7 @@ const FriendsPage = () => {
                     <h3 className="text-white font-medium">
                       {selectedFriend.name}
                     </h3>
-                    <div className="flex items-center gap-1">
+                    {/* <div className="flex items-center gap-1">
                       <div
                         className={cn(
                           "w-2 h-2 rounded-full",
@@ -954,7 +954,7 @@ const FriendsPage = () => {
                           ? "Currently online"
                           : "Currently offline"}
                       </p>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 <button className="text-xs font-inter border border-white/10 px-3 py-1 rounded bg-white/5">

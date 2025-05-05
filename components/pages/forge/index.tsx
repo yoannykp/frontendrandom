@@ -75,6 +75,10 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
   ]
 
   useEffect(() => {
+    fetchForgeList()
+  }, [])
+
+  const fetchForgeList = async () => {
     getForgeList().then((res) => {
       setForgeList(res.data?.alienParts)
       setUserRuneAmounts(res.data?.userRuneAmounts)
@@ -84,7 +88,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
         setActiveItemId(res.data.alienParts[0].id)
       }
     })
-  }, [])
+  }
 
   // Function to handle forge request
   const handleForge = async () => {
@@ -92,8 +96,8 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     setIsLoading(true)
     try {
       forgeAlienPart(Number(activeItemId)).then((res) => {
-        console.log("Forge response:", res)
         if (res.data?.success) {
+          fetchForgeList()
           toast.success("Forge successful")
         } else {
           toast.error(res.data?.error?.message || "Forge failed")
@@ -107,9 +111,6 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
       setIsLoading(false)
     }
   }
-
-  console.log("activeItemId ===>", activeItemId)
-  console.log("forgeList ===>", forgeList)
 
   return (
     <div className="w-full h-full rounded-lg backdrop-blur-xl border border-white/10 p-2">
