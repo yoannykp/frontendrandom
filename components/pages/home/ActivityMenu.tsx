@@ -83,8 +83,6 @@ const ActivityMenu = ({
 }) => {
   const { data: profile } = useProfile()
 
-  console.log(alien)
-
   return (
     <div
       className={cn(

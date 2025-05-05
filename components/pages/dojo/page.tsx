@@ -3,18 +3,22 @@
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { useWallet } from "@/context/wallet"
+import { AppDispatch } from "@/store"
 import { useAliens, useProfile, useTeam } from "@/store/hooks"
+import { fetchUserProfile } from "@/store/slices/userProfileSlice"
 import type { AuthUserData, CreateAlienData } from "@/types"
 import { useWallets } from "@privy-io/react-auth"
 import { ArrowLeft, ArrowRight, Loader2, Plus } from "lucide-react"
 import toast from "react-hot-toast"
+import { useDispatch } from "react-redux"
 
 import {
   equipAlienPart,
   getEquippedAlienParts,
   getOwnedAlienParts,
 } from "@/lib/api"
-import { cn, formatNumber } from "@/lib/utils"
+import { cn, formatNumber, getEthWallet } from "@/lib/utils"
 import { GradientBorder } from "@/components/ui/gradient-border"
 import IconButton from "@/components/ui/icon-button"
 import {
@@ -77,6 +81,8 @@ const DOJO_ITEMS = [
   },
 ]
 
+const EQUIP_COST = 150
+
 const DojoPage = () => {
   const { data: aliens, alien, updateAlienImage, fetchAliens } = useAliens()
   const { data: profile } = useProfile()
@@ -94,6 +100,8 @@ const DojoPage = () => {
   })
   const router = useRouter()
   const { wallets } = useWallets()
+  const { user } = useWallet()
+  const wallet = wallets[0] ? getEthWallet(wallets) : null
 
   const [userData, setUserData] = useState<AuthUserData>({
     name: "",
@@ -154,6 +162,8 @@ const DojoPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   // Add a ref for the canvas
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [totalPower, setTotalPower] = useState(0)
+  const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
     if (alien?.id) {
@@ -194,9 +204,13 @@ const DojoPage = () => {
     }
   }, [alien])
 
+  console.log("wallets ===>", wallets)
+
   useEffect(() => {
-    if (wallets?.[0]?.address) {
-      getOwnedAlienParts(wallets?.[0]?.address).then((res) => {
+    console.log("wallet ===>", wallet)
+
+    if (wallet?.address) {
+      getOwnedAlienParts(wallet?.address).then((res) => {
         if (res.data && Array.isArray(res.data?.userAlienParts)) {
           // Initialize parts map
           const partsMap: Record<string, any[]> = {
@@ -214,6 +228,9 @@ const DojoPage = () => {
             element: new Set(),
           }
 
+          // Calculate total power from all parts
+          let totalPartspower = 0
+
           // Process all objects in the array and collect their parts
           res.data.userAlienParts.forEach((collection) => {
             if (collection.parts && Array.isArray(collection.parts)) {
@@ -225,6 +242,11 @@ const DojoPage = () => {
                 ) {
                   seenIds[type].add(part.id)
                   partsMap[type].push(part)
+                }
+
+                // Add part's power to total
+                if (typeof part.power === "number") {
+                  totalPartspower += part.power
                 }
               })
             }
@@ -238,6 +260,16 @@ const DojoPage = () => {
               )
             : []
 
+          // Add element powers
+          uniqueElements.forEach((element: any) => {
+            if (typeof element.power === "number") {
+              totalPartspower += element.power
+            }
+          })
+
+          // Update total power state
+          setTotalPower(totalPartspower)
+
           // Update traits with the grouped parts
           setTraits({
             HAIR: partsMap.hair || [],
@@ -248,11 +280,72 @@ const DojoPage = () => {
         }
       })
     }
-  }, [wallets])
+  }, [wallet])
+
+  // useEffect(() => {
+  //   if (wallets?.[0]?.address) {
+  //     getOwnedAlienParts(wallets?.[0]?.address).then((res) => {
+  //       if (res.data && Array.isArray(res.data?.userAlienParts)) {
+  //         // Initialize parts map
+  //         const partsMap: Record<string, any[]> = {
+  //           hair: [],
+  //           eyes: [],
+  //           mouth: [],
+  //           element: [],
+  //         }
+
+  //         // Track IDs to prevent duplicates
+  //         const seenIds: Record<string, Set<number>> = {
+  //           hair: new Set(),
+  //           eyes: new Set(),
+  //           mouth: new Set(),
+  //           element: new Set(),
+  //         }
+
+  //         // Process all objects in the array and collect their parts
+  //         res.data.userAlienParts.forEach((collection) => {
+  //           if (collection.parts && Array.isArray(collection.parts)) {
+  //             collection.parts.forEach((part: any) => {
+  //               const type = part.type.toLowerCase()
+  //               if (
+  //                 partsMap[type] !== undefined &&
+  //                 !seenIds[type].has(part.id)
+  //               ) {
+  //                 seenIds[type].add(part.id)
+  //                 partsMap[type].push(part)
+  //               }
+  //             })
+  //           }
+  //         })
+
+  //         // For elements, also check for duplicates
+  //         const uniqueElements = res.data?.elements
+  //           ? res.data.elements.filter(
+  //               (element: any, index: number, self: any[]) =>
+  //                 index === self.findIndex((e: any) => e.id === element.id)
+  //             )
+  //           : []
+
+  //         // Update traits with the grouped parts
+  //         setTraits({
+  //           HAIR: partsMap.hair || [],
+  //           EYES: partsMap.eyes || [],
+  //           MOUTH: partsMap.mouth || [],
+  //           ELEMENT: uniqueElements || [],
+  //         })
+  //       }
+  //     })
+  //   }
+  // }, [wallets])
 
   // Track loading state
 
   const handleEquipParts = async () => {
+    if (profile?.stars && profile?.stars < EQUIP_COST) {
+      toast.error(`You need at least ${EQUIP_COST} stars to equip parts`)
+      return
+    }
+
     if (!alien?.id) {
       toast.error("No alien selected")
       return
@@ -267,14 +360,22 @@ const DojoPage = () => {
       return
     }
 
+    // check if defaultTraits and selectedTraits are the same
+    if (JSON.stringify(defaultTraits) === JSON.stringify(selectedTraits)) {
+      toast.error("No changes made")
+      return
+    }
+
     // Get the part IDs directly from the selectedTraits object
-    const selectedPartIds = []
+    let selectedPartIds = []
 
     // Add each selected trait ID if it exists
     if (selectedTraits.hairId) selectedPartIds.push(selectedTraits.hairId)
     if (selectedTraits.eyesId) selectedPartIds.push(selectedTraits.eyesId)
     if (selectedTraits.mouthId) selectedPartIds.push(selectedTraits.mouthId)
     if (selectedTraits.elementId) selectedPartIds.push(selectedTraits.elementId)
+    // remove duplicates
+    selectedPartIds = Array.from(new Set(selectedPartIds))
 
     if (selectedPartIds.length === 0) {
       toast.error("Some traits are not selected")
@@ -292,6 +393,9 @@ const DojoPage = () => {
 
       if (response.data && response.data.success) {
         const success = await handleUpdateAlienImage()
+
+        dispatch(fetchUserProfile())
+
         if (success) {
           toast.success("Parts equipped successfully")
         } else {
@@ -358,6 +462,10 @@ const DojoPage = () => {
       return false
     }
   }
+
+  console.log("alien ===>", alien)
+
+  console.log("profile ===>", profile)
 
   return (
     <div className=" flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-140px)] max-lg:hidden">
@@ -723,7 +831,7 @@ const DojoPage = () => {
                     <span>Equip</span>
                   )}
                   <span className="text-2xs flex items-center gap-2 font-inter">
-                    for 150{" "}
+                    for {EQUIP_COST}{" "}
                     <span className="rounded-full size-5 border border-white/10 flex items-center justify-center">
                       <Image
                         src={"/images/stars.png"}
@@ -779,7 +887,9 @@ const DojoPage = () => {
                         height={50}
                       />
                     </div>
-                    <p className="text-xs font-volkhov">3,621,000 ZONE</p>
+                    <p className="text-xs font-volkhov">
+                      {formatNumber(user?.zoneBalance)} ZONE
+                    </p>
                     <button className="glass-effect size-5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
                       <Plus className="size-3" />
                     </button>
@@ -813,7 +923,7 @@ const DojoPage = () => {
                       />
                     </div>
                     <span className="px-3 text-[#FF985F] text-sm">
-                      {aliens?.length}
+                      {alien?.strengthPoints}
                     </span>
                   </div>
                   <div className="border border-white/10 rounded flex items-center">
@@ -827,7 +937,7 @@ const DojoPage = () => {
                       />
                     </div>
                     <span className="px-3 text-[#FF5FF9] text-sm">
-                      {aliens?.length}
+                      {totalPower}
                     </span>
                   </div>
                 </div>

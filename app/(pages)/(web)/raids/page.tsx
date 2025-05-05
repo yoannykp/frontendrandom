@@ -50,16 +50,24 @@ const Page = () => {
             backgroundPosition: "center",
           }}
         />
-        {/* <div
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat left-1/2 -translate-x-1/2"
-              style={{
-                backgroundImage: `url(${alien?.image || ""})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            ></div> */}
 
-        <div
+        <img
+          src={alien?.image || ""}
+          alt={alien?.name || "Alien character"}
+          className="absolute bg-cover bg-no-repeat"
+          style={{
+            backgroundSize: "cover",
+            backgroundPosition: "25% center",
+            left: "25%",
+            transform: "translateX(-50%)",
+            width: "50%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "25% center",
+          }}
+        />
+
+        {/* <div
           className="absolute inset-0 bg-cover bg-no-repeat opacity-50"
           style={{
             backgroundImage: `url(${alien?.image || ""})`,
@@ -69,7 +77,7 @@ const Page = () => {
             transform: "translateX(-50%)", // Center the image at that 25% point
             width: "50%", // Control the width of the image
           }}
-        />
+        /> */}
 
         <div className=" w-full z-10 pb-12 pr-8 pl-24 pt-[105px] hidden lg:flex">
           <RaidsPage />
