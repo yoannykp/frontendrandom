@@ -87,6 +87,7 @@ const SummonModal = ({
       if (response.error || !response.data || !response.data.success) {
         toast.error(
           response.error?.message ||
+            // @ts-expect-error 'error' is not defined in the response
             response.data?.error?.message ||
             "Failed to get mint data"
         )
