@@ -38,7 +38,7 @@ const TeamRecap = () => {
             <div className="flex items-center justify-between bg-white/5 rounded px-2 py-1">
               <span className="text-xs  font-inter">Raid time</span>
               <span className="font-volkhov text-2xs">
-                +{team?.buffs.raidTimeBoost}%
+                +{team?.buffs?.raidTimeBoost}%
               </span>
             </div>
           </div>

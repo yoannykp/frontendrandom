@@ -83,34 +83,48 @@ const SummonModal = ({
       // Step 1: Get server signature and transaction ID
       const response = await mintCharacters(charactersIds, signature)
 
-      if (response.error || !response.data) {
-        toast.error(response.error?.message || "Failed to get mint data")
+      console.log("Mint Response ==>", response)
+      if (response.error || !response.data || !response.data.success) {
+        toast.error(
+          response.error?.message ||
+            // @ts-expect-error 'error' is not defined in the response
+            response.data?.error?.message ||
+            "Failed to get mint data"
+        )
         return
       }
 
-      const { serverSignature, transactionId } = response.data
+      if (response.data.success) {
+        const { serverSignature, transactionId, nonce } = response.data
 
-      // Step 2: Perform the transaction using the server signature
-      const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
-      if (!contractAddress) {
-        toast.error("Contract address not configured")
-        return
+        // Step 2: Perform the transaction using the server signature
+        const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+        if (!contractAddress) {
+          toast.error("Contract address not configured")
+          return
+        }
+
+        const contract = new ethers.Contract(
+          contractAddress,
+          CONTRACT_ABI,
+          signer
+        )
+
+        // Perform the mint transaction
+        const tx = await contract.mintBatch(
+          tokenIds,
+          amounts,
+          Number(nonce),
+          serverSignature
+        )
+        const receipt = await tx.wait()
+
+        console.log("Tx ==> ", tx)
+        console.log("Receipt ==> ", receipt)
+
+        toast.success("Minted successfully")
+        fetchCharacters() // Refresh the characters list
       }
-
-      const contract = new ethers.Contract(
-        contractAddress,
-        CONTRACT_ABI,
-        signer
-      )
-
-      // Perform the mint transaction
-      const tx = await contract.mintBatch(tokenIds, amounts, serverSignature)
-      const receipt = await tx.wait()
-
-      console.log(receipt)
-
-      toast.success("Minted successfully")
-      fetchCharacters() // Refresh the characters list
     } catch (error) {
       console.error("Minting error:", error)
       toast.error("Failed to mint characters")
