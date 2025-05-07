@@ -2,8 +2,7 @@
   {
     "inputs": [
       { "internalType": "string", "name": "_baseURI", "type": "string" },
-      { "internalType": "address", "name": "_serverWallet", "type": "address" },
-      { "internalType": "address", "name": "admin", "type": "address" }
+      { "internalType": "address", "name": "_serverWallet", "type": "address" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -259,6 +258,7 @@
     "inputs": [
       { "internalType": "uint256", "name": "id", "type": "uint256" },
       { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "uint256", "name": "nonce", "type": "uint256" },
       { "internalType": "bytes", "name": "signature", "type": "bytes" }
     ],
     "name": "burn",
@@ -270,6 +270,7 @@
     "inputs": [
       { "internalType": "uint256[]", "name": "ids", "type": "uint256[]" },
       { "internalType": "uint256[]", "name": "amounts", "type": "uint256[]" },
+      { "internalType": "uint256", "name": "nonce", "type": "uint256" },
       { "internalType": "bytes", "name": "signature", "type": "bytes" }
     ],
     "name": "burnBatch",
@@ -319,6 +320,7 @@
     "inputs": [
       { "internalType": "uint256", "name": "id", "type": "uint256" },
       { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "uint256", "name": "nonce", "type": "uint256" },
       { "internalType": "bytes", "name": "signature", "type": "bytes" }
     ],
     "name": "mint",
@@ -330,6 +332,7 @@
     "inputs": [
       { "internalType": "uint256[]", "name": "ids", "type": "uint256[]" },
       { "internalType": "uint256[]", "name": "amounts", "type": "uint256[]" },
+      { "internalType": "uint256", "name": "nonce", "type": "uint256" },
       { "internalType": "bytes", "name": "signature", "type": "bytes" }
     ],
     "name": "mintBatch",
@@ -382,6 +385,13 @@
     "name": "safeTransferFrom",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "serverWallet",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -456,6 +466,7 @@
       { "internalType": "uint256[]", "name": "ids", "type": "uint256[]" },
       { "internalType": "uint256[]", "name": "amounts", "type": "uint256[]" },
       { "internalType": "uint256", "name": "newTokenId", "type": "uint256" },
+      { "internalType": "uint256", "name": "nonce", "type": "uint256" },
       { "internalType": "bytes", "name": "signature", "type": "bytes" }
     ],
     "name": "upgrade",

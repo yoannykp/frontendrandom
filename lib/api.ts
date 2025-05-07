@@ -458,6 +458,7 @@ export const mintCharacters = async (
     characterIds: number[]
     serverSignature: string
     transactionId: number
+    nonce: number
   }>
 > => {
   const response = await apiManager.post<{
@@ -465,6 +466,7 @@ export const mintCharacters = async (
     characterIds: number[]
     serverSignature: string
     transactionId: number
+    nonce: number
   }>("/character/mint-character", {
     characterIds,
     signature,
