@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
-import frameFireImageSrc from "@/public/images/wheel/fire.png"
 import frameImageSrc from "@/public/images/wheel/frame.png"
 import toast from "react-hot-toast"
 
