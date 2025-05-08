@@ -74,7 +74,10 @@ export const isRaidLaunched = (
   histories?: RaidHistoryResponse[] | null
 ) => {
   if (!histories) return false
-  const history = histories.find((h) => h.raidId === raid.id && h.inProgress)
+  const history = histories.find((h) => {
+    return h.raidId === raid.id && h.inProgress
+  })
+
   return history?.inProgress
 }
 

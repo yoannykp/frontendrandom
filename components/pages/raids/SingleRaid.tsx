@@ -35,7 +35,8 @@ const SingleRaid = ({ raid }: { raid?: Raid }) => {
 
       if (response.data && response.data.success) {
         if (response.data) {
-          dispatch(addRaidHistory(response.data))
+          if (response.data.raidHistory)
+            dispatch(addRaidHistory(response.data.raidHistory))
         }
         toast.success("Raid launched successfully")
       } else {

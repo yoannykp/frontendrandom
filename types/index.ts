@@ -91,6 +91,7 @@ export interface RaidHistoryResponse extends RaidHistory {
   aliens: Alien[]
   error?: any
   success: boolean
+  raidHistory: RaidHistory[]
 }
 
 export interface Alien {
