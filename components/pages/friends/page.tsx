@@ -431,7 +431,7 @@ const FriendsPage = () => {
 
     const newMessage = {
       id: `temp_${timestamp}`,
-      senderId: profile.id,
+      senderId: alien?.userId || profile.id,
       senderWalletAddress: profile.walletAddress,
       content: messageInput,
       timestamp: timestamp,

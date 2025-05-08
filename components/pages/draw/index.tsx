@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { AppDispatch } from "@/store"
-import { useCharacters, useProfile } from "@/store/hooks"
+import { useCharacters } from "@/store/hooks"
 import { fetchUserProfile } from "@/store/slices/userProfileSlice"
 import { Character, Gear } from "@/types"
 import { createPortal } from "react-dom"
