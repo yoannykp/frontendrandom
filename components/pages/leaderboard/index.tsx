@@ -433,7 +433,7 @@ const LeaderboardPage = () => {
             <div className="flex flex-col gap-4 flex-1">
               {/* Main Profile Image with Gallery */}
               <div className="flex gap-2">
-                {/* <div className="flex-1 aspect-square rounded overflow-hidden relative">
+                <div className="flex-1 aspect-square rounded overflow-hidden relative">
                   <Image
                     src={selectedUserTeam?.team[0]?.image || ""}
                     alt="Character"
@@ -445,7 +445,7 @@ const LeaderboardPage = () => {
                     alt="User's alien"
                     fill
                   />
-                </div> */}
+                </div>
                 {selectedUserTeam?.team &&
                   selectedUserTeam.team.filter(
                     (teamMember) => !teamMember.isSelected
