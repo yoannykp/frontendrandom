@@ -114,6 +114,7 @@ const InventoryPage = () => {
         // Refresh inventory
         fetchInventory()
       } else {
+        // @ts-expect-error 'burnResponse' is not typed
         toast.error(burnResponse?.error?.message || "Failed to burn gear")
       }
     } catch (error) {
