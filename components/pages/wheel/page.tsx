@@ -46,8 +46,6 @@ const WheelPage = ({
     name: string
   } | null>(null)
 
-  console.log("spinHistory", spinHistory)
-
   const getCalendarData = () => {
     // Use UTC methods to avoid timezone issues
     const now = new Date()
@@ -124,7 +122,7 @@ const WheelPage = ({
     month: "long",
   })
 
-  const getDateForPosition = (weekIndex: number, dayIndex: number) => {
+  const getDateForPositionOld = (weekIndex: number, dayIndex: number) => {
     const now = new Date()
 
     console.log("now", now)
@@ -152,6 +150,46 @@ const WheelPage = ({
     ) {
       // Format the date using UTC values
       return `${date.getUTCDate()} ${date.toLocaleString("en-US", { month: "long", timeZone: "UTC" })}, ${date.getUTCFullYear()}`
+    }
+
+    // For days outside the current month
+    return ""
+  }
+
+  const getDateForPosition = (weekIndex: number, dayIndex: number) => {
+    const now = new Date()
+
+    console.log("now", now)
+    // Use UTC methods to avoid timezone issues
+    const currentMonth = now.getUTCMonth()
+    const currentYear = now.getUTCFullYear()
+
+    // Get first day of month in UTC
+    const firstDay = new Date(Date.UTC(currentYear, currentMonth, 1))
+
+    // Calculate the day offset based on the first day of the month
+    const firstDayOfWeek = firstDay.getUTCDay()
+
+    // Calculate the actual day number in the month
+    const dayNumber = weekIndex * 7 + dayIndex - firstDayOfWeek + 1
+
+    // Create a new date object for this position using UTC
+    const date = new Date(Date.UTC(currentYear, currentMonth, dayNumber))
+
+    // Only return a formatted date if it's a valid day in the current month
+    if (
+      dayNumber > 0 &&
+      dayNumber <=
+        new Date(Date.UTC(currentYear, currentMonth + 1, 0)).getUTCDate()
+    ) {
+      // Count total spins for this date
+      const dateString = date.toISOString().split("T")[0]
+      const totalSpins = spinHistory.filter(
+        (spin) => spin.split("T")[0] === dateString
+      ).length
+
+      // Format the date using UTC values with total spins count
+      return `${date.getUTCDate()} ${date.toLocaleString("en-US", { month: "long", timeZone: "UTC" })}${totalSpins > 0 ? ` - Total spins: ${totalSpins}` : ""}`
     }
 
     // For days outside the current month

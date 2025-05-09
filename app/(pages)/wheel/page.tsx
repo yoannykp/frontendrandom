@@ -87,6 +87,10 @@ const Page = () => {
     }[]
   >([])
   const [userCanSpin, setUserCanSpin] = useState(false)
+  const [spinStatus, setSpinStatus] = useState<{
+    canSpin: boolean
+    secondsUntilNextSpin: number
+  } | null>(null)
   const [spinHistory, setSpinHistory] = useState<string[]>([])
   const [isError, setIsError] = useState(false)
   const [winningItem, setWinningItem] = useState<{
@@ -104,19 +108,17 @@ const Page = () => {
     fetchSpinHistory()
   }, [])
 
-  // Add new useEffect for countdown timer
   useEffect(() => {
     if (!userCanSpin) {
-      // Calculate next day's start time (midnight)
-      const updateTimer = () => {
-        const now = new Date()
-        const tomorrow = new Date(now)
-        tomorrow.setDate(tomorrow.getDate() + 1)
-        tomorrow.setHours(0, 0, 0, 0)
+      // Use the secondsUntilNextSpin from the API response
+      let secondsRemaining = spinStatus?.secondsUntilNextSpin || 0
 
-        const nextSpinTimestamp = Math.floor(tomorrow.getTime() / 1000)
-        const currentTimestamp = Math.floor(now.getTime() / 1000)
-        const secondsRemaining = nextSpinTimestamp - currentTimestamp
+      const updateTimer = () => {
+        if (secondsRemaining <= 0) {
+          // Time's up, refresh spin status
+          fetchCanSpin()
+          return
+        }
 
         // Format time as HH:MM:SS
         const hours = Math.floor(secondsRemaining / 3600)
@@ -126,6 +128,8 @@ const Page = () => {
         setTimeRemaining(
           `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
         )
+
+        secondsRemaining--
       }
 
       // Initial update
@@ -137,12 +141,47 @@ const Page = () => {
       // Clean up interval on component unmount
       return () => clearInterval(interval)
     }
-  }, [userCanSpin])
+  }, [userCanSpin, spinStatus])
+
+  // Add new useEffect for countdown timer
+  // useEffect(() => {
+  //   if (!userCanSpin) {
+  //     // Calculate next day's start time (midnight)
+  //     const updateTimer = () => {
+  //       const now = new Date()
+  //       const tomorrow = new Date(now)
+  //       tomorrow.setDate(tomorrow.getDate() + 1)
+  //       tomorrow.setHours(0, 0, 0, 0)
+
+  //       const nextSpinTimestamp = Math.floor(tomorrow.getTime() / 1000)
+  //       const currentTimestamp = Math.floor(now.getTime() / 1000)
+  //       const secondsRemaining = nextSpinTimestamp - currentTimestamp
+
+  //       // Format time as HH:MM:SS
+  //       const hours = Math.floor(secondsRemaining / 3600)
+  //       const minutes = Math.floor((secondsRemaining % 3600) / 60)
+  //       const seconds = secondsRemaining % 60
+
+  //       setTimeRemaining(
+  //         `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+  //       )
+  //     }
+
+  //     // Initial update
+  //     updateTimer()
+
+  //     // Update timer every second
+  //     const interval = setInterval(updateTimer, 1000)
+
+  //     // Clean up interval on component unmount
+  //     return () => clearInterval(interval)
+  //   }
+  // }, [userCanSpin])
 
   const fetchCanSpin = async () => {
     const response = await canSpin()
     setUserCanSpin(response.data?.canSpin || false)
-    // setUserCanSpin(true)
+    setSpinStatus(response.data)
   }
 
   const fetchWheelItems = async () => {
@@ -161,7 +200,6 @@ const Page = () => {
   }
 
   const handleSpinComplete = (item: { color: string; name: string }) => {
-    console.log("spin completed!!!!")
     if (!isError) {
       setSpinHistory([...spinHistory, new Date().toISOString()])
     }

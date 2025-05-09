@@ -518,11 +518,17 @@ export const spinWheel = async (): Promise<
 }
 
 export const canSpin = async (): Promise<
-  ApiResponse<{ success: boolean; canSpin: boolean }>
+  ApiResponse<{
+    success: boolean
+    canSpin: boolean
+    secondsUntilNextSpin: number
+  }>
 > => {
-  const response = await apiManager.get<{ success: boolean; canSpin: boolean }>(
-    "/wheel/can-spin"
-  )
+  const response = await apiManager.get<{
+    success: boolean
+    canSpin: boolean
+    secondsUntilNextSpin: number
+  }>("/wheel/can-spin")
   return response
 }
 
