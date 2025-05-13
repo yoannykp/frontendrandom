@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import { useWallet } from "@/context/wallet"
 import { useInventory } from "@/store/hooks"
 import { Character, InventoryItem } from "@/types"
+import { usePrivy, useWallets } from "@privy-io/react-auth"
+import { ethers } from "ethers"
 import { CloudLightning, X } from "lucide-react"
 import toast from "react-hot-toast"
 
 import { burnGear } from "@/lib/api"
-import { cn } from "@/lib/utils"
+import { cn, getEthWallet, handleSignMessage } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import SummonModal from "@/components/pages/draw/SummonModal"
+import CONTRACT_ABI from "@/app/assets/abi.json"
 
 // Define the BurnGearResponse type
 
@@ -50,6 +54,9 @@ const InventoryPage = () => {
     null
   )
   const { data: inventory, fetchInventory } = useInventory()
+  const { wallets } = useWallets()
+  const { provider, signer } = useWallet()
+  const { signMessage } = usePrivy()
 
   // Fetch inventory data when component mounts
   useEffect(() => {
@@ -100,6 +107,8 @@ const InventoryPage = () => {
       const burnResponse = response.data
 
       console.log("Burn Response ==>", burnResponse)
+      console.log("selectedItem ==>", selectedItem)
+
       if (burnResponse && burnResponse.success && burnResponse.character) {
         // Show success message
         toast.success("Gear burned successfully!")
@@ -113,6 +122,12 @@ const InventoryPage = () => {
 
         // Refresh inventory
         fetchInventory()
+
+        handleMintCharacter(
+          burnResponse.serverSignature,
+          burnResponse.nonce,
+          burnResponse.character
+        )
       } else {
         // @ts-expect-error 'burnResponse' is not typed
         toast.error(burnResponse?.error?.message || "Failed to burn gear")
@@ -122,6 +137,70 @@ const InventoryPage = () => {
       toast.error("An error occurred while burning gear")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleMintCharacter = async (
+    serverSignature: string,
+    nonce: number,
+    character: Character
+  ) => {
+    const wallet = getEthWallet(wallets)
+    if (!wallet) {
+      toast.error("Please connect a wallet")
+      return
+    }
+
+    if (!provider || !signer) {
+      toast.error("Please connect a wallet")
+      return
+    }
+
+    const charactersIds = [character.id]
+    const tokenIds = [character.tokenId]
+    const amounts = new Array(tokenIds.length).fill(1)
+
+    const signature = await handleSignMessage(
+      charactersIds.join(","),
+      wallet,
+      signMessage
+    )
+
+    if (!signature) {
+      toast.error("Please connect a wallet")
+      return
+    }
+
+    try {
+      // Step 2: Perform the transaction using the server signature
+      const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
+      if (!contractAddress) {
+        toast.error("Contract address not configured")
+        return
+      }
+
+      const contract = new ethers.Contract(
+        contractAddress,
+        CONTRACT_ABI,
+        signer
+      )
+
+      // Perform the mint transaction
+      const tx = await contract.mintBatch(
+        tokenIds,
+        amounts,
+        Number(nonce),
+        serverSignature
+      )
+      const receipt = await tx.wait()
+
+      console.log("Tx ==> ", tx)
+      console.log("Receipt ==> ", receipt)
+
+      toast.success("Minted successfully")
+    } catch (error) {
+      console.error("Minting error:", error)
+      toast.error("Failed to mint characters")
     }
   }
 
