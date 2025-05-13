@@ -319,18 +319,14 @@ const DojoPage = () => {
           }
 
           // Update the selected traits state
-          setSelectedTraits(updatedTraits)
           setDefaultTraits(updatedTraits)
+          setSelectedTraits(updatedTraits)
         }
       })
     }
   }, [alien])
 
-  console.log("wallets ===>", wallets)
-
   useEffect(() => {
-    console.log("wallet ===>", wallet)
-
     if (wallet?.address) {
       getOwnedAlienParts(wallet?.address).then((res) => {
         if (res.data && Array.isArray(res.data?.userAlienParts)) {
@@ -525,19 +521,24 @@ const DojoPage = () => {
       return
     }
 
-    // Check for duplicate IDs and ensure each part type has a unique ID
-    const seenIds = new Set<number>()
+    // Check for duplicate part types instead of duplicate IDs
+    const seenTypes = new Set<string>()
     const uniqueParts = selectedParts.filter((part) => {
-      if (seenIds.has(part.id)) {
-        console.warn(`Duplicate ID detected: ${part.id} for type ${part.type}`)
+      if (seenTypes.has(part.type)) {
+        console.warn(`Duplicate type detected: ${part.type}`)
         return false
       }
-      seenIds.add(part.id)
+      seenTypes.add(part.type)
       return true
     })
 
+    // console.log("uniqueParts1 ===>", uniqueParts1)
+    // console.log("uniqueParts ===>", uniqueParts)
+
     if (uniqueParts.length !== selectedParts.length) {
-      toast.error("Duplicate part IDs detected. Please select different parts.")
+      toast.error(
+        "Duplicate part types detected. Please select different parts."
+      )
       return
     }
 
@@ -622,7 +623,7 @@ const DojoPage = () => {
     }
   }
 
-  console.log("Traits ===>", traits)
+  // console.log("Traits ===>", traits)
   console.log("selectedTraits ===>", selectedTraits)
   console.log("defaultTraits ===>", defaultTraits)
 

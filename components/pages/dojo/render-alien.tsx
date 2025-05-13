@@ -23,17 +23,20 @@ const preloadImage = (src: string): Promise<HTMLImageElement> => {
 
   return new Promise((resolve, reject) => {
     const img = new Image()
-    img.crossOrigin = "anonymous"
+
+    // Add proper error handling
+    img.onerror = () => {
+      console.error(`Failed to load image: ${src}`)
+      reject(new Error(`Failed to load image: ${src}`))
+    }
+
     img.onload = () => {
       imageCache[src] = img
-
-      console.log(`Successfully loaded image: ${src}`)
       resolve(img)
     }
-    img.onerror = (e) => {
-      console.error(`Failed to load image: ${src}`, e)
-      reject(e)
-    }
+
+    // Set crossOrigin to anonymous for S3 bucket images
+    img.crossOrigin = "anonymous"
     img.src = src
   })
 }

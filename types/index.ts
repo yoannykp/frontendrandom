@@ -244,6 +244,8 @@ export interface CharactersState {
 export interface BurnGearResponse {
   success: boolean
   character: Character
+  serverSignature: string
+  nonce: number
 }
 export interface Character {
   id: number
@@ -276,6 +278,8 @@ export interface InventoryItem {
   id: number
   name: string
   quantity: number
+  tier?: number
+  isPortal2?: boolean
   image: string
   description: string
   type: "CHARACTER" | "ELEMENT" | "ALIEN_PART" | "GEAR"

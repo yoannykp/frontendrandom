@@ -397,28 +397,64 @@ export const burnGear = async (
   return response
 }
 
-export const getCharacterTiers = async (
-  characterId: number
-): Promise<ApiResponse<{ characters: Character[]; success: boolean }>> => {
-  const response = await apiManager.get<{
-    characters: Character[]
+// export const getCharacterTiers = async (
+//   characterId: number
+// ): Promise<ApiResponse<{ characters: Character[]; success: boolean }>> => {
+//   const response = await apiManager.get<{
+//     characters: Character[]
+//     success: boolean
+//   }>("/character/tiers", {
+//     characterId,
+//   })
+//   return response
+// }
+
+export const fetchCharacterTiers = async (): Promise<
+  ApiResponse<{
     success: boolean
-  }>("/character/tiers", {
-    characterId,
-  })
+    allCharacterTiers: {
+      [portalKey: string]: {
+        stage1: Character
+        stage2: Character
+        stage3: Character
+      }[]
+    }
+  }>
+> => {
+  const response = await apiManager.get<{
+    success: boolean
+    allCharacterTiers: {
+      [portalKey: string]: {
+        stage1: Character
+        stage2: Character
+        stage3: Character
+      }[]
+    }
+  }>("/character/tiers")
   return response
 }
+
 export const upgradeCharacter = async (
   characterId: number
 ): Promise<
   ApiResponse<{
     success: boolean
     serverSignature: string
+    nonce: number
+    character: Character
+    oldTokenId: number
+    oldTokenAmount: number
+    newTokenId: number
   }>
 > => {
-  const response = await apiManager.get<{
+  const response = await apiManager.post<{
     success: boolean
     serverSignature: string
+    nonce: number
+    character: Character
+    oldTokenId: number
+    oldTokenAmount: number
+    newTokenId: number
   }>("/character/upgrade-character", {
     characterId,
   })
