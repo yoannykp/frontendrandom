@@ -80,13 +80,13 @@ const Page = () => {
         /> */}
 
         <div className=" w-full z-10 pb-12 pr-8 pl-24 pt-[105px] hidden lg:flex">
-          <RaidsPage isHunt={false} />
+          <RaidsPage isHunt={true} />
         </div>
       </div>
 
       {/* Mobile */}
       <div className="lg:hidden flex-1 flex flex-col">
-        <RaidsPage isHunt={false} />
+        <RaidsPage isHunt={true} />
       </div>
 
       {/* Background Gradients */}

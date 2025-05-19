@@ -58,6 +58,7 @@ export interface Raid {
   createdAt: string
   updatedAt: string
   image: string
+  isHunt: boolean
   element: Element
 }
 
@@ -81,6 +82,7 @@ export interface RaidHistory {
   raidId: number
   userId: number
   aliens: Alien[]
+  isHunt: boolean
   characters: undefined
   inProgress: boolean
   createdAt: string

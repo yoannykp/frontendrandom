@@ -1,4 +1,3 @@
-import { CreateAlienData } from "@/types"
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux"
 
 import type { AppDispatch, RootState } from "./index"
@@ -16,7 +15,7 @@ import {
   resetAwardStatus,
 } from "./slices/dailyRewardsSlice"
 import { clearInventory, fetchUserInventory } from "./slices/inventorySlice"
-import { fetchRaidHistory, fetchRaids } from "./slices/raidsSlice"
+import { fetchRaidHistory } from "./slices/raidsSlice"
 import {
   clearTeam,
   fetchTeam,

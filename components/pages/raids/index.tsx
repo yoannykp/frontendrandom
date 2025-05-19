@@ -13,18 +13,21 @@ import RaidsList from "./RaidsList"
 import SingleRaid from "./SingleRaid"
 import TeamRecap from "./TeamRecap"
 
-const RaidsPage = () => {
+const RaidsPage = ({ isHunt = false }: { isHunt?: boolean }) => {
   const [isRaidsListOpen, setIsRaidsListOpen] = useState(false)
   const { data: raids } = useRaids()
   const [selectedRaid, setSelectedRaid] = useState<Raid | null>(null)
   const { data: histories } = useRaidHistory()
+
+  console.log("raids  =====>", raids)
+
   return (
     <>
       <div className="hidden lg:flex w-full relative gap-3">
         <RaidsList
           selectedRaid={selectedRaid}
           setSelectedRaid={setSelectedRaid}
-          raids={raids || []}
+          raids={raids?.filter((raid) => raid?.isHunt === isHunt) || []}
         />
         <div className="flex-1 h-full flex flex-col overflow-y-auto">
           <SingleRaid raid={selectedRaid || undefined} />
