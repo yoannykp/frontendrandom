@@ -366,6 +366,7 @@ export interface DailyRewardsResponse {
   dailyStreak: number
   lastDailyClaimed: string
   claimedDailyRewards: DailyReward[]
+  claimedDailyRewardIds: number[]
 }
 export interface SpinResult {
   type: string

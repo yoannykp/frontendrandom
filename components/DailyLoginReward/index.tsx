@@ -22,7 +22,18 @@ const DailyLoginReward = () => {
   const [timeLeft, setTimeLeft] = useState("")
 
   const isClaimed = (reward: DailyReward) => {
-    return rewards?.claimedDailyRewards.some((r) => r.id === reward.id)
+    const rewardClaimed = rewards?.claimedDailyRewards.some(
+      (r) => r.id === reward.id
+    )
+
+    // return rewardClaimed
+    if (
+      currentReward?.id === rewards?.dailyRewards[0].id &&
+      (rewards?.dailyStreak || 0) > 5
+    ) {
+      return false
+    }
+    return rewardClaimed
   }
 
   const formatDate = (date: Date): string => {
@@ -45,19 +56,17 @@ const DailyLoginReward = () => {
     return rewardPresent && todayStr === claimedStr
   }
 
-  const isCurrent = (reward: DailyReward) => {
-    const todayStr = formatDate(new Date())
-    const rewardDay = formatDate(new Date(reward.rewardDate))
-
-    return todayStr === rewardDay
-  }
-
   useEffect(() => {
     fetchDailyRewards()
   }, [])
 
   const handleClaim = async () => {
-    if (currentReward && isClaimed(currentReward)) return
+    if (
+      currentReward &&
+      isClaimed(currentReward) &&
+      (rewards?.dailyStreak || 0) < 6
+    )
+      return
 
     try {
       const res = await claimRewards()
@@ -67,26 +76,114 @@ const DailyLoginReward = () => {
         fetchDailyRewards()
         fetchUserProfile()
       } else {
-        toast.error(res?.error?.message || "Failed to claim rewards")
+        toast.error(
+          res?.error?.message || res?.error || "Failed to claim rewards"
+        )
       }
     } catch (error) {
       toast.error("Failed to claim rewards")
     }
   }
 
+  const getCurrentReward = (
+    rewards: DailyReward[],
+    userClaimStatus: {
+      lastDailyClaimed: string
+      claimedDailyRewardIds: number[]
+    }
+  ) => {
+    if (!rewards || rewards.length === 0) return null
+
+    // Sort rewards by ID to maintain sequence
+    const sortedRewards = [...rewards].sort((a, b) =>
+      a.id
+        .toString()
+        .localeCompare(b.id.toString(), undefined, { numeric: true })
+    )
+
+    // If user hasn't claimed any rewards yet, show the first one
+    if (
+      !userClaimStatus.lastDailyClaimed ||
+      !userClaimStatus.claimedDailyRewardIds?.length
+    ) {
+      return sortedRewards[0]
+    }
+
+    // Check if user already claimed today
+    const today = new Date()
+    const lastClaimed = new Date(userClaimStatus.lastDailyClaimed)
+
+    if (isSameDay(today, lastClaimed)) {
+      // Already claimed today, show timer for tomorrow's reward
+      const lastClaimedId =
+        userClaimStatus.claimedDailyRewardIds[
+          userClaimStatus.claimedDailyRewardIds.length - 1
+        ]
+      const lastIndex = sortedRewards.findIndex((r) => r.id === lastClaimedId)
+      const nextIndex = (lastIndex + 1) % sortedRewards.length
+      return sortedRewards[lastIndex]
+    }
+
+    // Check if user claimed yesterday
+    const yesterday = new Date(today)
+    yesterday.setDate(yesterday.getDate() - 1)
+
+    if (isSameDay(yesterday, lastClaimed)) {
+      // Claimed yesterday, show next reward in sequence
+      const lastClaimedId =
+        userClaimStatus.claimedDailyRewardIds[
+          userClaimStatus.claimedDailyRewardIds.length - 1
+        ]
+      const lastIndex = sortedRewards.findIndex((r) => r.id === lastClaimedId)
+      const nextIndex = (lastIndex + 1) % sortedRewards.length
+      return sortedRewards[nextIndex]
+    }
+
+    // Missed a day, start from the beginning
+    return sortedRewards[0]
+  }
+
+  // Helper function to check if two dates are the same day
+  const isSameDay = (date1: Date, date2: Date) => {
+    const utcDate1 = formatDate(date1)
+    const utcDate2 = formatDate(date2)
+
+    return utcDate1 === utcDate2
+  }
+
+  const isCurrent = (reward: DailyReward) => {
+    return currentReward?.id === reward.id
+  }
+
   useEffect(() => {
-    if (rewards?.dailyRewards) {
-      const today = new Date()
-      const currentReward =
-        rewards.dailyRewards.find((reward) => isCurrent(reward)) || null
+    if (
+      rewards?.dailyRewards &&
+      rewards?.lastDailyClaimed &&
+      rewards?.claimedDailyRewardIds
+    ) {
+      // Get the current reward based on sequence and user's claim status
+      const currentReward = getCurrentReward(rewards.dailyRewards, {
+        lastDailyClaimed: rewards?.lastDailyClaimed,
+        claimedDailyRewardIds: rewards?.claimedDailyRewardIds,
+      })
+
       setCurrentReward(currentReward)
 
-      // Calculate time left until next reward
+      // Calculate time left until next reward (midnight)
       if (currentReward) {
-        const rewardDate = new Date(currentReward.rewardDate)
-        const tomorrow = new Date(today)
-        tomorrow.setDate(tomorrow.getDate() + 1)
-        tomorrow.setHours(0, 0, 0, 0)
+        // Get current UTC date and set tomorrow at UTC midnight
+        const today = new Date()
+        const tomorrow = new Date(
+          Date.UTC(
+            today.getUTCFullYear(),
+            today.getUTCMonth(),
+            today.getUTCDate() + 1,
+            0,
+            0,
+            0,
+            0
+          )
+        )
 
         const updateTimer = () => {
           const now = new Date()
@@ -94,6 +191,7 @@ const DailyLoginReward = () => {
 
           if (diff <= 0) {
             setTimeLeft("00:00:00")
+            // You might want to refresh the current reward here
             return
           }
 
@@ -234,7 +332,13 @@ const DailyLoginReward = () => {
                     Multiplicator{" "}
                   </div>
                   <div className="font-volkhov px-4 py-1">
-                    x{rewards?.dailyStreak}
+                    x
+                    {currentReward?.id !== rewards?.dailyRewards[0].id
+                      ? (rewards?.dailyStreak || 0) +
+                        (currentReward && !isClaimedTodayReward(currentReward)
+                          ? 1
+                          : 0)
+                      : 1}
                   </div>
                 </div>
 

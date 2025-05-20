@@ -1,3 +1,4 @@
+import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useWallet } from "@/context/wallet"
@@ -38,6 +39,8 @@ const SummonModal = ({
   const { signMessage } = usePrivy()
   const { wallets } = useWallets()
   const { provider, signer } = useWallet()
+  const [isMinting, setIsMinting] = useState(false)
+  const [isMinted, setIsMinted] = useState(false)
 
   // Handle modal close to refresh characters
   const handleOpenChange = (open: boolean) => {
@@ -80,6 +83,7 @@ const SummonModal = ({
     }
 
     try {
+      setIsMinting(true)
       // Step 1: Get server signature and transaction ID
       const response = await mintCharacters(charactersIds, signature)
 
@@ -123,11 +127,15 @@ const SummonModal = ({
         console.log("Receipt ==> ", receipt)
 
         toast.success("Minted successfully")
+        setIsMinted(true)
         fetchCharacters() // Refresh the characters list
       }
     } catch (error) {
       console.error("Minting error:", error)
       toast.error("Failed to mint characters")
+      setIsMinting(false)
+    } finally {
+      setIsMinting(false)
     }
   }
 
@@ -204,9 +212,11 @@ const SummonModal = ({
             {showMintButton && (
               <button
                 onClick={handleMintCharacter}
-                className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group"
+                className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isMinting || isMinted}
               >
-                Mint {summonItems.length > 1 ? "All" : "Character"}
+                {isMinting ? "Minting..." : isMinted ? "Minted" : "Mint"}
+                {summonItems.length > 1 ? " All" : " Character"}
                 <span
                   className={cn(
                     "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
