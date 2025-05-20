@@ -21,8 +21,6 @@ const AlienRaid = ({
     fetchInventory()
   }, [])
 
-  console.log("inventory ===>", inventory)
-
   useEffect(() => {
     if (!inventory) {
       setItems([])
@@ -44,9 +42,9 @@ const AlienRaid = ({
 
   return (
     <div>
-      <h2 className="font-medium mb-5 bg-white/15 border border-white/10 w-max rounded-xl p-4">
+      {/* <h2 className="font-medium mb-5 bg-white/15 border border-white/10 w-max rounded-xl p-4">
         Alien Raid
-      </h2>
+      </h2> */}
       <div className="w-full mx-auto bg-white/15 border border-white/10 backdrop-blur-md rounded-2xl p-6">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* <div className="flex-1">
@@ -150,10 +148,8 @@ const AlienRaid = ({
                 </div>
               ))
             ) : (
-              <div className="col-span-full text-center py-10 text-white/60">
-                {inventory
-                  ? "No items found in this category"
-                  : "Loading inventory..."}
+              <div className="col-span-full text-white/60">
+                {inventory ? "No data found" : "Loading data..."}
               </div>
             )}
           </div>
