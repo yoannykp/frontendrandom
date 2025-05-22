@@ -156,11 +156,7 @@ const DailyLoginReward = () => {
   }
 
   useEffect(() => {
-    if (
-      rewards?.dailyRewards &&
-      rewards?.lastDailyClaimed &&
-      rewards?.claimedDailyRewardIds
-    ) {
+    if (rewards?.dailyRewards) {
       // Get the current reward based on sequence and user's claim status
       const currentReward = getCurrentReward(rewards.dailyRewards, {
         lastDailyClaimed: rewards?.lastDailyClaimed,
