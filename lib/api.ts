@@ -503,6 +503,7 @@ export const mintCharacters = async (
     serverSignature: string
     transactionId: number
     nonce: number
+    unmintedCharacterIds: number[]
   }>
 > => {
   const response = await apiManager.post<{
@@ -511,9 +512,25 @@ export const mintCharacters = async (
     serverSignature: string
     transactionId: number
     nonce: number
+    unmintedCharacterIds: number[]
   }>("/character/mint-character", {
     characterIds,
     signature,
+  })
+  return response
+}
+
+export const handleFailedMint = async (
+  unmintedCharacterId: number
+): Promise<
+  ApiResponse<{
+    success: boolean
+  }>
+> => {
+  const response = await apiManager.post<{
+    success: true
+  }>("/character/handle-failed-mint", {
+    unmintedCharacterId,
   })
   return response
 }

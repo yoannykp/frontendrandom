@@ -272,6 +272,8 @@ const DojoPage = () => {
   useEffect(() => {
     if (wallet?.address) {
       getOwnedAlienParts(wallet?.address).then((res) => {
+        console.log("res.data ==>", res.data)
+
         if (res.data && Array.isArray(res.data?.userAlienParts)) {
           // Initialize parts map
           const partsMap: Record<string, any[]> = {

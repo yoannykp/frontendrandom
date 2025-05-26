@@ -8,7 +8,7 @@ import { usePrivy, useWallets } from "@privy-io/react-auth"
 import { ethers } from "ethers"
 import toast from "react-hot-toast"
 
-import { mintCharacters } from "@/lib/api"
+import { handleFailedMint, mintCharacters } from "@/lib/api"
 import { cn, getEthWallet, handleSignMessage } from "@/lib/utils"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import CONTRACT_ABI from "@/app/assets/abi.json"
@@ -25,6 +25,7 @@ const SummonModal = ({
   showMintButton = false,
   isMinted,
   setIsMinted,
+  hideNextButton = false,
 }: {
   isOpen: boolean
   setIsOpen: (isOpen: boolean) => void
@@ -37,6 +38,7 @@ const SummonModal = ({
   showMintButton?: boolean
   isMinted: boolean
   setIsMinted: (isMinted: boolean) => void
+  hideNextButton?: boolean
 }) => {
   // Get the fetchCharacters function from the useCharacters hook
   const { fetchCharacters } = useCharacters()
@@ -44,6 +46,7 @@ const SummonModal = ({
   const { wallets } = useWallets()
   const { provider, signer } = useWallet()
   const [isMinting, setIsMinting] = useState(false)
+  const [unmintedCharacterIds, setUnmintedCharacterIds] = useState<number[]>([])
 
   // Handle modal close to refresh characters
   const handleOpenChange = (open: boolean) => {
@@ -104,18 +107,33 @@ const SummonModal = ({
 
       console.log("Mint Response ==>", response)
       if (response.error || !response.data || !response.data.success) {
+        setIsMinting(false)
+
         toast.error(
           response.error?.message ||
             // @ts-expect-error 'error' is not defined in the response
             response.data?.error?.message ||
             "Failed to get mint data"
         )
-        setIsMinting(false)
+        if (response.data) {
+          const { unmintedCharacterIds } = response.data
+
+          if (unmintedCharacterIds.length > 0) {
+            for (const id of unmintedCharacterIds) {
+              await handleFailedMint(id)
+            }
+          }
+        }
         return
       }
 
       if (response.data.success) {
-        const { serverSignature, transactionId, nonce } = response.data
+        const { serverSignature, transactionId, nonce, unmintedCharacterIds } =
+          response.data
+
+        if (unmintedCharacterIds.length > 0) {
+          setUnmintedCharacterIds(unmintedCharacterIds)
+        }
 
         // Step 2: Perform the transaction using the server signature
         const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
@@ -168,6 +186,13 @@ const SummonModal = ({
         } catch (txError: any) {
           console.error("Transaction error:", txError)
 
+          if (unmintedCharacterIds.length > 0) {
+            for (const id of unmintedCharacterIds) {
+              await handleFailedMint(id)
+            }
+            setUnmintedCharacterIds([])
+          }
+
           // Handle specific error cases
           if (txError.code === "ACTION_REJECTED") {
             toast.error("Transaction was rejected by user")
@@ -183,6 +208,12 @@ const SummonModal = ({
         }
       }
     } catch (error: any) {
+      if (unmintedCharacterIds.length > 0) {
+        for (const id of unmintedCharacterIds) {
+          await handleFailedMint(id)
+        }
+        setUnmintedCharacterIds([])
+      }
       console.error("Minting error:", error)
 
       // More specific error handling
@@ -285,19 +316,21 @@ const SummonModal = ({
                 />
               </button>
             )}
-            <Link
-              href={summonType === "character" ? "/team" : "/inventory"}
-              className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group"
-            >
-              Next
-              <span
-                className={cn(
-                  "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
-                  "group-disabled:group-hover:h-[30px]",
-                  "bg-[#EF98E6]"
-                )}
-              />
-            </Link>
+            {!hideNextButton && (
+              <Link
+                href={summonType === "character" ? "/team" : "/inventory"}
+                className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group"
+              >
+                Next
+                <span
+                  className={cn(
+                    "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
+                    "group-disabled:group-hover:h-[30px]",
+                    "bg-[#EF98E6]"
+                  )}
+                />
+              </Link>
+            )}
           </div>
         </div>
 

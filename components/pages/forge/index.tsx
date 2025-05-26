@@ -25,6 +25,7 @@ import {
 import { cn, getEthWallet, handleSignMessage } from "@/lib/utils"
 import CONTRACT_ABI from "@/app/assets/abi.json"
 
+import SummonModal from "../draw/SummonModal"
 import AlienRaidModal from "./alien-raid/Modal"
 
 const CustomArrow = ({
@@ -70,16 +71,23 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
   const [selectedForPromotion, setSelectedForPromotion] = useState<any>(null)
   const { wallets } = useWallets()
   const { provider, signer } = useWallet()
+  const [dataLoaded, setDataLoaded] = useState(false)
   const { signMessage } = usePrivy()
+  const [promotedCharacter, setPromotedCharacter] = useState<Character | null>(
+    null
+  )
+  const [isSummonModalOpen, setIsSummonModalOpen] = useState(false)
+  const [isMinted, setIsMinted] = useState(false)
 
   useEffect(() => {
     fetchInitialData()
-  }, [])
+  }, [selectedCharacter, activeTab])
 
   const fetchInitialData = async () => {
     await fetchForgeList()
     fetchCharacterTiers().then((res) => {
       setCharacterTiers(res.data?.allCharacterTiers || {})
+      setDataLoaded(true)
     })
   }
 
@@ -87,7 +95,8 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     if (
       (activeTab === ForgeTabs.ENHANCEMENT ||
         activeTab === ForgeTabs.PROMOTION) &&
-      selectedCharacter
+      selectedCharacter &&
+      dataLoaded
     ) {
       let portalTiers = characterTiers.portal2
       if (activeTab === ForgeTabs.ENHANCEMENT) {
@@ -112,11 +121,14 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
 
       console.log("Found tier object ===>", tierObj)
     }
-  }, [selectedCharacter, activeTab, characterTiers])
+  }, [selectedCharacter, activeTab, characterTiers, dataLoaded])
 
   useEffect(() => {
     setTierObj(null)
     setSelectedForPromotion(null)
+    setPromotedCharacter(null)
+    setIsSummonModalOpen(false)
+    setIsMinted(false)
   }, [activeTab])
 
   // Function to handle forge request
@@ -302,6 +314,8 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
       setSelectedCharacter(null)
       setTierObj(null)
 
+      setPromotedCharacter(character)
+      setIsSummonModalOpen(true)
       toast.success("Promoted successfully!")
     } catch (error) {
       console.error("Minting error:", error)
@@ -323,13 +337,19 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     >
       {/* Stage 1 content */}
       <div className="aspect-square relative">
-        <Image
-          src={tierObj?.stage1?.image}
-          alt="Stage 01 image"
-          width={300}
-          height={300}
-          className="w-full h-full object-cover"
-        />
+        {tierObj?.stage2?.image ? (
+          <Image
+            src={tierObj?.stage1?.image}
+            alt="Stage 01 image"
+            width={300}
+            height={300}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 w-full h-full bg-black/70 flex items-center justify-center text-lg text-center">
+            Promote to <br /> Unlock
+          </div>
+        )}
       </div>
       <div className="pt-4">
         <h2 className="text-2xl font-bold text-white mb-3">Stage 01</h2>
@@ -460,7 +480,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                 {/* Stage 03 - Locked */}
                 <div className="w-full max-w-sm rounded-xl border border-white/10 backdrop-blur-md flex flex-col p-3">
                   <div className="aspect-square relative">
-                    {tierObj?.stage3?.image && (
+                    {tierObj?.stage3?.image ? (
                       <Image
                         src={tierObj?.stage3?.image}
                         alt="Stage 03"
@@ -468,12 +488,17 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                         height={300}
                         className="w-full h-full object-cover"
                       />
-                    )}
-                    {tierObj?.stage3?.quantity < 1 && (
+                    ) : (
                       <div className="absolute inset-0 w-full h-full bg-black/70 flex items-center justify-center text-lg text-center">
                         Promote to <br /> Unlock
                       </div>
                     )}
+                    {tierObj?.stage3?.image &&
+                      tierObj?.stage3?.quantity < 1 && (
+                        <div className="absolute inset-0 w-full h-full bg-black/70 flex items-center justify-center text-lg text-center">
+                          Promote to <br /> Unlock
+                        </div>
+                      )}
                   </div>
                   <div className="pt-4">
                     <h2 className="text-2xl font-bold text-white mb-3">
@@ -527,7 +552,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                 </div>
                 <button
                   className="px-5 !h-14 rounded-xl text-lg border bg-white/5 border-white/10 flex items-center justify-center text-center flex-1 relative group overflow-hidden"
-                  onClick={() => handlePromote()}
+                  onClick={handlePromote}
                   disabled={
                     Number(selectedForPromotion?.quantity || 0) <
                       Number(selectedForPromotion?.upgradeReq || 0) || isLoading
@@ -846,16 +871,6 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
           </div>
         )} */}
 
-        <AlienRaidModal
-          isOpen={isAlienRaidModalOpen}
-          onClose={() => setIsAlienRaidModalOpen(false)}
-          onSelect={(item) => {
-            setSelectedCharacter(item)
-            setIsAlienRaidModalOpen(false)
-          }}
-          isPortal2={activeTab === ForgeTabs.ENHANCEMENT}
-        />
-
         {activeTab === ForgeTabs.FORGE && (
           <div className="h-full w-full flex items-center justify-center">
             <div className="relative w-full h-full">
@@ -976,6 +991,33 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
               </button>
             </div>
           </div>
+        )}
+
+        <AlienRaidModal
+          isOpen={isAlienRaidModalOpen}
+          onClose={() => setIsAlienRaidModalOpen(false)}
+          onSelect={(item) => {
+            setDataLoaded(false)
+            setSelectedCharacter(item)
+            setIsAlienRaidModalOpen(false)
+          }}
+          isPortal2={activeTab === ForgeTabs.ENHANCEMENT}
+        />
+
+        {/* Summon Modal for showing character after promoting */}
+        {promotedCharacter && (
+          <SummonModal
+            title="Promoted Character"
+            isOpen={isSummonModalOpen}
+            setIsOpen={setIsSummonModalOpen}
+            summonType="character"
+            summonItems={[promotedCharacter]}
+            loading={false}
+            showCloseButton={true}
+            isMinted={isMinted}
+            setIsMinted={setIsMinted}
+            hideNextButton={true}
+          />
         )}
       </div>
     </div>
