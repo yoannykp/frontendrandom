@@ -91,11 +91,18 @@ const Page = () => {
               </div>
             </div>
             {mostSoonToCompleteRaid && (
-              <div className="absolute top-4 lg:top-10 right-4 lg:right-[330px] glass-effect z-10 px-3 py-2 rounded-xl w-44 max-lg:hidden">
-                <div className="flex items-center gap-2">
+              <div className="absolute top-4 lg:top-10 right-4 lg:right-[27rem] glass-effect z-10 px-3 py-2 rounded-xl w-44 max-lg:hidden">
+                <div className="flex items-center justify-between gap-2">
                   <p className="font-volkhov">Ongoing Raid</p>
+
+                  <div className="relative">
+                    <div className="w-2 h-2 bg-red-500 rounded-full" />
+                    <div className="absolute top-0 left-0 w-2 h-2 bg-red-500 rounded-full animate-ping" />
+                    <div className="absolute top-0 left-0 w-2 h-2 bg-red-300 rounded-full animate-ping" />
+                  </div>
                 </div>
                 <p className="text-xs text-white/50">
+                  Ends in{" "}
                   {mostSoonToCompleteRaid &&
                     Object.entries(
                       formatRemainingTime(mostSoonToCompleteRaid.remainingTime)
@@ -112,7 +119,6 @@ const Page = () => {
                           )}
                         </React.Fragment>
                       ))}{" "}
-                  left
                 </p>
               </div>
             )}
