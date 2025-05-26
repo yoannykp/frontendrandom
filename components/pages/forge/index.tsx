@@ -223,7 +223,8 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
           upgradeResponse.character,
           upgradeResponse.oldTokenId,
           upgradeResponse.oldTokenAmount,
-          upgradeResponse.newTokenId
+          upgradeResponse.newTokenId,
+          upgradeResponse.newCharacter
         )
       } else {
         // @ts-expect-error 'burnResponse' is not typed
@@ -244,7 +245,8 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     character: Character,
     oldTokenId: number,
     oldTokenAmount: number,
-    newTokenId: number
+    newTokenId: number,
+    newCharacter: Character
   ) => {
     const wallet = getEthWallet(wallets)
     if (!wallet) {
@@ -314,7 +316,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
       setSelectedCharacter(null)
       setTierObj(null)
 
-      setPromotedCharacter(character)
+      setPromotedCharacter(newCharacter)
       setIsSummonModalOpen(true)
       toast.success("Promoted successfully!")
     } catch (error) {

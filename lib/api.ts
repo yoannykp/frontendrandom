@@ -445,6 +445,7 @@ export const upgradeCharacter = async (
     oldTokenId: number
     oldTokenAmount: number
     newTokenId: number
+    newCharacter: Character
   }>
 > => {
   const response = await apiManager.post<{
@@ -455,6 +456,7 @@ export const upgradeCharacter = async (
     oldTokenId: number
     oldTokenAmount: number
     newTokenId: number
+    newCharacter: Character
   }>("/character/upgrade-character", {
     characterId,
   })
