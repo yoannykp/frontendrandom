@@ -60,25 +60,34 @@ const CreateAlien = ({
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const handleCreateAlien = async () => {
-    // Validate required fields
-    if (!createAlienData.name) {
-      toast.error("Please enter a name for your alien")
-      return
-    }
-    if (!createAlienData.elementId) {
-      toast.error("Please select an element for your alien")
-      return
-    }
-    if (selectedTraits?.hairId === -1 || !selectedTraits?.hairId) {
-      toast.error("Please select a hair style for your alien")
-      return
-    }
-    if (selectedTraits?.eyesId === -1 || !selectedTraits?.eyesId) {
-      toast.error("Please select a eyes for your alien")
-      return
-    }
-    if (selectedTraits?.mouthId === -1 || !selectedTraits?.mouthId) {
-      toast.error("Please select a mouth for your alien")
+    // validation checks
+    const validations = [
+      {
+        condition: !createAlienData.name?.trim(),
+        message: "Please enter a name for your alien",
+      },
+      {
+        condition: !createAlienData.elementId,
+        message: "Please select an element for your alien",
+      },
+      {
+        condition: !selectedTraits?.hair || selectedTraits.hairId <= 0,
+        message: "Please select a hair style for your alien",
+      },
+      {
+        condition: !selectedTraits?.eyes || selectedTraits.eyesId <= 0,
+        message: "Please select eyes for your alien",
+      },
+      {
+        condition: !selectedTraits?.mouth || selectedTraits.mouthId <= 0,
+        message: "Please select a mouth for your alien",
+      },
+    ]
+
+    // Check all validations
+    const failedValidation = validations.find((v) => v.condition)
+    if (failedValidation) {
+      toast.error(failedValidation.message)
       return
     }
 
