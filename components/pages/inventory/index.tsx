@@ -8,7 +8,7 @@ import { ethers } from "ethers"
 import { CloudLightning, Loader2, X } from "lucide-react"
 import toast from "react-hot-toast"
 
-import { burnGear } from "@/lib/api"
+import { burnGear, updateGearBalance } from "@/lib/api"
 import { cn, getEthWallet, handleSignMessage } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import SummonModal from "@/components/pages/draw/SummonModal"
@@ -134,12 +134,13 @@ const InventoryPage = () => {
         // setSelectedItem(null)
 
         // Refresh inventory
-        fetchInventory()
+        // fetchInventory()
 
         handleMintCharacter(
           burnResponse.serverSignature,
           burnResponse.nonce,
-          burnResponse.character
+          burnResponse.character,
+          selectedItem.id
         )
       } else {
         // @ts-expect-error 'burnResponse' is not typed
@@ -158,7 +159,8 @@ const InventoryPage = () => {
   const handleMintCharacter = async (
     serverSignature: string,
     nonce: number,
-    character: Character
+    character: Character,
+    gearId: number
   ) => {
     const wallet = getEthWallet(wallets)
     if (!wallet) {
@@ -215,6 +217,12 @@ const InventoryPage = () => {
 
       console.log("Tx ==> ", tx)
       console.log("Receipt ==> ", receipt)
+
+      const response = await updateGearBalance(gearId)
+      // Refresh inventory
+      fetchInventory()
+
+      console.log("Response ==> ", response)
 
       // Set the summoned character and open the summon modal
       setSummonedCharacter(character)

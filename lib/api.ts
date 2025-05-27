@@ -397,6 +397,18 @@ export const burnGear = async (
   return response
 }
 
+export const updateGearBalance = async (
+  gearId: number
+): Promise<ApiResponse<BurnGearResponse>> => {
+  const response = await apiManager.post<BurnGearResponse>(
+    "/character/update-gear-balance",
+    {
+      gearId,
+    }
+  )
+  return response
+}
+
 // export const getCharacterTiers = async (
 //   characterId: number
 // ): Promise<ApiResponse<{ characters: Character[]; success: boolean }>> => {
