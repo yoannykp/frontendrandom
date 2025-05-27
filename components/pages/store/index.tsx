@@ -5,7 +5,7 @@ import { useInventory } from "@/store/hooks"
 import { Character, InventoryItem } from "@/types"
 import { usePrivy, useWallets } from "@privy-io/react-auth"
 import { ethers } from "ethers"
-import { CloudLightning, Loader2, X } from "lucide-react"
+import { Loader2, X } from "lucide-react"
 import toast from "react-hot-toast"
 
 import { burnGear, updateGearBalance } from "@/lib/api"
