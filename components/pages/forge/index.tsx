@@ -389,7 +389,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="absolute inset-0 w-full h-full bg-black/70 flex items-center justify-center text-lg text-center">
+          <div className="absolute inset-0 w-full h-full bg-black/50 flex items-center justify-center text-lg text-center rounded-lg">
             Promote to <br /> Unlock
           </div>
         )}
@@ -428,7 +428,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="absolute inset-0 w-full h-full bg-black/70 flex items-center justify-center text-lg text-center">
+          <div className="absolute inset-0 w-full h-full bg-black/50 flex items-center justify-center text-lg text-center rounded-lg">
             Promote to <br /> Unlock
           </div>
         )}
@@ -709,7 +709,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                       />
                     )}
                     {tierObj?.stage3?.quantity < 1 && (
-                      <div className="absolute inset-0 w-full h-full bg-black/70 flex items-center justify-center text-lg text-center">
+                      <div className="absolute inset-0 w-full h-full bg-black/50 flex items-center justify-center text-lg text-center rounded-lg">
                         Promote to <br /> Unlock
                       </div>
                     )}

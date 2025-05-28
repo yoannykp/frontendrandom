@@ -158,7 +158,7 @@ const AddCharacterModal = () => {
                     >
                       <div className="relative">
                         <Image
-                          src={character.image || ""}
+                          src={character.teamImage || ""}
                           alt={character.name}
                           width={500}
                           height={500}

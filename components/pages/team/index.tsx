@@ -156,7 +156,7 @@ const TeamPage = () => {
 
               <div className="relative w-full aspect-square shrink-0">
                 <Image
-                  src={member.image || ""}
+                  src={member.teamImage || ""}
                   alt={`Team member ${index + 1}`}
                   fill
                   className="object-cover rounded-lg"

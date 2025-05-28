@@ -216,6 +216,7 @@ export interface TeamResponse {
     strengthPoints: number
     element: Element
     image: string | null
+    teamImage: string | null
     type: "character" | "alien"
     isSelected: boolean
   }[]
@@ -256,6 +257,7 @@ export interface Character {
   power: number
   tier: number
   image?: string
+  teamImage?: string
   video?: string
   portal: number
   elementId: number
