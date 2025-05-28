@@ -321,11 +321,23 @@ const DojoPage = () => {
               )
             : []
 
+          console.log("uniqueElements ===>", uniqueElements)
           // Add element powers
-          uniqueElements.forEach((element: any) => {
-            if (typeof element.power === "number") {
-              totalPartspower += element.power
-            }
+          // uniqueElements.forEach((element: any) => {
+          //   if (typeof element.power === "number") {
+          //     totalPartspower += element.power
+          //   }
+          // })
+
+          res.data?.alienPartsList.forEach((part: any) => {
+            part?.userPowers?.forEach((power: any) => {
+              if (
+                power.userId === profile?.id ||
+                power.userId === alien?.userId
+              ) {
+                totalPartspower += power.power
+              }
+            })
           })
 
           // Update total power state

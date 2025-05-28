@@ -2,21 +2,26 @@ import { Fragment } from "react"
 import { InventoryItem } from "@/types"
 import { Dialog, Transition } from "@headlessui/react"
 
-import AlienRaid from "."
+import EnhancementData from "./EnhancementData"
+import PromotionData from "./PromotionData"
 
-interface AlienRaidModalProps {
+interface ModalProps {
   isOpen: boolean
   onClose: () => void
   onSelect: (item: InventoryItem) => void
-  isPortal2?: boolean
+  isEnhancement?: boolean
+  forgeList?: any
+  userId?: number
 }
 
-const AlienRaidModal = ({
+const Modal = ({
   isOpen,
   onClose,
   onSelect,
-  isPortal2,
-}: AlienRaidModalProps) => {
+  isEnhancement,
+  forgeList,
+  userId,
+}: ModalProps) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -44,7 +49,15 @@ const AlienRaidModal = ({
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="w-full max-w-7xl transform overflow-hidden transition-all">
-                <AlienRaid onSelect={onSelect} isPortal2={isPortal2} />
+                {isEnhancement ? (
+                  <EnhancementData
+                    onSelect={onSelect}
+                    forgeList={forgeList}
+                    userId={userId}
+                  />
+                ) : (
+                  <PromotionData onSelect={onSelect} />
+                )}
               </Dialog.Panel>
             </Transition.Child>
           </div>
@@ -54,4 +67,4 @@ const AlienRaidModal = ({
   )
 }
 
-export default AlienRaidModal
+export default Modal

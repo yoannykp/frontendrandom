@@ -12,21 +12,24 @@ import "swiper/css/effect-coverflow"
 import "swiper/css/navigation"
 
 import { useWallet } from "@/context/wallet"
+import { useAliens, useProfile } from "@/store/hooks"
 import { usePrivy, useWallets } from "@privy-io/react-auth"
 import { ethers } from "ethers"
 import toast from "react-hot-toast"
 
 import {
+  enhanceAlienPart,
   fetchCharacterTiers,
   forgeAlienPart,
   getForgeList,
+  getOwnedAlienParts,
   upgradeCharacter,
 } from "@/lib/api"
 import { cn, getEthWallet, handleSignMessage } from "@/lib/utils"
 import CONTRACT_ABI from "@/app/assets/abi.json"
 
 import SummonModal from "../draw/SummonModal"
-import AlienRaidModal from "./alien-raid/Modal"
+import Modal from "./Modal"
 
 const CustomArrow = ({
   direction,
@@ -65,7 +68,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
   const [selectedCharacter, setSelectedCharacter] = useState<
     Character | InventoryItem | null
   >(null)
-  const [isAlienRaidModalOpen, setIsAlienRaidModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [characterTiers, setCharacterTiers] = useState<any>({})
   const [tierObj, setTierObj] = useState<any>(null)
   const [selectedForPromotion, setSelectedForPromotion] = useState<any>(null)
@@ -78,6 +81,13 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
   )
   const [isSummonModalOpen, setIsSummonModalOpen] = useState(false)
   const [isMinted, setIsMinted] = useState(false)
+  const [selectedEnhancementObj, setSelectedEnhancementObj] =
+    useState<any>(null)
+  const [userEnhancedParts, setUserEnhancedParts] = useState<any[]>([])
+  const { data: profile } = useProfile()
+  const { alien } = useAliens()
+
+  console.log("profile ====>", profile?.id, alien?.userId)
 
   useEffect(() => {
     fetchInitialData()
@@ -89,7 +99,13 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
       setCharacterTiers(res.data?.allCharacterTiers || {})
       setDataLoaded(true)
     })
+    await getOwnedAlienParts().then((res) => {
+      console.log("res.data?.userAlienParts", res)
+      setUserEnhancedParts(res.data?.alienPartsList || [])
+    })
   }
+
+  console.log("userEnhancedParts ====>", userEnhancedParts)
 
   useEffect(() => {
     if (
@@ -129,6 +145,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     setPromotedCharacter(null)
     setIsSummonModalOpen(false)
     setIsMinted(false)
+    setSelectedEnhancementObj(null)
   }, [activeTab])
 
   // Function to handle forge request
@@ -156,6 +173,31 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
       }
     } catch (error) {
       console.error("Error forging item:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Function to handle enhance request
+  const handleEnhance = async () => {
+    if (!selectedEnhancementObj) return
+    setIsLoading(true)
+    try {
+      const response = await enhanceAlienPart(Number(selectedEnhancementObj.id))
+      if (response.data?.success) {
+        await fetchInitialData()
+
+        setSelectedEnhancementObj(null)
+        toast.success("Enhanced successfully")
+      } else {
+        toast.error(
+          response.data?.error?.message ||
+            response?.data?.message ||
+            "Enhance failed"
+        )
+      }
+    } catch (error) {
+      console.error("Error enhancing item:", error)
     } finally {
       setIsLoading(false)
     }
@@ -327,9 +369,8 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     }
   }
 
-  console.log("selectedCharacter", selectedCharacter)
-  console.log("characterTiers", characterTiers)
-  console.log("selectedForPromotion", selectedForPromotion)
+  console.log("selectedEnhancementObj", selectedEnhancementObj)
+  console.log("forgeList", forgeList)
 
   // Break down the complex function into smaller helper functions
   const renderStage1 = (tierObj: any) => (
@@ -410,12 +451,20 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     </div>
   )
 
+  const getPower = () => {
+    return selectedEnhancementObj
+      ? selectedEnhancementObj.userPowers.filter(
+          (power: any) => power.userId === alien?.userId
+        )[0]?.power || 0
+      : 0
+  }
+
   return (
     <div className="w-full h-full rounded-lg backdrop-blur-xl border border-white/10 p-2">
       <div className="h-full rounded-lg backdrop-blur-lg bg-white/10 px-14 py-10 flex flex-col">
         {activeTab === ForgeTabs.ENHANCEMENT && (
           <div className={cn("h-full w-full max-w-max mx-auto flex flex-col")}>
-            {!selectedCharacter && !tierObj ? (
+            {!selectedEnhancementObj ? (
               <div
                 className={cn(
                   "h-full w-full max-w-max mx-auto flex flex-col justify-center"
@@ -424,7 +473,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                 <div className="w-full max-w-sm rounded-xl border border-white/10 backdrop-blur-md flex flex-col p-3">
                   <div
                     className="aspect-square relative cursor-pointer"
-                    onClick={() => setIsAlienRaidModalOpen(true)}
+                    onClick={() => setIsModalOpen(true)}
                   >
                     <div className="absolute inset-0 w-full h-full bg-white/10 rounded-md flex items-center justify-center text-lg text-center">
                       <Plus className="w-20 h-20" />
@@ -432,7 +481,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                   </div>
                   <div className="pt-4 w-full justify-center flex items-center">
                     <h2 className="text-2xl font-bold text-white mb-3">
-                      Add Character{" "}
+                      Add Item to Enhance{" "}
                     </h2>
                   </div>
                 </div>
@@ -440,15 +489,41 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
             ) : (
               <div className="flex justify-center flex-1 max-w-max">
                 {/* Stage 01 */}
-                {renderStage1(tierObj)}
+                <div className="w-full max-w-sm rounded-xl border border-white/10 backdrop-blur-md flex flex-col p-3">
+                  {/* Stage 1 content */}
+                  <div className="aspect-square relative">
+                    <Image
+                      src={selectedEnhancementObj?.image}
+                      alt="Stage 01 image"
+                      width={300}
+                      height={300}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="pt-4">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-[#D3EF98] font-medium">
+                        {selectedEnhancementObj?.name || "--"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-white/50 text-sm font-inter">
+                        Power
+                      </span>
+                      <span className="text-[#98EFC5] font-medium">
+                        {Number(getPower())}
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Arrow and Check Icons */}
                 <div className="flex flex-col items-center pt-10 mx-4 space-y-4 h-full">
                   <button className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md flex items-center justify-center text-white">
-                    {tierObj?.stage1?.quantity &&
-                    tierObj?.stage1?.upgradeReq &&
-                    Number(tierObj?.stage1?.quantity) >=
-                      Number(tierObj?.stage1?.upgradeReq) ? (
+                    {4 <
+                    Number(
+                      userRuneAmounts[selectedEnhancementObj.forgeRuneType] || 0
+                    ) ? (
                       <Check />
                     ) : (
                       <Lock />
@@ -460,66 +535,29 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                 </div>
 
                 {/* Stage 02 */}
-                {renderStage2(tierObj)}
-
-                {/* Arrow and Check Icons */}
-                <div className="flex flex-col items-center pt-10 mx-4 space-y-4 h-full">
-                  <button className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md flex items-center justify-center text-white">
-                    {tierObj?.stage2?.quantity &&
-                    tierObj?.stage2?.upgradeReq &&
-                    Number(tierObj?.stage2?.quantity) >=
-                      Number(tierObj?.stage2?.upgradeReq) ? (
-                      <Check />
-                    ) : (
-                      <Lock />
-                    )}
-                  </button>
-                  <button className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md flex items-center justify-center text-white">
-                    <ArrowRight />
-                  </button>
-                </div>
-
-                {/* Stage 03 - Locked */}
                 <div className="w-full max-w-sm rounded-xl border border-white/10 backdrop-blur-md flex flex-col p-3">
+                  {/* Stage 1 content */}
                   <div className="aspect-square relative">
-                    {tierObj?.stage3?.image ? (
-                      <Image
-                        src={tierObj?.stage3?.image}
-                        alt="Stage 03"
-                        width={300}
-                        height={300}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 w-full h-full bg-black/70 flex items-center justify-center text-lg text-center">
-                        Promote to <br /> Unlock
-                      </div>
-                    )}
-                    {tierObj?.stage3?.image &&
-                      tierObj?.stage3?.quantity < 1 && (
-                        <div className="absolute inset-0 w-full h-full bg-black/70 flex items-center justify-center text-lg text-center">
-                          Promote to <br /> Unlock
-                        </div>
-                      )}
+                    <Image
+                      src={selectedEnhancementObj?.image}
+                      alt="Stage 01 image"
+                      width={300}
+                      height={300}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div className="pt-4">
-                    <h2 className="text-2xl font-bold text-white mb-3">
-                      Stage 03
-                    </h2>
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-white/50 text-sm font-inter">
-                        Name
-                      </span>
                       <span className="text-[#D3EF98] font-medium">
-                        {tierObj?.stage3?.name || "--"}
+                        {`${selectedEnhancementObj?.name} +5` || "--"}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-white/50 text-sm font-inter">
-                        Total
+                        Power
                       </span>
                       <span className="text-[#98EFC5] font-medium">
-                        {tierObj?.stage3?.quantity ?? "--"}
+                        {Number(getPower() + 5) ?? "--"}
                       </span>
                     </div>
                   </div>
@@ -527,22 +565,26 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
               </div>
             )}
 
-            {selectedForPromotion && (
-              <div className="mt-8 flex items-center space-x-4 bg-white/10 p-2 rounded-xl backdrop-blur-lg">
+            {selectedEnhancementObj && (
+              <div className="mt-4 flex items-center space-x-4 bg-white/10 p-2 rounded-xl backdrop-blur-lg">
                 <div className="px-5 !h-14 rounded-xl text-lg border bg-white/5 border-white/10 flex items-center justify-center text-center flex-1">
-                  {selectedForPromotion?.name || "--"}
+                  {selectedEnhancementObj?.name || "--"}
                 </div>
-                <div className="px-5 !h-14 rounded-xl text-sm border bg-white/5 border-white/10 flex items-center justify-between text-center flex-1">
+                <div className="px-2 !h-14 rounded-xl text-sm border bg-white/5 border-white/10 flex items-center justify-between text-center flex-1">
                   <span>Requested to promote</span>
                   <div className="rounded-full bg-white/10 flex items-center font-inter">
                     <span className="text-[#D3EF98] text-xs px-3">
-                      {selectedForPromotion?.quantity ?? "--"}/
-                      {selectedForPromotion?.upgradeReq ?? "--"}
+                      {selectedEnhancementObj?.forgeRuneType &&
+                      userRuneAmounts[selectedEnhancementObj.forgeRuneType] !==
+                        undefined
+                        ? userRuneAmounts[selectedEnhancementObj.forgeRuneType]
+                        : 0}
+                      /4
                     </span>
-                    {selectedForPromotion?.image && (
+                    {selectedEnhancementObj?.image && (
                       <span className="p-0.5 bg-white/10 border border-white/10 rounded-full">
                         <Image
-                          src={selectedForPromotion?.image}
+                          src={selectedEnhancementObj?.image}
                           alt="Selected for promotion"
                           width={30}
                           height={30}
@@ -554,14 +596,31 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                 </div>
                 <button
                   className="px-5 !h-14 rounded-xl text-lg border bg-white/5 border-white/10 flex items-center justify-center text-center flex-1 relative group overflow-hidden"
-                  onClick={handlePromote}
+                  onClick={handleEnhance}
                   disabled={
-                    Number(selectedForPromotion?.quantity || 0) <
-                      Number(selectedForPromotion?.upgradeReq || 0) || isLoading
+                    !selectedEnhancementObj ||
+                    isLoading ||
+                    4 >
+                      Number(
+                        userRuneAmounts[selectedEnhancementObj.forgeRuneType] ||
+                          0
+                      )
                   }
+                  // disabled={
+                  //   !selectedEnhancementObj ||
+                  //   isLoading ||
+                  //   Number(
+                  //     selectedEnhancementObj?.forgeRuneType &&
+                  //       userRuneAmounts[
+                  //         selectedEnhancementObj.forgeRuneType
+                  //       ] !== undefined
+                  //       ? userRuneAmounts[selectedEnhancementObj.forgeRuneType]
+                  //       : 0
+                  //   ) < Number(selectedEnhancementObj?.forgeRuneAmount || 0)
+                  // }
                 >
                   <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all group-disabled:group-hover:h-[30px] bg-[#D3EF98]" />
-                  {isLoading ? "Promoting..." : "Promote"}
+                  {isLoading ? "Enhancing..." : "Enhance"}
                   {isLoading && (
                     <Loader2 className="w-4 h-4 ml-2 animate-spin" />
                   )}
@@ -582,7 +641,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                 <div className="w-full max-w-sm rounded-xl border border-white/10 backdrop-blur-md flex flex-col p-3">
                   <div
                     className="aspect-square relative cursor-pointer"
-                    onClick={() => setIsAlienRaidModalOpen(true)}
+                    onClick={() => setIsModalOpen(true)}
                   >
                     <div className="absolute inset-0 w-full h-full bg-white/10 rounded-md flex items-center justify-center text-lg text-center">
                       <Plus className="w-20 h-20" />
@@ -995,15 +1054,21 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
           </div>
         )}
 
-        <AlienRaidModal
-          isOpen={isAlienRaidModalOpen}
-          onClose={() => setIsAlienRaidModalOpen(false)}
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
           onSelect={(item) => {
             setDataLoaded(false)
-            setSelectedCharacter(item)
-            setIsAlienRaidModalOpen(false)
+            if (activeTab === ForgeTabs.ENHANCEMENT) {
+              setSelectedEnhancementObj(item)
+            } else {
+              setSelectedCharacter(item)
+            }
+            setIsModalOpen(false)
           }}
-          isPortal2={activeTab === ForgeTabs.ENHANCEMENT}
+          forgeList={userEnhancedParts}
+          isEnhancement={activeTab === ForgeTabs.ENHANCEMENT}
+          userId={alien?.userId}
         />
 
         {/* Summon Modal for showing character after promoting */}

@@ -1,5 +1,6 @@
 import {
   Alien,
+  AlienPart,
   AlienPartsGroup,
   AuthUserData,
   BurnGearResponse,
@@ -619,7 +620,11 @@ export const getWheelItems = async (): Promise<
 export const getOwnedAlienParts = async (
   walletAddress?: string
 ): Promise<
-  ApiResponse<{ userAlienParts: AlienPartsGroup[]; elements: Element[] }>
+  ApiResponse<{
+    userAlienParts: AlienPartsGroup[]
+    elements: Element[]
+    alienPartsList: AlienPart[]
+  }>
 > => {
   const params: Record<string, string | number | boolean> = {}
   if (walletAddress) {
@@ -628,6 +633,7 @@ export const getOwnedAlienParts = async (
   const response = await apiManager.get<{
     userAlienParts: AlienPartsGroup[]
     elements: Element[]
+    alienPartsList: AlienPart[]
   }>("/profile/get-owned-alien-parts", params)
 
   if (response.data) {
@@ -635,6 +641,7 @@ export const getOwnedAlienParts = async (
       data: {
         userAlienParts: response.data.userAlienParts,
         elements: response.data.elements,
+        alienPartsList: response.data.alienPartsList,
       },
       error: null,
     }
@@ -755,6 +762,15 @@ export const forgeAlienPart = async (
   alienPartId: number
 ): Promise<ApiResponse<any>> => {
   const response = await apiManager.post<any>("/profile/forge-parts", {
+    alienPartId,
+  })
+  return response
+}
+
+export const enhanceAlienPart = async (
+  alienPartId: number
+): Promise<ApiResponse<any>> => {
+  const response = await apiManager.post<any>("/profile/enhance-parts", {
     alienPartId,
   })
   return response
