@@ -12,6 +12,7 @@ interface ModalProps {
   isEnhancement?: boolean
   forgeList?: any
   userId?: number
+  forgeListLoading?: boolean
 }
 
 const Modal = ({
@@ -21,6 +22,7 @@ const Modal = ({
   isEnhancement,
   forgeList,
   userId,
+  forgeListLoading,
 }: ModalProps) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -54,6 +56,7 @@ const Modal = ({
                     onSelect={onSelect}
                     forgeList={forgeList}
                     userId={userId}
+                    forgeListLoading={forgeListLoading}
                   />
                 ) : (
                   <PromotionData onSelect={onSelect} />

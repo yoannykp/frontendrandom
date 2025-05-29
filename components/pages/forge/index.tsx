@@ -86,6 +86,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
   const [userEnhancedParts, setUserEnhancedParts] = useState<any[]>([])
   const { data: profile } = useProfile()
   const { alien } = useAliens()
+  const [forgeListLoading, setForgeListLoading] = useState(false)
 
   console.log("profile ====>", profile?.id, alien?.userId)
 
@@ -205,6 +206,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
 
   const fetchForgeList = async () => {
     try {
+      setForgeListLoading(true)
       const res = await getForgeList()
       setForgeList(res.data?.alienParts || [])
       setUserRuneAmounts(
@@ -231,10 +233,13 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
           setActiveItemId(res.data.alienParts[0].id)
         }
       }
+      setForgeListLoading(false)
       return res
     } catch (error) {
       console.error("Error fetching forge list:", error)
       return { data: { alienParts: [], userRuneAmounts: {} } }
+    } finally {
+      setForgeListLoading(false)
     }
   }
 
@@ -649,7 +654,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                   </div>
                   <div className="pt-4 w-full justify-center flex items-center">
                     <h2 className="text-2xl font-bold text-white mb-3">
-                      Add Character{" "}
+                      Add Character to Promote
                     </h2>
                   </div>
                 </div>
@@ -1069,6 +1074,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
           forgeList={userEnhancedParts}
           isEnhancement={activeTab === ForgeTabs.ENHANCEMENT}
           userId={alien?.userId}
+          forgeListLoading={forgeListLoading}
         />
 
         {/* Summon Modal for showing character after promoting */}

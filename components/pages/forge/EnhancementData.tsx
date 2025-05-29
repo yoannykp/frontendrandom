@@ -1,6 +1,7 @@
 import { Key } from "react"
 import Image from "next/image"
 import { InventoryItem } from "@/types"
+import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -8,14 +9,26 @@ const EnhancementData = ({
   onSelect,
   forgeList,
   userId,
+  forgeListLoading,
 }: {
   onSelect: (item: InventoryItem) => void
   forgeList?: any
   userId?: number
+  forgeListLoading?: boolean
 }) => {
   return (
-    <div>
-      <div className="w-full h-[calc(100vh-200px)] overflow-y-auto mx-auto bg-white/15 border border-white/10 backdrop-blur-md rounded-2xl p-6">
+    <div
+      className={cn(
+        "w-full h-[calc(100vh-200px)] overflow-y-auto mx-auto bg-white/15 border border-white/10 backdrop-blur-md rounded-2xl p-6",
+        forgeListLoading && "flex items-center justify-center"
+      )}
+    >
+      {forgeListLoading ? (
+        <div className="flex items-center justify-center">
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          <span className="text-sm"> Loading data...</span>
+        </div>
+      ) : (
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3 mt-4 h-full overflow-y-auto">
             {forgeList.length > 0 ? (
@@ -55,7 +68,7 @@ const EnhancementData = ({
             )}
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

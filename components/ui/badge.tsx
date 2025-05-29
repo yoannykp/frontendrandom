@@ -17,11 +17,11 @@ const badgeVariants = cva(
         outline: "text-foreground",
         legendary:
           "bg-pink-600 text-white leading-[1.25] hover:bg-pink-700 transition-all duration-200 font-light",
-        epic: "bg-purple-600 text-white leading-[1.25] hover:bg-purple-700 transition-all duration-200 font-light",
-        rare: "bg-blue-600 text-white leading-[1.25] hover:bg-blue-700 transition-all duration-200 font-light",
-        common:
+        eyes: "bg-purple-600 text-white leading-[1.25] hover:bg-purple-700 transition-all duration-200 font-light",
+        hair: "bg-blue-600 text-white leading-[1.25] hover:bg-blue-700 transition-all duration-200 font-light",
+        mouth:
           "bg-gray-600 text-white leading-[1.25] hover:bg-gray-700 transition-all duration-200 font-light",
-        uncommon:
+        background:
           "bg-green-600 text-white leading-[1.25] hover:bg-green-700 transition-all duration-200 font-light",
       },
     },
