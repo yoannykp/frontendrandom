@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { useWallet } from "@/context/wallet"
-import { useInventory } from "@/store/hooks"
+import { useInventory, useProfile } from "@/store/hooks"
 import { Character, InventoryItem } from "@/types"
 import { usePrivy, useWallets } from "@privy-io/react-auth"
 import { ethers } from "ethers"
@@ -17,7 +17,7 @@ import {
 import { cn, getEthWallet, handleSignMessage } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import BrandButton from "@/components/ui/brand-button"
-import CONTRACT_ABI from "@/app/assets/abi.json"
+import CONTRACT_ABI from "@/app/assets/wearablesContractAbi.json"
 
 // Define the BurnGearResponse type
 
@@ -67,6 +67,11 @@ const StorePage = () => {
   const [isMinted, setIsMinted] = useState(false)
   const [storeWearables, setStoreWearables] = useState<any[]>([])
   const [loadingItemId, setLoadingItemId] = useState(null)
+  const [isLoading, setIsLoading] = useState({
+    buy: false,
+    sell: false,
+    transfer: false,
+  })
 
   // Fetch inventory data when component mounts
   useEffect(() => {
@@ -128,99 +133,6 @@ const StorePage = () => {
     }
   }
 
-  // const handleMintCharacter = async (
-  //   serverSignature: string,
-  //   nonce: number,
-  //   character: Character,
-  //   gearId: number
-  // ) => {
-  //   const wallet = getEthWallet(wallets)
-  //   if (!wallet) {
-  //     toast.error("Please connect a wallet")
-  //     setLoading(false)
-  //     return
-  //   }
-
-  //   if (!provider || !signer) {
-  //     toast.error("Please connect a wallet")
-  //     setLoading(false)
-  //     return
-  //   }
-
-  //   const charactersIds = [character.id]
-  //   const tokenIds = [character.tokenId]
-  //   const amounts = new Array(tokenIds.length).fill(1)
-
-  //   try {
-  //     const signature = await handleSignMessage(
-  //       charactersIds.join(","),
-  //       wallet,
-  //       signMessage
-  //     )
-
-  //     if (!signature) {
-  //       toast.error("Signature failed or was cancelled")
-  //       setLoading(false)
-  //       return
-  //     }
-
-  //     // Step 2: Perform the transaction using the server signature
-  //     const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
-  //     if (!contractAddress) {
-  //       toast.error("Contract address not configured")
-  //       setLoading(false)
-  //       return
-  //     }
-
-  //     const contract = new ethers.Contract(
-  //       contractAddress,
-  //       CONTRACT_ABI,
-  //       signer
-  //     )
-
-  //     // Perform the mint transaction
-  //     const tx = await contract.mintBatch(
-  //       tokenIds,
-  //       amounts,
-  //       Number(nonce),
-  //       serverSignature
-  //     )
-  //     const receipt = await tx.wait()
-
-  //     console.log("Tx ==> ", tx)
-  //     console.log("Receipt ==> ", receipt)
-
-  //     const response = await updateGearBalance(gearId)
-  //     // Refresh inventory
-  //     fetchInventory()
-
-  //     console.log("Response ==> ", response)
-
-  //     // Set the summoned character and open the summon modal
-  //     setSummonedCharacter(character)
-
-  //     // Reset selected item
-  //     setSelectedItem(null)
-
-  //     setIsSummonModalOpen(true)
-  //     toast.success("Gear burned successfully!")
-  //   } catch (error) {
-  //     console.error("Minting error:", error)
-  //     if (error instanceof Error) {
-  //       // More descriptive error message based on the actual error
-  //       if (error.message.includes("user rejected")) {
-  //         toast.error("Transaction was cancelled by user")
-  //       } else {
-  //         toast.error(`Failed to mint: ${error.message}`)
-  //       }
-  //     } else {
-  //       toast.error("Failed to mint characters")
-  //     }
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
-
   console.log("storeWearables ==>", storeWearables)
 
   function formatTinyNumberJSX(value: number) {
@@ -243,6 +155,135 @@ const StorePage = () => {
 
     // For regular numbers
     return <span>${value}</span>
+  }
+
+  // const handleTransfer = async (subject: string, amount: number) => {
+  const handleTransfer = async (subject: string) => {
+    console.log("handleTransfer")
+    setIsLoading({ ...isLoading, transfer: true })
+
+    // const subject =
+    //   "0xb7fbc0ed8d213b20fd87a6dc606ea6408011c15f43415245898593f5808fbdd6"
+    const amount = ethers.parseEther("0.001")
+
+    if (!signer) {
+      toast.error("Wallet not connected")
+      return
+    }
+
+    const from = await signer.getAddress()
+    const to = "0x6b7B85684092e7986a0C5471A97420227DcEE204"
+
+    console.log(
+      `Subject: ${subject}\tAmount: ${amount.toString()}\tFrom: ${from}\tTo: ${to}`
+    )
+
+    try {
+      const contract = new ethers.Contract(
+        process.env.NEXT_PUBLIC_WEARABLES_CONTRACT_ADDRESS || "",
+        CONTRACT_ABI,
+        signer
+      )
+
+      const tx = await contract.transferWearables(subject, from, to, amount)
+      await tx.wait()
+
+      toast.success("Wearables transferred successfully!")
+      console.log("Transaction hash:", tx.hash)
+    } catch (error) {
+      console.error("Transfer failed:", error)
+      toast.error("Transfer failed")
+    } finally {
+      setIsLoading({ ...isLoading, transfer: false })
+    }
+  }
+
+  const handleBuy = async (subject: string) => {
+    console.log("handleTransfer")
+
+    setIsLoading({ ...isLoading, buy: true })
+    // const subject =
+    //   "0xb7fbc0ed8d213b20fd87a6dc606ea6408011c15f43415245898593f5808fbdd6"
+    const amount = ethers.parseEther("0.001")
+
+    if (!signer) {
+      toast.error("Wallet not connected")
+      return
+    }
+
+    try {
+      const contract = new ethers.Contract(
+        process.env.NEXT_PUBLIC_WEARABLES_CONTRACT_ADDRESS || "",
+        CONTRACT_ABI,
+        signer
+      )
+
+      console.log("contract", contract)
+      console.log("signer", signer)
+
+      console.log("subject", subject)
+      console.log("amount", amount)
+
+      const price = await contract.getBuyPriceAfterFee(subject, amount)
+
+      console.log(
+        `Subject: ${subject}\tAmount: ${amount.toString()}\tPrice: ${price.toString()}`
+      )
+
+      const tx = await contract.buyWearables(subject, amount, {
+        value: price,
+      })
+      await tx.wait()
+
+      toast.success("Wearables bought successfully!")
+      console.log("Transaction hash:", tx.hash)
+    } catch (error) {
+      console.error("Buy failed:", error)
+      toast.error("Buy failed")
+    } finally {
+      setIsLoading({ ...isLoading, buy: false })
+    }
+  }
+
+  const handleSell = async (subject: string) => {
+    console.log("handleTransfer")
+
+    setIsLoading({ ...isLoading, sell: true })
+    // const subject =
+    //   "0xb7fbc0ed8d213b20fd87a6dc606ea6408011c15f43415245898593f5808fbdd6"
+    const amount = ethers.parseEther("0.001")
+
+    if (!signer) {
+      toast.error("Wallet not connected")
+      return
+    }
+
+    try {
+      const contract = new ethers.Contract(
+        process.env.NEXT_PUBLIC_WEARABLES_CONTRACT_ADDRESS || "",
+        CONTRACT_ABI,
+        signer
+      )
+
+      const price = await contract.getBuyPriceAfterFee(subject, amount)
+
+      console.log(
+        `Subject: ${subject}\tAmount: ${amount.toString()}\tPrice: ${price.toString()}`
+      )
+
+      const tx = await contract.sellWearables(subject, amount, {
+        value: price,
+      })
+      await tx.wait()
+
+      toast.success("Wearables sold successfully!")
+      console.log("Transaction hash:", tx.hash)
+    } catch (error) {
+      console.error("Sell failed:", error)
+      toast.error("Sell failed")
+    } finally {
+      setIsLoading({ ...isLoading, sell: false })
+    }
   }
 
   return (
@@ -375,6 +416,13 @@ const StorePage = () => {
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between text-xs">
+                    <p className="truncate mr-2">Availability</p>
+                    <p className=" text-2xs whitespace-nowrap">
+                      {selectedItem?.availabilityInWei}/
+                      {selectedItem?.totalSupplyInWei}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
                     <p className="truncate mr-2">Total supply</p>
                     <p className="text-2xs whitespace-nowrap">
                       {/* {selectedItem?.totalSupply} */}
@@ -394,16 +442,35 @@ const StorePage = () => {
                 <BrandButton
                   blurColor="bg-[#96DFF4]"
                   className="w-full font-light"
-                  onClick={() => setSelectedItem(null)}
+                  onClick={() => handleBuy(selectedItem?.subject)}
+                  disabled={isLoading.buy}
                 >
-                  Buy
+                  {isLoading.buy ? "Buying... " : "Buy"}
+                  {isLoading.buy && (
+                    <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                  )}
                 </BrandButton>
                 <BrandButton
                   blurColor="bg-[#F49696]"
                   className="w-full font-light"
-                  onClick={() => setSelectedItem(null)}
+                  onClick={() => handleSell(selectedItem?.subject)}
+                  disabled={isLoading.sell}
                 >
-                  Sell
+                  {isLoading.sell ? "Selling... " : "Sell"}
+                  {isLoading.sell && (
+                    <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                  )}
+                </BrandButton>
+                <BrandButton
+                  blurColor="bg-[#EF98E6]"
+                  className="w-full font-light"
+                  onClick={() => handleTransfer(selectedItem?.subject)}
+                  disabled={isLoading.transfer}
+                >
+                  {isLoading.transfer ? "Transferring... " : "Transfer"}
+                  {isLoading.transfer && (
+                    <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                  )}
                 </BrandButton>
               </div>
             </div>
