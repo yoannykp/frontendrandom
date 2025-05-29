@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import { useInventory } from "@/store/hooks"
 import { InventoryItem } from "@/types"
+import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -13,7 +14,11 @@ const PromotionData = ({
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
   const [items, setItems] = useState<InventoryItem[]>([])
   const [loading, setLoading] = useState(false)
-  const { data: inventory, fetchInventory } = useInventory()
+  const {
+    data: inventory,
+    fetchInventory,
+    loading: inventoryLoading,
+  } = useInventory()
 
   useEffect(() => {
     fetchInventory()
@@ -33,11 +38,19 @@ const PromotionData = ({
     setLoading(false)
   }, [inventory])
 
-  console.log("items ===>", items)
-
   return (
-    <div>
-      <div className="w-full h-[calc(100vh-200px)] overflow-y-auto mx-auto bg-white/15 border border-white/10 backdrop-blur-md rounded-2xl p-6">
+    <div
+      className={cn(
+        "w-full h-[calc(100vh-200px)] overflow-y-auto mx-auto bg-white/15 border border-white/10 backdrop-blur-md rounded-2xl p-6",
+        inventoryLoading && "flex items-center justify-center"
+      )}
+    >
+      {inventoryLoading ? (
+        <div className="flex items-center justify-center">
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          <span className="text-sm"> Loading data...</span>
+        </div>
+      ) : (
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3 mt-4 h-full overflow-y-auto">
             {items.length > 0 ? (
@@ -77,7 +90,7 @@ const PromotionData = ({
             )}
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

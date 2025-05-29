@@ -1,9 +1,13 @@
 "use client"
 
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 import { RewardType } from "@/types"
 
 const NoRaid = () => {
+  const pathname = usePathname()
+  const isHunt = pathname === "/hunt"
+
   return (
     <div className="lg:bg-white/10 rounded-sm lg:rounded-2xl  lg:p-4 flex-1">
       <div className=" h-full rounded-lg flex flex-col p-4 lg:p-10 relative overflow-hidden">
@@ -25,7 +29,9 @@ const NoRaid = () => {
 
         <div className="relative z-10 flex flex-col h-full">
           <div className="flex flex-col gap-2 flex-1">
-            <h2 className="text-3xl font-volkhov">Raids</h2>
+            <h2 className="text-3xl font-volkhov">
+              {isHunt ? "Hunt" : "Raids"}
+            </h2>
             <p className="text-white/50 text-sm max-w-[400px]">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
               sagittis ipsum sit amet tortor efficitur volutpat. Nullam a quam

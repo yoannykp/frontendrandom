@@ -338,7 +338,7 @@ const StorePage = () => {
                   alt="item"
                   width={400}
                   height={400}
-                  className="object-cover h-[300px] rounded"
+                  className="object-cover h-[350px] rounded"
                 />
               </div>
 
@@ -436,10 +436,11 @@ const StorePage = () => {
                 <span className="text-sm">Back to store</span>
               </BrandButton>
 
-              <div className="flex flex-col gap-4 w-full">
+              <div className="flex flex-col gap-2 w-full">
                 <h2 className="text-lg font-bold">{selectedItem?.name}</h2>
                 <p className="text-sm">{selectedItem?.description}</p>
-                <div className="flex flex-col mt-3 gap-1 p-3">
+
+                <div className="flex flex-col mt-3 gap-1 py-3">
                   <div className="flex items-center justify-between">
                     <p className="truncate mr-2 text-sm">Type</p>
                     <Badge
@@ -631,7 +632,7 @@ const StorePage = () => {
                   {loading ? (
                     <div className="flex items-center justify-center">
                       <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                      <span className="text-sm"> Loading Wearables...</span>
+                      <span className="text-sm"> Loading Items...</span>
                     </div>
                   ) : (
                     "No items found"
