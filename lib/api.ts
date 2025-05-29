@@ -775,3 +775,15 @@ export const enhanceAlienPart = async (
   })
   return response
 }
+
+export const getStoreWearables = async (): Promise<ApiResponse<any>> => {
+  const response = await apiManager.get<any>("/store/wearables")
+  return response
+}
+
+export const getWearableObjectDetails = async (
+  subject: string
+): Promise<ApiResponse<any>> => {
+  const response = await apiManager.get<any>(`/store/wearables/${subject}`)
+  return response
+}
