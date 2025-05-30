@@ -836,8 +836,9 @@ const DojoPage = () => {
                           </span>
                           <span className="text-xs font-volkhov">
                             {bonusDetails.starBoost
-                              ? bonusDetails.starBoost.toFixed(5)
+                              ? bonusDetails.starBoost
                               : 0}
+                            %
                           </span>
                         </div>
                         <div className="flex-1 flex justify-between items-center gap-2 bg-white/10 rounded px-2 py-1">
@@ -845,9 +846,7 @@ const DojoPage = () => {
                             xpBoost
                           </span>
                           <span className="text-xs font-volkhov">
-                            {bonusDetails.xpBoost
-                              ? bonusDetails.xpBoost.toFixed(5)
-                              : 0}
+                            {bonusDetails.xpBoost ? bonusDetails.xpBoost : 0}%
                           </span>
                         </div>
                       </div>
@@ -858,8 +857,9 @@ const DojoPage = () => {
                           </span>
                           <span className="text-xs font-volkhov">
                             {bonusDetails.raidTimeBoost
-                              ? bonusDetails.raidTimeBoost.toFixed(5)
+                              ? bonusDetails.raidTimeBoost
                               : 0}
+                            %
                           </span>
                         </div>
                       </div>
