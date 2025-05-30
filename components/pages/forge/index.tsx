@@ -31,6 +31,27 @@ import CONTRACT_ABI from "@/app/assets/abi.json"
 import SummonModal from "../draw/SummonModal"
 import Modal from "./Modal"
 
+const formatRemainingTime = (targetDate: string) => {
+  if (!targetDate) return null
+
+  const now = new Date()
+  const target = new Date(targetDate)
+  const timeDiff = target.getTime() - now.getTime()
+
+  // Return null if the date has passed
+  if (timeDiff < 0) return null
+
+  const hours = Math.floor(timeDiff / (1000 * 60 * 60))
+  const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000)
+
+  return {
+    hours,
+    minutes,
+    seconds,
+  }
+}
+
 const CustomArrow = ({
   direction,
   onClick,
@@ -87,6 +108,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
   const { data: profile } = useProfile()
   const { alien } = useAliens()
   const [forgeListLoading, setForgeListLoading] = useState(false)
+  const [remainingTime, setRemainingTime] = useState<string | null>(null)
 
   console.log("profile ====>", profile?.id, alien?.userId)
 
@@ -105,8 +127,6 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
       setUserEnhancedParts(res.data?.alienPartsList || [])
     })
   }
-
-  console.log("userEnhancedParts ====>", userEnhancedParts)
 
   useEffect(() => {
     if (
@@ -149,6 +169,29 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     setSelectedEnhancementObj(null)
   }, [activeTab])
 
+  // Add this useEffect for countdown
+  useEffect(() => {
+    if (!activeItem?.userForgeTime) {
+      setRemainingTime(null)
+      return
+    }
+
+    const updateTime = () => {
+      const time = formatRemainingTime(activeItem.userForgeTime)
+      if (!time) {
+        setRemainingTime(null)
+        return
+      }
+      const formattedTime = `${String(time.hours).padStart(2, "0")}:${String(time.minutes).padStart(2, "0")}:${String(time.seconds).padStart(2, "0")}`
+      setRemainingTime(formattedTime)
+    }
+
+    updateTime() // Initial update
+    const interval = setInterval(updateTime, 1000)
+
+    return () => clearInterval(interval)
+  }, [activeItem?.userForgeTime])
+
   // Function to handle forge request
   const handleForge = async () => {
     if (!activeItemId) return
@@ -156,7 +199,6 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     try {
       const response = await forgeAlienPart(Number(activeItemId))
       if (response.data?.success) {
-        await fetchForgeList()
         // Get the current real index from the swiper
         const currentRealIndex = swiperRef.current?.realIndex || 0
         // Update active item based on the current slide after refetching
@@ -164,7 +206,8 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
           setActiveItem(forgeList[currentRealIndex])
           setActiveItemId(forgeList[currentRealIndex].id)
         }
-        toast.success("Forge successful")
+        await fetchForgeList()
+        toast.success(response.data?.message || "Forge successful")
       } else {
         toast.error(
           response.data?.error?.message ||
@@ -374,8 +417,8 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     }
   }
 
-  console.log("selectedEnhancementObj", selectedEnhancementObj)
-  console.log("forgeList", forgeList)
+  console.log("selectedEnhancementObj ====>", selectedEnhancementObj)
+  console.log("forgeList ====>", forgeList)
 
   // Break down the complex function into smaller helper functions
   const renderStage1 = (tierObj: any) => (
@@ -788,155 +831,6 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
           </div>
         )}
 
-        {/* {activeTab === ForgeTabs.PROMOTION && (
-          <div className="h-full w-full max-w-max mx-auto flex flex-col">
-            {!selectedCharacter && !tierObj ? (
-              <div
-                className={cn(
-                  "h-full w-full max-w-max mx-auto flex flex-col justify-center"
-                )}
-              >
-                <div className="w-full max-w-sm rounded-xl border border-white/10 backdrop-blur-md flex flex-col p-3">
-                  <div
-                    className="aspect-square relative cursor-pointer"
-                    onClick={() => setIsAlienRaidModalOpen(true)}
-                  >
-                    <div className="absolute inset-0 w-full h-full bg-white/10 rounded-md flex items-center justify-center text-lg text-center">
-                      <Plus className="w-20 h-20" />
-                    </div>
-                  </div>
-                  <div className="pt-4 w-full justify-center flex items-center">
-                    <h2 className="text-2xl font-bold text-white mb-3">
-                      Add Character{" "}
-                    </h2>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col lg:flex-row  justify-center flex-1 max-w-max ">
-                <div className="w-full max-w-lg flex flex-col ">
-                  <h3 className="text-center text-xl">Tier 1</h3>
-                  {tierObj?.stage1?.image && (
-                    <div className="aspect-square relative">
-                      <Image
-                        src={tierObj?.stage1?.image}
-                        alt="Stage 01 - Green Cat"
-                        width={300}
-                        height={300}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex flex-col items-center pt-20  gap-4 h-full">
-                  <button className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md flex items-center justify-center text-white">
-                    {tierObj?.stage1?.quantity &&
-                    tierObj?.stage1?.upgradeReq &&
-                    Number(tierObj?.stage1?.quantity) >=
-                      Number(tierObj?.stage1?.upgradeReq) ? (
-                      <Check />
-                    ) : (
-                      <Lock />
-                    )}
-                  </button>
-                  <button className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md flex items-center justify-center text-white">
-                    <ArrowRight />
-                  </button>
-                </div>
-
-                <div className="w-full max-w-lg flex flex-col  ">
-                  <h3 className="text-center text-xl">Tier 2</h3>
-                  {tierObj?.stage2?.image && (
-                    <div className="aspect-square relative">
-                      <Image
-                        src={tierObj?.stage2?.image}
-                        alt="Stage 01 - Green Cat"
-                        width={300}
-                        height={300}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex flex-col items-center pt-20  gap-4 h-full">
-                  <button className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md flex items-center justify-center text-white">
-                    {tierObj?.stage2?.quantity &&
-                    tierObj?.stage2?.upgradeReq &&
-                    Number(tierObj?.stage2?.quantity) >=
-                      Number(tierObj?.stage2?.upgradeReq) ? (
-                      <Check />
-                    ) : (
-                      <Lock />
-                    )}
-                  </button>
-                  <button className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md flex items-center justify-center text-white">
-                    <ArrowRight />
-                  </button>
-                </div>
-
-                <div className="w-full max-w-lg flex flex-col">
-                  <h3 className="text-center text-xl">Tier 3</h3>
-                  {tierObj?.stage3?.image && (
-                    <div className="aspect-square relative">
-                      <Image
-                        src={tierObj?.stage3?.image}
-                        alt="Stage 01 - Green Cat"
-                        width={300}
-                        height={300}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {selectedForPromotion && (
-              <div className="mt-8 flex items-center space-x-4 bg-white/10 p-2 rounded-xl backdrop-blur-lg">
-                <div className="px-5 !h-14 rounded-xl text-lg border bg-white/5 border-white/10 flex items-center justify-center text-center flex-1">
-                  {selectedForPromotion?.name || "--"}
-                </div>
-                <div className="px-5 !h-14 rounded-xl text-sm border bg-white/5 border-white/10 flex items-center justify-between text-center flex-1">
-                  <span>Requested to promote</span>
-                  <div className="rounded-full bg-white/10 flex items-center font-inter">
-                    <span className="text-[#D3EF98] text-xs px-3">
-                      {selectedForPromotion?.quantity ?? "--"}/
-                      {selectedForPromotion?.upgradeReq ?? "--"}
-                    </span>
-                    {selectedForPromotion?.image && (
-                      <span className="p-0.5 bg-white/10 border border-white/10 rounded-full">
-                        <Image
-                          src={selectedForPromotion?.image}
-                          alt="Selected for promotion"
-                          width={30}
-                          height={30}
-                          className="object-cover rounded-full"
-                        />
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <button
-                  className="px-5 !h-14 rounded-xl text-lg border bg-white/5 border-white/10 flex items-center justify-center text-center flex-1 relative group overflow-hidden"
-                  onClick={() => handlePromote()}
-                  disabled={
-                    Number(selectedForPromotion?.quantity || 0) <
-                      Number(selectedForPromotion?.upgradeReq || 0) || isLoading
-                  }
-                >
-                  <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all group-disabled:group-hover:h-[30px] bg-[#D3EF98]" />
-                  {isLoading ? "Promoting..." : "Promote"}
-                  {isLoading && (
-                    <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                  )}
-                </button>
-              </div>
-            )}
-          </div>
-        )} */}
-
         {activeTab === ForgeTabs.FORGE && (
           <div className="h-full w-full flex items-center justify-center">
             <div className="relative w-full h-full">
@@ -1046,14 +940,22 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                       userRuneAmounts[activeItem.forgeRuneType] !== undefined
                       ? userRuneAmounts[activeItem.forgeRuneType]
                       : 0
-                  ) < Number(activeItem?.forgeRuneAmount || 0)
+                  ) < Number(activeItem?.forgeRuneAmount || 0) ||
+                  !!activeItem?.userForgeTime
                 }
                 className="w-full h-14 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center relative group overflow-hidden"
               >
                 <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all group-disabled:group-hover:h-[30px] bg-[#5FD7FF]" />
-                <span className="text-white text-xl">
-                  {isLoading ? "Forging..." : "Forge"}
-                </span>
+
+                {remainingTime ? (
+                  <span className="text-white text-sm ml-2">
+                    {remainingTime}
+                  </span>
+                ) : (
+                  <span className="text-white text-xl">
+                    {isLoading ? "Forging..." : "Forge"}
+                  </span>
+                )}
               </button>
             </div>
           </div>

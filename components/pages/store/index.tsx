@@ -641,8 +641,8 @@ const StorePage = () => {
                 <div className="col-span-full text-center py-10 text-white/60">
                   {loading ? (
                     <div className="flex items-center justify-center">
-                      <Loader2 className="w-4 h-4 ml-2 animate-spin" />
-                      <span className="text-sm"> Loading Items...</span>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <span className="text-sm">Loading Items...</span>
                     </div>
                   ) : (
                     "No items found"
