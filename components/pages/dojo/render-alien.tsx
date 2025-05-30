@@ -28,6 +28,16 @@ const BASE_IMAGES = [
   "/images/alien/body/cothes.png",
 ]
 
+// Helper function to get proxied URL for trait images
+const getProxiedUrl = (src: string): string => {
+  // Don't proxy local images (base images)
+  if (src.startsWith("/")) {
+    return src
+  }
+  // Use image proxy for external images (traits)
+  return `/api/image-proxy?url=${encodeURIComponent(src)}`
+}
+
 // Preload an image and store in cache
 const preloadImage = (
   src: string,
@@ -38,8 +48,13 @@ const preloadImage = (
     return Promise.reject(new Error(`Invalid image source: ${src}`))
   }
 
+  // Get proxied URL for trait images
+  const proxiedSrc = getProxiedUrl(src)
+
   // Add cache busting parameter to avoid browser cache issues
-  const cacheBustedSrc = forceFresh ? `${src}?cb=${Date.now()}` : src
+  const cacheBustedSrc = forceFresh
+    ? `${proxiedSrc}?cb=${Date.now()}`
+    : proxiedSrc
 
   // Return cached image if available and not forcing a fresh load
   if (imageCache[src] && !forceFresh) {
@@ -75,7 +90,7 @@ const preloadImage = (
       resolve(img)
     }
 
-    // Set crossOrigin to anonymous for S3 bucket images
+    // Set crossOrigin to anonymous for all images
     img.crossOrigin = "anonymous"
     img.src = cacheBustedSrc
   })
@@ -92,7 +107,7 @@ const refreshCachedImage = (src: string) => {
     }
     console.log(`Refreshed cached image: ${src}`)
   }
-  freshImg.src = `${src}?cb=${Date.now()}` // Add cache busting
+  freshImg.src = `${getProxiedUrl(src)}?cb=${Date.now()}` // Add cache busting
 }
 
 // Clear all items from the cache that are older than the specified time
@@ -155,6 +170,12 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
     const [baseImagesLoaded, setBaseImagesLoaded] = useState(false)
     const [isTraitsChanging, setIsTraitsChanging] = useState(false)
     const previousTraitsRef = useRef({
+      hair: "",
+      eyes: "",
+      mouth: "",
+      element: "",
+    })
+    const [pendingTraits, setPendingTraits] = useState({
       hair: "",
       eyes: "",
       mouth: "",
@@ -226,7 +247,15 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
         return
       }
 
-      // Determine if only user traits changed (for smoother transitions)
+      // Store the new traits as pending
+      setPendingTraits({
+        hair: selectedTraits.hair,
+        eyes: selectedTraits.eyes,
+        mouth: selectedTraits.mouth,
+        element: element,
+      })
+
+      // Determine if only user traits changed
       const onlyUserTraitsChanged =
         haveUserTraitsChanged() && previousTraitsRef.current.element === element
 
@@ -236,26 +265,16 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
       // Clear stale cache entries periodically
       clearStaleCache()
 
-      // Update reference to current traits
-      previousTraitsRef.current = {
-        hair: selectedTraits.hair,
-        eyes: selectedTraits.eyes,
-        mouth: selectedTraits.mouth,
-        element: element,
-      }
-
       setLoadingAttempted(true)
 
-      // Only show loading indicator for major changes
-      if (!onlyUserTraitsChanged) {
+      // Only show loading indicator for initial load
+      if (!loadingAttempted) {
         setIsLoading(true)
       }
 
-      setLoadingProgress(0)
-
       const loadTraitImages = async () => {
         try {
-          // Create an array of trait image sources (no base images)
+          // Create an array of new trait image sources
           const traitImageSources = [
             ...(selectedTraits.eyes ? [selectedTraits.eyes] : []),
             ...(selectedTraits.hair ? [selectedTraits.hair] : []),
@@ -268,40 +287,36 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
             (src) => src && typeof src === "string" && src.trim() !== ""
           )
 
-          const totalImages = validImageSources.length
-          let loadedImages = 0
-
-          // Create an array of promises to load all images in parallel
-          const loadPromises = validImageSources.map((src) =>
-            preloadImage(src)
-              .catch((err) => {
+          // Load all new images first
+          await Promise.all(
+            validImageSources.map((src) =>
+              preloadImage(src).catch((err) => {
                 console.error(`Failed to load image: ${src}`, err)
-                return null // Return null for failed loads, but don't fail the Promise.all
+                return null
               })
-              .finally(() => {
-                loadedImages++
-                setLoadingProgress(
-                  Math.floor((loadedImages / totalImages) * 100)
-                )
-              })
+            )
           )
 
-          // Wait for all images to load (or fail)
-          await Promise.all(loadPromises)
+          // Only update the reference to current traits after all images are loaded
+          previousTraitsRef.current = {
+            hair: selectedTraits.hair,
+            eyes: selectedTraits.eyes,
+            mouth: selectedTraits.mouth,
+            element: element,
+          }
 
           setIsImagesLoaded(true)
 
-          // Set loading to false after a short delay to ensure smooth transition
+          // Set loading states to false after ensuring images are loaded
           setTimeout(
             () => {
               setIsLoading(false)
               setIsTraitsChanging(false)
             },
-            onlyUserTraitsChanged ? 50 : 300
+            onlyUserTraitsChanged ? 100 : 300
           )
         } catch (error) {
           console.error("Error in loadAllImages:", error)
-          // Try to continue with whatever images were loaded
           if (Object.keys(imageCache).length > 0) {
             console.log(
               "Some images were loaded, attempting to render with available images"
@@ -312,7 +327,7 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
                 setIsLoading(false)
                 setIsTraitsChanging(false)
               },
-              onlyUserTraitsChanged ? 50 : 300
+              onlyUserTraitsChanged ? 100 : 300
             )
           }
         }
@@ -384,14 +399,11 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
           ctx.clearRect(0, 0, width, height)
 
           try {
-            // Different opacity settings for base images vs traits
-            if (isLoading) {
-              ctx.globalAlpha = 0.6 // Reduced opacity while loading everything
-            } else if (isTraitsChanging) {
-              // For trait changes, keep base images solid but traits translucent
-              ctx.globalAlpha = 1.0
+            // Set initial opacity
+            if (isLoading && !loadingAttempted) {
+              ctx.globalAlpha = 0.6 // Reduced opacity only during initial load
             } else {
-              ctx.globalAlpha = 1.0 // Full opacity when fully loaded
+              ctx.globalAlpha = 1.0 // Full opacity for all other states
             }
 
             // Helper function to draw image maintaining aspect ratio
@@ -400,75 +412,75 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
                 return false
               }
 
-              // Set appropriate opacity based on whether it's a base part or trait
-              if (isTraitsChanging) {
-                ctx.globalAlpha = isBasePart ? 1.0 : 0.8
-              }
-
               if (imageCache[src]) {
                 ctx.drawImage(imageCache[src].img, 0, 0, width, height)
                 return true
-              } else {
-                // Try to load the image on-demand if not in cache
-                const img = new Image()
-                img.crossOrigin = "anonymous"
-                img.onload = () => {
-                  imageCache[src] = { img, timestamp: Date.now() }
-                  ctx.drawImage(img, 0, 0, width, height)
+              } else if (!isBasePart) {
+                // For non-base parts (traits), try to use the previous trait if available
+                const prevSrc =
+                  previousTraitsRef.current[
+                    src === pendingTraits.hair
+                      ? "hair"
+                      : src === pendingTraits.eyes
+                        ? "eyes"
+                        : src === pendingTraits.mouth
+                          ? "mouth"
+                          : "element"
+                  ]
+                if (prevSrc && imageCache[prevSrc]) {
+                  ctx.drawImage(imageCache[prevSrc].img, 0, 0, width, height)
+                  return true
+                }
+              }
 
-                  // Redraw the entire alien when this image loads
-                  // This ensures the full alien is displayed once all parts are available
+              // Try to load the image if not in cache
+              const img = new Image()
+              img.crossOrigin = "anonymous"
+              img.onload = () => {
+                imageCache[src] = { img, timestamp: Date.now() }
+                ctx.drawImage(img, 0, 0, width, height)
+                drawAlien(ctx, scale, showBackground)
+              }
+              img.onerror = () => {
+                console.error(`Failed to load image on-demand: ${src}`)
+                const retryImg = new Image()
+                retryImg.crossOrigin = "anonymous"
+                retryImg.onload = () => {
+                  imageCache[src] = { img: retryImg, timestamp: Date.now() }
+                  ctx.drawImage(retryImg, 0, 0, width, height)
                   drawAlien(ctx, scale, showBackground)
                 }
-                img.onerror = () => {
-                  console.error(`Failed to load image on-demand: ${src}`)
-                  // Try one more time with cache busting
-                  const retryImg = new Image()
-                  retryImg.crossOrigin = "anonymous"
-                  retryImg.onload = () => {
-                    imageCache[src] = { img: retryImg, timestamp: Date.now() }
-                    ctx.drawImage(retryImg, 0, 0, width, height)
-                    drawAlien(ctx, scale, showBackground)
-                  }
-                  retryImg.src = `${src}?cb=${Date.now()}`
-                }
-                img.src = src
-                return false
+                const proxiedSrc = getProxiedUrl(src)
+                retryImg.src = `${proxiedSrc}?cb=${Date.now()}`
               }
+              const proxiedSrc = getProxiedUrl(src)
+              img.src = proxiedSrc
+              return false
             }
 
-            // Draw base body (always at full opacity)
+            // Draw base body
             drawImage("/images/alien/body/body.png", true)
 
-            // Draw head (always at full opacity)
+            // Draw head
             drawImage("/images/alien/body/head.png", true)
 
-            // Reset global alpha for trait images if necessary
-            if (isTraitsChanging) {
-              ctx.globalAlpha = 0.8 // Slightly transparent for changing traits
-            }
+            // Draw traits - use new trait if loaded, otherwise keep previous
+            const eyesSrc = imageCache[selectedTraits.eyes]
+              ? selectedTraits.eyes
+              : previousTraitsRef.current.eyes
+            if (eyesSrc) drawImage(eyesSrc)
 
-            // Draw selected eyes traits
-            if (selectedTraits.eyes) {
-              drawImage(selectedTraits.eyes)
-            }
+            const hairSrc = imageCache[selectedTraits.hair]
+              ? selectedTraits.hair
+              : previousTraitsRef.current.hair
+            if (hairSrc) drawImage(hairSrc)
 
-            // Draw selected hair
-            if (selectedTraits.hair) {
-              drawImage(selectedTraits.hair)
-            }
+            const mouthSrc = imageCache[selectedTraits.mouth]
+              ? selectedTraits.mouth
+              : previousTraitsRef.current.mouth
+            if (mouthSrc) drawImage(mouthSrc)
 
-            // Draw selected mouth traits
-            if (selectedTraits.mouth) {
-              drawImage(selectedTraits.mouth)
-            }
-
-            // Reset alpha for clothes (base part)
-            if (isTraitsChanging) {
-              ctx.globalAlpha = 1.0
-            }
-
-            // Draw clothes (always at full opacity)
+            // Draw clothes
             drawImage("/images/alien/body/cothes.png", true)
 
             // Reset global alpha
@@ -536,22 +548,17 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
               height: "100%",
               display: "block",
               objectFit: "contain",
-              opacity: isLoading ? 0.7 : 1, // Additional opacity control on the canvas element
+              opacity: isLoading ? 0.7 : 1,
               transition: "opacity 0.3s ease-in-out",
             }}
             className="max-sm:h-64 max-sm:w-auto max-sm:object-contain"
           />
-          {/* Loading overlay - only show for major changes */}
-          {isLoading && !isTraitsChanging && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+          {/* Loading overlay - show during initial load or trait changes */}
+          {(isLoading || isTraitsChanging) && (
+            <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
               <div className="bg-black/30 backdrop-blur-sm p-4 rounded-full">
                 <Loader2 className="h-10 w-10 animate-spin text-white" />
               </div>
-              {loadingProgress > 0 && (
-                <div className="mt-2 text-white text-sm bg-black/30 px-2 py-1 rounded-full">
-                  {loadingProgress}%
-                </div>
-              )}
             </div>
           )}
           {/* Hidden canvases */}

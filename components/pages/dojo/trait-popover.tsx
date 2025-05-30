@@ -1,5 +1,6 @@
 import { useState } from "react"
 import Image from "next/image"
+import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { GradientBorder } from "@/components/ui/gradient-border"
@@ -56,6 +57,9 @@ const TraitPopover = ({
   disabled = false,
 }: TraitPopoverProps) => {
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
+  const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>(
+    {}
+  )
 
   // Handle image load error
   const handleImageError = (traitId: number) => {
@@ -63,11 +67,19 @@ const TraitPopover = ({
       ...prev,
       [traitId]: true,
     }))
+    setLoadingImages((prev) => ({
+      ...prev,
+      [traitId]: false,
+    }))
     console.error(`Failed to load image for trait ID: ${traitId}`)
   }
 
   // Reset error when image successfully loads
   const handleImageLoad = (traitId: number) => {
+    setLoadingImages((prev) => ({
+      ...prev,
+      [traitId]: false,
+    }))
     if (imageErrors[traitId]) {
       setImageErrors((prev) => {
         const newErrors = { ...prev }
@@ -75,6 +87,14 @@ const TraitPopover = ({
         return newErrors
       })
     }
+  }
+
+  // Start loading state when image starts loading
+  const handleImageStartLoad = (traitId: number) => {
+    setLoadingImages((prev) => ({
+      ...prev,
+      [traitId]: true,
+    }))
   }
 
   return (
@@ -94,6 +114,8 @@ const TraitPopover = ({
             className="w-24 h-24 opacity-30"
             width={100}
             height={100}
+            crossOrigin="anonymous"
+            unoptimized
           />
           <span className="text-[8px] absolute bottom-3 left-1/2 -translate-x-1/2">
             {item.label}
@@ -107,14 +129,14 @@ const TraitPopover = ({
       >
         <ScrollArea className="h-[150px]">
           <div className="grid grid-cols-3 gap-2">
-            {traits.map((trait, index) => (
+            {traits.map((trait) => (
               <GradientBorder
                 key={trait.id}
                 isSelected={selectedId === trait.id}
                 className="transition-colors duration-300"
               >
                 <div
-                  className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
+                  className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all relative"
                   onClick={() => onSelect(trait)}
                 >
                   <div className="w-full h-full flex items-center justify-center relative overflow-hidden">
@@ -124,18 +146,29 @@ const TraitPopover = ({
                         {trait.name?.slice(0, 3) || "⚠️"}
                       </div>
                     ) : (
-                      <Image
-                        loader={imageLoader}
-                        src={trait.image}
-                        alt={trait.name || `Trait ${trait.id}`}
-                        width={50}
-                        height={50}
-                        className="object-cover"
-                        crossOrigin="anonymous"
-                        onError={() => handleImageError(trait.id)}
-                        onLoad={() => handleImageLoad(trait.id)}
-                        unoptimized
-                      />
+                      <>
+                        <Image
+                          src={`/api/image-proxy?url=${trait.image}`}
+                          alt={trait.name || `Trait ${trait.id}`}
+                          width={50}
+                          height={50}
+                          className={cn(
+                            "object-cover",
+                            loadingImages[trait.id] && "opacity-30"
+                          )}
+                          crossOrigin="anonymous"
+                          onError={() => handleImageError(trait.id)}
+                          onLoad={() => handleImageLoad(trait.id)}
+                          onLoadingComplete={() => handleImageLoad(trait.id)}
+                          onLoadStart={() => handleImageStartLoad(trait.id)}
+                          unoptimized
+                        />
+                        {loadingImages[trait.id] && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Loader2 className="w-4 h-4 animate-spin text-white/80" />
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
