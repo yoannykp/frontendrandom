@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { AuthUserData, CreateAlienData, Traits } from "@/types"
+import { useUser } from "@privy-io/react-auth"
 import { AnimatePresence, motion } from "framer-motion"
 
 import { getOnboardingData } from "@/lib/api"
@@ -50,6 +51,7 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
 
   const [traits, setTraits] = useState<Traits | null>(null)
   const router = useRouter()
+  const { user } = useUser()
 
   const [userData, setUserData] = useState<AuthUserData>({
     name: "",
@@ -58,7 +60,14 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
     twitterId: "random",
     image: "/images/user.png",
     refferalCode: "",
+    email: user?.email?.address,
   })
+
+  useEffect(() => {
+    if (user) {
+      setUserData((prev) => ({ ...prev, email: user?.email?.address }))
+    }
+  }, [user])
 
   const [createAlienData, setCreateAlienData] = useState<CreateAlienData>({
     name: "",
@@ -103,6 +112,7 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
       }
     })
   }, [])
+
   useEffect(() => {
     audioRef.current = new Audio("/music.mp3")
     audioRef.current.loop = true
@@ -143,8 +153,6 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
     // }
     setCurrentStep((previous) => previous + 1)
   }
-
-  console.log("selectedTraits ===>", selectedTraits)
 
   return (
     <main className="w-full h-screen relative">

@@ -21,7 +21,8 @@ const ConnectModal = ({
   moveToPreviousStep: () => void
   moveToStep: (step: number) => void
 }) => {
-  const { login, ready, authenticated, signMessage, connectWallet } = usePrivy()
+  const { login, ready, authenticated, signMessage, connectWallet, user } =
+    usePrivy()
   const { logout } = useLogout()
   const { wallets } = useWallets()
   const router = useRouter()
@@ -54,6 +55,8 @@ const ConnectModal = ({
     //   ),
     // },
   ]
+
+  console.log("user ====>", user)
 
   const handleOptionClick = (option: (typeof options)[0]) => {
     if (ready && authenticated) {
@@ -115,7 +118,7 @@ const ConnectModal = ({
   //   checkUser()
   // }, [authenticated, ready, wallets[0]])
 
-  const handleAuthenticate = async () => {
+  const handleAuthenticate = async (email: string) => {
     const wallet = getEthWallet(wallets)
     if (!wallet) {
       toast.error("Please connect a wallet")
@@ -146,7 +149,12 @@ const ConnectModal = ({
     const res = await authenticate({
       signature: sign,
       signedMessage: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
+      register: {
+        email: email,
+      },
     })
+
+    console.log("res ====>", res)
     if (res.data) {
       router.push("/?showDailyReward=true")
     }
@@ -154,13 +162,17 @@ const ConnectModal = ({
 
   useEffect(() => {
     const checkUser = async () => {
-      if (authenticated && ready && wallets.length > 0) {
+      if (authenticated && ready && wallets.length > 0 && user) {
+        // ✅ Access email here
+        const email = user?.email?.address
+        console.log("User email:", email)
+
         const ethWallet = getEthWallet(wallets)
         if (ethWallet) {
           const res = await checkUserExist(ethWallet.address)
 
           if (res.data) {
-            handleAuthenticate()
+            handleAuthenticate(user?.email?.address || "")
           } else {
             moveToStep(2)
           }
@@ -172,7 +184,7 @@ const ConnectModal = ({
       }
     }
     checkUser()
-  }, [authenticated, ready, wallets])
+  }, [authenticated, ready, wallets, user])
 
   return (
     <div className="w-full md:w-[35rem] space-y-6 z-20">

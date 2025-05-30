@@ -45,6 +45,11 @@ const InfoModal = ({
       return
     }
 
+    if (!userData.email) {
+      toast.error("Email is not linked to your wallet")
+      return
+    }
+
     if (!signer) {
       toast.error("Please connect your wallet")
       return

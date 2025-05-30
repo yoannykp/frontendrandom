@@ -5,12 +5,13 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
 }
 
 export type AuthUserData = {
-  name: string
-  code: string
-  country: string
-  twitterId: string
+  name?: string
+  code?: string
+  country?: string
+  twitterId?: string
   image?: string
   refferalCode?: string
+  email?: string
 }
 
 export interface CreateAlienData {
