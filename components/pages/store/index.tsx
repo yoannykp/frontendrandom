@@ -195,9 +195,18 @@ const StorePage = () => {
       console.log("Transaction hash:", tx.hash)
       setShowTransferInput(false)
       setTransferAddress("")
-    } catch (error) {
-      console.error("Transfer failed:", error)
-      toast.error("Transfer failed")
+    } catch (error: any) {
+      console.error("Full error object:", error)
+
+      if (error.code === "BAD_DATA") {
+        toast.error("Contract call failed - invalid data returned")
+      } else if (error.reason) {
+        toast.error(`Contract error: ${error.reason}`)
+      } else if (error.message) {
+        toast.error(`Error: ${error.message}`)
+      } else {
+        toast.error("Transfer failed")
+      }
     } finally {
       setIsLoading({ ...isLoading, transfer: false })
     }
@@ -304,9 +313,18 @@ const StorePage = () => {
 
       toast.success("Wearables sold successfully!")
       console.log("Transaction hash:", tx.hash)
-    } catch (error) {
-      console.error("Sell failed:", error)
-      toast.error("Sell failed")
+    } catch (error: any) {
+      console.error("Full error object:", error)
+
+      if (error.code === "BAD_DATA") {
+        toast.error("Contract call failed - invalid data returned")
+      } else if (error.reason) {
+        toast.error(`Contract error: ${error.reason}`)
+      } else if (error.message) {
+        toast.error(`Error: ${error.message}`)
+      } else {
+        toast.error("Sell failed")
+      }
     } finally {
       setIsLoading({ ...isLoading, sell: false })
     }
@@ -445,8 +463,7 @@ const StorePage = () => {
                   <div className="flex items-center justify-between text-xs">
                     <p className="truncate mr-2">Availability</p>
                     <p className=" text-2xs whitespace-nowrap">
-                      {selectedItem?.availabilityInWei}/
-                      {selectedItem?.totalSupplyInWei}
+                      {selectedItem?.availability}/{selectedItem?.totalSupply}
                     </p>
                   </div>
                   <div className="flex items-center justify-between text-xs">
