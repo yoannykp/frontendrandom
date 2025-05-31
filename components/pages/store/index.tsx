@@ -198,14 +198,20 @@ const StorePage = () => {
     } catch (error: any) {
       console.error("Full error object:", error)
 
-      if (error.code === "BAD_DATA") {
-        toast.error("Contract call failed - invalid data returned")
-      } else if (error.reason) {
-        toast.error(`Contract error: ${error.reason}`)
-      } else if (error.message) {
-        toast.error(`Error: ${error.message}`)
+      if (error.code === 4001) {
+        toast.error("Transaction rejected")
+      } else if (error.code === "INSUFFICIENT_FUNDS") {
+        toast.error("Insufficient funds")
+      } else if (error.code === "CALL_EXCEPTION") {
+        toast.error("Transaction failed. Please try again")
+      } else if (error.message?.includes("user rejected")) {
+        toast.error("Transaction cancelled")
+      } else if (error.message?.includes("insufficient funds")) {
+        toast.error("Insufficient funds")
+      } else if (error.message?.includes("missing revert data")) {
+        toast.error("Transaction failed. Please try again")
       } else {
-        toast.error("Transfer failed")
+        toast.error("Failed to transfer. Please try again")
       }
     } finally {
       setIsLoading({ ...isLoading, transfer: false })
@@ -260,14 +266,20 @@ const StorePage = () => {
     } catch (error: any) {
       console.error("Full error object:", error)
 
-      if (error.code === "BAD_DATA") {
-        toast.error("Contract call failed - invalid data returned")
-      } else if (error.reason) {
-        toast.error(`Contract error: ${error.reason}`)
-      } else if (error.message) {
-        toast.error(`Error: ${error.message}`)
+      if (error.code === 4001) {
+        toast.error("Transaction rejected")
+      } else if (error.code === "INSUFFICIENT_FUNDS") {
+        toast.error("Insufficient funds")
+      } else if (error.code === "CALL_EXCEPTION") {
+        toast.error("Transaction failed. Please try again")
+      } else if (error.message?.includes("user rejected")) {
+        toast.error("Transaction cancelled")
+      } else if (error.message?.includes("insufficient funds")) {
+        toast.error("Insufficient funds")
+      } else if (error.message?.includes("missing revert data")) {
+        toast.error("Transaction failed. Please try again")
       } else {
-        toast.error("Buy failed")
+        toast.error("Failed to buy. Please try again")
       }
     } finally {
       setIsLoading({ ...isLoading, buy: false })
@@ -316,14 +328,20 @@ const StorePage = () => {
     } catch (error: any) {
       console.error("Full error object:", error)
 
-      if (error.code === "BAD_DATA") {
-        toast.error("Contract call failed - invalid data returned")
-      } else if (error.reason) {
-        toast.error(`Contract error: ${error.reason}`)
-      } else if (error.message) {
-        toast.error(`Error: ${error.message}`)
+      if (error.code === 4001) {
+        toast.error("Transaction rejected")
+      } else if (error.code === "INSUFFICIENT_FUNDS") {
+        toast.error("Insufficient funds")
+      } else if (error.code === "CALL_EXCEPTION") {
+        toast.error("Transaction failed. Please try again")
+      } else if (error.message?.includes("user rejected")) {
+        toast.error("Transaction cancelled")
+      } else if (error.message?.includes("insufficient funds")) {
+        toast.error("Insufficient funds")
+      } else if (error.message?.includes("missing revert data")) {
+        toast.error("Transaction failed. Please try again")
       } else {
-        toast.error("Sell failed")
+        toast.error("Failed to sell. Please try again")
       }
     } finally {
       setIsLoading({ ...isLoading, sell: false })

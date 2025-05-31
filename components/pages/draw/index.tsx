@@ -4,6 +4,7 @@ import { AppDispatch } from "@/store"
 import { useCharacters } from "@/store/hooks"
 import { fetchUserProfile } from "@/store/slices/userProfileSlice"
 import { Character, Gear } from "@/types"
+import { Loader2 } from "lucide-react"
 import { createPortal } from "react-dom"
 import toast from "react-hot-toast"
 import { useDispatch } from "react-redux"
@@ -133,7 +134,7 @@ const VideoPlayerModal = ({
 }
 
 const DrawPage = ({ portal }: { portal: number }) => {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState({ single: false, multi: false })
   const [isOpen, setIsOpen] = useState(false)
   const [videoModalOpen, setVideoModalOpen] = useState(false)
   const [characterVideoUrl, setCharacterVideoUrl] = useState("")
@@ -168,9 +169,8 @@ const DrawPage = ({ portal }: { portal: number }) => {
   }
 
   const handleSummonCharacter = async () => {
-    console.log("handleSummonCharacter")
     try {
-      setLoading(true)
+      setLoading({ ...loading, single: true })
       const response = await summonCharacter({ portal })
       console.log(response)
       if (!response?.data?.success || response.error) {
@@ -203,13 +203,13 @@ const DrawPage = ({ portal }: { portal: number }) => {
       toast.error("Error summoning character")
       console.log(error)
     } finally {
-      setLoading(false)
+      setLoading({ ...loading, single: false })
     }
   }
 
   const handleMultiSummon = async () => {
     try {
-      setLoading(true)
+      setLoading({ ...loading, multi: true })
       const response = await multiSummonCharacter({ portal })
       if (!response?.data?.success || response.error) {
         toast.error(
@@ -236,13 +236,13 @@ const DrawPage = ({ portal }: { portal: number }) => {
       toast.error("Error summoning character")
       console.log(error)
     } finally {
-      setLoading(false)
+      setLoading({ ...loading, multi: false })
     }
   }
 
   const handleSummonGear = async () => {
     try {
-      setLoading(true)
+      setLoading({ ...loading, single: true })
       const response = await summonGear()
       if (!response?.data?.success || response.error) {
         toast.error(
@@ -264,13 +264,13 @@ const DrawPage = ({ portal }: { portal: number }) => {
       toast.error("Error summoning gear")
       console.log(error)
     } finally {
-      setLoading(false)
+      setLoading({ ...loading, single: false })
     }
   }
 
   const handleMultiSummonGear = async () => {
     try {
-      setLoading(true)
+      setLoading({ ...loading, multi: true })
       const response = await multiSummonGear()
       if (!response?.data?.success || response.error) {
         toast.error(
@@ -292,7 +292,7 @@ const DrawPage = ({ portal }: { portal: number }) => {
       toast.error("Error summoning gear")
       console.log(error)
     } finally {
-      setLoading(false)
+      setLoading({ ...loading, multi: false })
     }
   }
 
@@ -330,9 +330,14 @@ const DrawPage = ({ portal }: { portal: number }) => {
             <button
               className="group  mt-1 w-full  bg-white/10 px-3 py-2 rounded-lg relative overflow-hidden border border-white/10"
               onClick={() => handleSummon(false)}
-              disabled={loading}
+              disabled={loading.single}
             >
-              <div className="flex items-center gap-2 justify-between z-10 w-full ">
+              <div className="flex items-center gap-2 justify-between z-10 w-full relative">
+                {loading.single && (
+                  <div className="w-full flex items-center justify-center absolute top-0 left-0">
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                  </div>
+                )}
                 <span>{portal === 1 ? 100 : 50}</span>
                 <span className="size-6 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center border border-white/10">
                   <Image
@@ -358,9 +363,14 @@ const DrawPage = ({ portal }: { portal: number }) => {
             <button
               className="group  mt-1 w-full  bg-white/10 px-3 py-2 rounded-lg relative overflow-hidden border border-white/10"
               onClick={() => handleSummon(true)}
-              disabled={loading}
+              disabled={loading.multi}
             >
-              <div className="flex items-center gap-2 justify-between z-10 w-full ">
+              <div className="flex items-center gap-2 justify-between z-10 w-full relative">
+                {loading.multi && (
+                  <div className="w-full flex items-center justify-center absolute top-0 left-0">
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                  </div>
+                )}
                 <span>{portal === 1 ? 1000 : 500}</span>
                 <span className="size-6 rounded-full bg-white/20 backdrop-blur-lg flex items-center justify-center border border-white/10">
                   <Image
@@ -398,7 +408,7 @@ const DrawPage = ({ portal }: { portal: number }) => {
         summonType={summonType}
         summonItems={summonItems}
         handleMultiSummon={() => handleSummon(true)}
-        loading={loading}
+        loading={loading.single || loading.multi}
         showCloseButton
         showMintButton={summonType === "character"}
         isMinted={isMinted}

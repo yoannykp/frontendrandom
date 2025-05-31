@@ -470,11 +470,6 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
               : previousTraitsRef.current.eyes
             if (eyesSrc) drawImage(eyesSrc)
 
-            const hairSrc = imageCache[selectedTraits.hair]
-              ? selectedTraits.hair
-              : previousTraitsRef.current.hair
-            if (hairSrc) drawImage(hairSrc)
-
             const mouthSrc = imageCache[selectedTraits.mouth]
               ? selectedTraits.mouth
               : previousTraitsRef.current.mouth
@@ -482,6 +477,12 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
 
             // Draw clothes
             drawImage("/images/alien/body/cothes.png", true)
+
+            // Draw hair last to ensure it's on top
+            const hairSrc = imageCache[selectedTraits.hair]
+              ? selectedTraits.hair
+              : previousTraitsRef.current.hair
+            if (hairSrc) drawImage(hairSrc)
 
             // Reset global alpha
             ctx.globalAlpha = 1.0
