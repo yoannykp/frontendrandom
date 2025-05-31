@@ -18,7 +18,7 @@ import {
   getEquippedAlienParts,
   getOwnedAlienParts,
 } from "@/lib/api"
-import { cn, formatNumber, getEthWallet } from "@/lib/utils"
+import { cn, formatNumber } from "@/lib/utils"
 import IconButton from "@/components/ui/icon-button"
 import {
   Popover,

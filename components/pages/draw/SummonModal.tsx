@@ -9,7 +9,7 @@ import { ethers } from "ethers"
 import toast from "react-hot-toast"
 
 import { handleFailedMint, mintCharacters } from "@/lib/api"
-import { cn, getEthWallet, handleSignMessage } from "@/lib/utils"
+import { cn, handleSignMessage } from "@/lib/utils"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import CONTRACT_ABI from "@/app/assets/abi.json"
 

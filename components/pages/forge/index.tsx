@@ -25,7 +25,7 @@ import {
   getOwnedAlienParts,
   upgradeCharacter,
 } from "@/lib/api"
-import { cn, getEthWallet, handleSignMessage } from "@/lib/utils"
+import { cn, handleSignMessage } from "@/lib/utils"
 import CONTRACT_ABI from "@/app/assets/abi.json"
 
 import SummonModal from "../draw/SummonModal"

@@ -9,7 +9,7 @@ import { CloudLightning, Loader2, X } from "lucide-react"
 import toast from "react-hot-toast"
 
 import { burnGear, updateGearBalance } from "@/lib/api"
-import { cn, getEthWallet, handleSignMessage } from "@/lib/utils"
+import { cn, handleSignMessage } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import SummonModal from "@/components/pages/draw/SummonModal"
 import CONTRACT_ABI from "@/app/assets/abi.json"

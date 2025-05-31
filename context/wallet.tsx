@@ -16,7 +16,7 @@ import {
   Provider,
 } from "ethers"
 
-import { getEthWallet, getUserWallet, getZoneBalance } from "@/lib/utils"
+import { getUserWallet, getZoneBalance } from "@/lib/utils"
 
 type WalletContextType = {
   isConnected: boolean
