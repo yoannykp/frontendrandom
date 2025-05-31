@@ -7,7 +7,12 @@ import { Mail } from "lucide-react"
 import toast from "react-hot-toast"
 
 import { authenticate, checkUserExist } from "@/lib/api"
-import { getChain, getEthWallet, handleSignMessage } from "@/lib/utils"
+import {
+  getChain,
+  getEthWallet,
+  getUserWallet,
+  handleSignMessage,
+} from "@/lib/utils"
 
 import BrandButton from "../ui/brand-button"
 import PreviousStepButton from "./previous-step-button"
@@ -118,8 +123,9 @@ const ConnectModal = ({
   //   checkUser()
   // }, [authenticated, ready, wallets[0]])
 
-  const handleAuthenticate = async (email: string) => {
-    const wallet = getEthWallet(wallets)
+  const handleAuthenticate = async (walletAddress: string, email: string) => {
+    // const wallet = getEthWallet(wallets)
+    const wallet = getUserWallet(wallets, walletAddress)
     if (!wallet) {
       toast.error("Please connect a wallet")
       return
@@ -162,26 +168,36 @@ const ConnectModal = ({
 
   useEffect(() => {
     const checkUser = async () => {
-      if (authenticated && ready && wallets.length > 0 && user) {
-        // ✅ Access email here
-        const email = user?.email?.address
-        console.log("User email:", email)
+      if (authenticated && ready && user && user?.wallet) {
+        const res = await checkUserExist(user?.wallet?.address || "")
 
-        const ethWallet = getEthWallet(wallets)
-        if (ethWallet) {
-          const res = await checkUserExist(ethWallet.address)
-
-          if (res.data) {
-            handleAuthenticate(user?.email?.address || "")
-          } else {
-            moveToStep(2)
-          }
+        if (res.data) {
+          handleAuthenticate(user?.wallet?.address, user?.email?.address || "")
         } else {
-          connectWallet({
-            walletList: ["metamask", "rainbow", "coinbase_wallet", "phantom"],
-          })
+          moveToStep(2)
         }
       }
+
+      // if (authenticated && ready && wallets.length > 0 && user) {
+      //   // ✅ Access email here
+      //   const email = user?.email?.address
+      //   console.log("User email:", email)
+
+      //   const ethWallet = getEthWallet(wallets)
+      //   if (ethWallet) {
+      //     const res = await checkUserExist(ethWallet.address)
+
+      //     if (res.data) {
+      //       handleAuthenticate(user?.email?.address || "")
+      //     } else {
+      //       moveToStep(2)
+      //     }
+      //   } else {
+      //     connectWallet({
+      //       walletList: ["metamask", "rainbow", "coinbase_wallet", "phantom"],
+      //     })
+      //   }
+      // }
     }
     checkUser()
   }, [authenticated, ready, wallets, user])

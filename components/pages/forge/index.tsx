@@ -94,7 +94,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
   const [tierObj, setTierObj] = useState<any>(null)
   const [selectedForPromotion, setSelectedForPromotion] = useState<any>(null)
   const { wallets } = useWallets()
-  const { provider, signer } = useWallet()
+  const { provider, signer, wallet } = useWallet()
   const [dataLoaded, setDataLoaded] = useState(false)
   const { signMessage } = usePrivy()
   const [promotedCharacter, setPromotedCharacter] = useState<Character | null>(
@@ -341,7 +341,8 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     newTokenId: number,
     newCharacter: Character
   ) => {
-    const wallet = getEthWallet(wallets)
+    // const wallet = getEthWallet(wallets)
+    console.log("wallet ====>", wallet)
     if (!wallet) {
       toast.error("Please connect a wallet")
       return
@@ -412,9 +413,31 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
       setPromotedCharacter(newCharacter)
       setIsSummonModalOpen(true)
       toast.success("Promoted successfully!")
-    } catch (error) {
+    } catch (error: any) {
       console.error("Minting error:", error)
-      toast.error("Failed to mint characters")
+      // if (error instanceof Error) {
+      //   // More descriptive error message based on the actual error
+      //   if (error.message.includes("user rejected")) {
+      //     toast.error("Transaction cancelled")
+      //   } else if (error.message.includes("insufficient funds")) {
+      //     toast.error("Insufficient funds")
+      //   } else {
+      //     toast.error("Failed to mint. Please try again")
+      //   }
+      // } else {
+      //   toast.error("Failed to mint. Please try again")
+      // }
+      if (error.code === 4001) {
+        toast.error("Transaction rejected")
+      } else if (error.code === "INSUFFICIENT_FUNDS") {
+        toast.error("Insufficient funds")
+      } else if (error.message?.includes("user rejected")) {
+        toast.error("Transaction cancelled")
+      } else if (error.message?.includes("insufficient funds")) {
+        toast.error("Insufficient funds")
+      } else {
+        toast.error("Failed to mint. Please try again")
+      }
     } finally {
       setIsLoading(false)
     }

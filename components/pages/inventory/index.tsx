@@ -55,9 +55,11 @@ const InventoryPage = () => {
   )
   const { data: inventory, fetchInventory } = useInventory()
   const { wallets } = useWallets()
-  const { provider, signer } = useWallet()
+  const { provider, signer, wallet } = useWallet()
   const { signMessage } = usePrivy()
   const [isMinted, setIsMinted] = useState(false)
+
+  console.log("wallet ====>", wallet)
 
   useEffect(() => {
     if (isSummonModalOpen) {
@@ -162,7 +164,9 @@ const InventoryPage = () => {
     character: Character,
     gearId: number
   ) => {
-    const wallet = getEthWallet(wallets)
+    // const wallet = getEthWallet(wallets)
+
+    console.log("wallet ====>", wallet)
     if (!wallet) {
       toast.error("Please connect a wallet")
       setLoading(false)
@@ -232,17 +236,20 @@ const InventoryPage = () => {
 
       setIsSummonModalOpen(true)
       toast.success("Gear burned successfully!")
-    } catch (error) {
+    } catch (error: any) {
       console.error("Minting error:", error)
-      if (error instanceof Error) {
-        // More descriptive error message based on the actual error
-        if (error.message.includes("user rejected")) {
-          toast.error("Transaction was cancelled by user")
-        } else {
-          toast.error(`Failed to mint: ${error.message}`)
-        }
+
+      // More specific error handling with concise messages
+      if (error.code === 4001) {
+        toast.error("Transaction rejected")
+      } else if (error.code === "INSUFFICIENT_FUNDS") {
+        toast.error("Insufficient funds")
+      } else if (error.message?.includes("user rejected")) {
+        toast.error("Transaction cancelled")
+      } else if (error.message?.includes("insufficient funds")) {
+        toast.error("Insufficient funds")
       } else {
-        toast.error("Failed to mint characters")
+        toast.error("Failed to mint. Please try again")
       }
     } finally {
       setLoading(false)

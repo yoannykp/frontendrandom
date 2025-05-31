@@ -285,7 +285,20 @@ export const handleSignMessage = async (
 }
 
 export const getEthWallet = (wallets: ConnectedWallet[]) => {
+  console.log("wallets ===>", wallets)
+
   const wallet = wallets.find((wallet) => wallet.connectorType !== "embedded")
+  if (wallet) {
+    return wallet
+  }
+  return null
+}
+
+export const getUserWallet = (
+  wallets: ConnectedWallet[],
+  walletAddress: string
+) => {
+  const wallet = wallets.find((w) => w.address === walletAddress)
   if (wallet) {
     return wallet
   }

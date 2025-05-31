@@ -5,7 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useAliens, useProfile } from "@/store/hooks"
-import { useLogout } from "@privy-io/react-auth"
+import { useLogout, useUser } from "@privy-io/react-auth"
 import { Copy, CopyCheck, Loader2, LogOut } from "lucide-react"
 
 import { getUnseenReferralRewards, markReferralRewardsAsSeen } from "@/lib/api"
@@ -34,6 +34,10 @@ export default function Home() {
 
   const searchParams = useSearchParams()
   const [isRewardModalOpen, setIsRewardModalOpen] = useState(false)
+
+  const { user } = useUser()
+
+  console.log("privy user ====>", user)
 
   useEffect(() => {
     if (searchParams.get("showDailyReward")) {

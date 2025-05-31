@@ -1,7 +1,12 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState } from "react"
-import { useActiveWallet, usePrivy, useWallets } from "@privy-io/react-auth"
+import {
+  ConnectedWallet,
+  useActiveWallet,
+  usePrivy,
+  useWallets,
+} from "@privy-io/react-auth"
 import {
   BrowserProvider,
   Eip1193Provider,
@@ -11,7 +16,7 @@ import {
   Provider,
 } from "ethers"
 
-import { getEthWallet, getZoneBalance } from "@/lib/utils"
+import { getEthWallet, getUserWallet, getZoneBalance } from "@/lib/utils"
 
 type WalletContextType = {
   isConnected: boolean
@@ -24,6 +29,7 @@ type WalletContextType = {
     zoneBalance: number
   } | null
   setIsAuthenticated: (value: boolean) => void
+  wallet: ConnectedWallet | null
 }
 
 export const WalletContext = createContext<WalletContextType>({
@@ -33,6 +39,7 @@ export const WalletContext = createContext<WalletContextType>({
   signer: null,
   user: null,
   setIsAuthenticated: () => {},
+  wallet: null,
 })
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
@@ -41,9 +48,21 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<WalletContextType["user"] | null>(null)
   const { user: privyUser } = usePrivy()
   const { wallets } = useWallets()
-  const wallet = wallets[0] ? getEthWallet(wallets) : null
+  // const wallet = wallets[0] ? getEthWallet(wallets) : null
+  const [wallet, setWallet] = useState<ConnectedWallet | null>(
+    privyUser?.wallet?.address && wallets.length > 0
+      ? getUserWallet(wallets, privyUser?.wallet?.address)
+      : null
+  )
   const [isConnected, setIsConnected] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  useEffect(() => {
+    if (privyUser?.wallet?.address && wallets.length > 0) {
+      const wallet = getUserWallet(wallets, privyUser?.wallet?.address)
+      setWallet(wallet)
+    }
+  }, [privyUser, wallets])
 
   useEffect(() => {
     const initialize = async () => {
@@ -108,6 +127,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
         provider,
         signer,
         user,
+        wallet,
         isConnected,
         isAuthenticated,
         setIsAuthenticated,

@@ -100,8 +100,9 @@ const DojoPage = () => {
   })
   const router = useRouter()
   const { wallets } = useWallets()
-  const { user } = useWallet()
-  const wallet = wallets[0] ? getEthWallet(wallets) : null
+  const { user, wallet } = useWallet()
+  // const wallet = wallets[0] ? getEthWallet(wallets) : null
+  console.log("wallet ====>", wallet)
 
   const [userData, setUserData] = useState<AuthUserData>({
     name: "",

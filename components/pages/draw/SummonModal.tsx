@@ -44,7 +44,7 @@ const SummonModal = ({
   const { fetchCharacters } = useCharacters()
   const { signMessage } = usePrivy()
   const { wallets } = useWallets()
-  const { provider, signer } = useWallet()
+  const { provider, signer, wallet } = useWallet()
   const [isMinting, setIsMinting] = useState(false)
   const [unmintedCharacterIds, setUnmintedCharacterIds] = useState<number[]>([])
 
@@ -60,7 +60,8 @@ const SummonModal = ({
   const handleMintCharacter = async () => {
     if (summonType === "gear") return
 
-    const wallet = getEthWallet(wallets)
+    // const wallet = getEthWallet(wallets)
+    console.log("wallet ====>", wallet)
     if (!wallet) {
       toast.error("Please connect a wallet")
       return
@@ -216,11 +217,17 @@ const SummonModal = ({
       }
       console.error("Minting error:", error)
 
-      // More specific error handling
+      // More specific error handling with concise messages
       if (error.code === 4001) {
-        toast.error("Transaction rejected by user")
+        toast.error("Transaction rejected")
+      } else if (error.code === "INSUFFICIENT_FUNDS") {
+        toast.error("Insufficient funds")
+      } else if (error.message?.includes("user rejected")) {
+        toast.error("Transaction cancelled")
+      } else if (error.message?.includes("insufficient funds")) {
+        toast.error("Insufficient funds")
       } else {
-        toast.error(error.message || "Failed to mint characters")
+        toast.error("Failed to mint. Please try again")
       }
 
       setIsMinting(false)
