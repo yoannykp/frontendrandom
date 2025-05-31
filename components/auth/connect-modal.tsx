@@ -8,7 +8,7 @@ import { Mail } from "lucide-react"
 import toast from "react-hot-toast"
 
 import { authenticate, checkUserExist } from "@/lib/api"
-import { getChain, getUserWallet, handleSignMessage } from "@/lib/utils"
+import { getChain, handleSignMessage } from "@/lib/utils"
 
 import BrandButton from "../ui/brand-button"
 import PreviousStepButton from "./previous-step-button"
