@@ -2,6 +2,12 @@ import Image from "next/image"
 import { Alien, Profile } from "@/types"
 
 import { addCacheBuster } from "@/lib/utils"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface UserProgressProps {
   profile: Profile | null
@@ -37,13 +43,31 @@ export function UserProgress({
       {/* User Details */}
       <div className="space-y-4">
         {/* Name and Stats */}
-        <div className="flex justify-between items-center">
-          <div>
-            <div className="text-white/70 font-medium">{profile?.name}</div>
+        <div className="flex justify-between items-center w-full">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 overflow-hidden w-full">
+              <div className="text-white/70 font-medium whitespace-nowrap">
+                {profile?.name}
+              </div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="text-white/70 font-medium truncate whitespace-nowrap overflow-hidden">
+                      {profile?.email}
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{profile?.email}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+
             <div className="text-white text-xl mt-1">{alien?.name}</div>
           </div>
+
           {unseenReferralRewards > 0 && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <div className="text-blue-400 text-2xl">
                 +{unseenReferralRewards} Stars
               </div>

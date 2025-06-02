@@ -35,10 +35,6 @@ export default function Home() {
   const searchParams = useSearchParams()
   const [isRewardModalOpen, setIsRewardModalOpen] = useState(false)
 
-  const { user } = useUser()
-
-  console.log("privy user ====>", user)
-
   useEffect(() => {
     if (searchParams.get("showDailyReward")) {
       setIsRewardModalOpen(true)

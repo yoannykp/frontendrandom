@@ -38,6 +38,7 @@ export interface Profile {
   starsBoost: number
   xpBoost: number
   raidTimeBoost: number
+  email: string
 }
 
 export interface RaidReward {
