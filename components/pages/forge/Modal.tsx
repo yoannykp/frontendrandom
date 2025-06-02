@@ -59,7 +59,7 @@ const Modal = ({
                     forgeListLoading={forgeListLoading}
                   />
                 ) : (
-                  <PromotionData onSelect={onSelect} />
+                  <PromotionData onSelect={onSelect} onClose={onClose} />
                 )}
               </Dialog.Panel>
             </Transition.Child>

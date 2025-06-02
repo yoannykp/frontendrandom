@@ -3,13 +3,16 @@ import Image from "next/image"
 import { useInventory } from "@/store/hooks"
 import { InventoryItem } from "@/types"
 import { Loader2 } from "lucide-react"
+import toast from "react-hot-toast"
 
 import { cn } from "@/lib/utils"
 
 const PromotionData = ({
   onSelect,
+  onClose,
 }: {
   onSelect: (item: InventoryItem) => void
+  onClose: () => void
 }) => {
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
   const [items, setItems] = useState<InventoryItem[]>([])
@@ -55,6 +58,19 @@ const PromotionData = ({
       setItems([])
       return
     }
+
+    // Check if inventory is an object
+    if (typeof inventory !== "object") {
+      toast.error("Failed to load inventory")
+      onClose()
+      return
+    }
+
+    // if (!inventory?.success) {
+    //   toast.error(inventory?.error?.message || "Failed to load inventory")
+    //   onClose()
+    //   return
+    // }
 
     setItems(
       inventory.filter(
