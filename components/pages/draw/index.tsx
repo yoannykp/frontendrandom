@@ -193,6 +193,7 @@ const DrawPage = ({ portal }: { portal: number }) => {
         setSingleSummonItem(response.data.character)
         setCharacterVideoUrl(response.data.character.video)
         setVideoModalOpen(true)
+        dispatch(fetchUserProfile())
       } else if (response.data?.character) {
         // If no video, show the summon modal directly
         setSummonItems([response.data.character])
@@ -221,8 +222,6 @@ const DrawPage = ({ portal }: { portal: number }) => {
       // Refresh characters list after successful multi-summon
       fetchCharacters()
       // fetchUserProfile()
-      dispatch(fetchUserProfile())
-
       // Set summon type to character
       setSummonType("character")
 
@@ -258,6 +257,7 @@ const DrawPage = ({ portal }: { portal: number }) => {
       if (response.data && "gear" in response.data) {
         setSummonItems([response.data.gear as Gear])
         setIsOpen(true)
+        dispatch(fetchUserProfile())
         toast.success("Gear summoned successfully")
       }
     } catch (error) {
@@ -286,6 +286,7 @@ const DrawPage = ({ portal }: { portal: number }) => {
       if (response.data && "gears" in response.data) {
         setSummonItems(response.data.gears as Gear[])
         setIsOpen(true)
+        dispatch(fetchUserProfile())
         toast.success("Gear summoned successfully")
       }
     } catch (error) {
