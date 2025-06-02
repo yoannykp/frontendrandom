@@ -31,42 +31,43 @@ const EnhancementData = ({
       ) : (
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3 mt-4 h-full overflow-y-auto">
-            {forgeList.length > 0 ? (
-              forgeList.map((item: any, index: Key | null | undefined) => (
-                <div
-                  key={index}
-                  className={cn(
-                    "w-full h-full backdrop-blur-lg rounded-lg p-3 cursor-pointer transition-all duration-200 hover:bg-white/10"
-                  )}
-                  onClick={() => onSelect(item)}
-                >
-                  <div className="relative aspect-square">
-                    <Image
-                      src={item.image || ""}
-                      alt="item"
-                      width={100}
-                      height={100}
-                      className="object-cover w-full h-full rounded"
-                    />
+            {forgeList.length > 0
+              ? forgeList.map((item: any, index: Key | null | undefined) => (
+                  <div
+                    key={index}
+                    className={cn(
+                      "w-full h-full backdrop-blur-lg rounded-lg p-3 cursor-pointer transition-all duration-200 hover:bg-white/10"
+                    )}
+                    onClick={() => onSelect(item)}
+                  >
+                    <div className="relative aspect-square">
+                      <Image
+                        src={item.image || ""}
+                        alt="item"
+                        width={100}
+                        height={100}
+                        className="object-cover w-full h-full rounded"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between mt-3 text-sm">
+                      <p className="truncate mr-2">{item.name}</p>
+                      <p className="border border-white/10 px-2 rounded-md text-2xs whitespace-nowrap">
+                        {(userId &&
+                          item.userPowers.filter(
+                            (power: any) => power.userId === userId
+                          )[0]?.power) ||
+                          0}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between mt-3 text-sm">
-                    <p className="truncate mr-2">{item.name}</p>
-                    <p className="border border-white/10 px-2 rounded-md text-2xs whitespace-nowrap">
-                      {(userId &&
-                        item.userPowers.filter(
-                          (power: any) => power.userId === userId
-                        )[0]?.power) ||
-                        0}
-                    </p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="col-span-full text-white/60">
-                {forgeList ? "No data found" : "Loading data..."}
-              </div>
-            )}
+                ))
+              : ""}
           </div>
+        </div>
+      )}
+      {!forgeListLoading && forgeList.length === 0 && forgeList && (
+        <div className="col-span-full text-white/60 w-full h-full flex items-center justify-center">
+          No data found
         </div>
       )}
     </div>

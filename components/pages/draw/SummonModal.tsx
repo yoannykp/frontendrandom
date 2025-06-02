@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useWallet } from "@/context/wallet"
 import { useCharacters } from "@/store/hooks"
 import { Character, Gear } from "@/types"
@@ -47,20 +48,47 @@ const SummonModal = ({
   const { provider, signer, wallet } = useWallet()
   const [isMinting, setIsMinting] = useState(false)
   const [unmintedCharacterIds, setUnmintedCharacterIds] = useState<number[]>([])
+  const [isSigningOrMinting, setIsSigningOrMinting] = useState(false)
+  const router = useRouter()
+
+  // Add this function at the top level of the component
+  const shouldShowConfirmation = () => {
+    return !isMinted && summonType === "character" && showMintButton
+  }
+
+  const handleClose = () => {
+    if (shouldShowConfirmation()) {
+      const wantToClose = window.confirm(
+        "Closing without minting will result in loss of stars. Are you sure you want to close?"
+      )
+      if (!wantToClose) {
+        return
+      }
+    }
+
+    fetchCharacters()
+    setIsOpen(false)
+  }
 
   // Handle modal close to refresh characters
   const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      // Refresh characters when modal is closed
-      fetchCharacters()
+    // Prevent closing if either signing or minting is in progress
+    if (isSigningOrMinting || isMinting) {
+      return
     }
+
+    // If trying to close
+    if (!open) {
+      handleClose()
+      return
+    }
+
     setIsOpen(open)
   }
 
   const handleMintCharacter = async () => {
     if (summonType === "gear") return
 
-    // const wallet = getEthWallet(wallets)
     console.log("wallet ====>", wallet)
     if (!wallet) {
       toast.error("Please connect a wallet")
@@ -89,7 +117,7 @@ const SummonModal = ({
     console.log("Token IDs to mint:", tokenIds)
 
     try {
-      // Sign the message for authentication
+      setIsSigningOrMinting(true)
       const signature = await handleSignMessage(
         tokenIds.join(","),
         wallet,
@@ -98,6 +126,7 @@ const SummonModal = ({
 
       if (!signature) {
         toast.error("Failed to sign message")
+        setIsSigningOrMinting(false)
         return
       }
 
@@ -233,13 +262,58 @@ const SummonModal = ({
       setIsMinting(false)
     } finally {
       setIsMinting(false)
+      setIsSigningOrMinting(false)
     }
   }
 
+  // Add navigation handler
+  const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (shouldShowConfirmation()) {
+      const wantToNavigate = window.confirm(
+        "Leaving without minting will result in loss of stars. Are you sure you want to continue?"
+      )
+      if (!wantToNavigate) {
+        e.preventDefault()
+        return
+      }
+    }
+  }
+
+  // Add effect for page reload/navigation warning
+  useEffect(() => {
+    if (shouldShowConfirmation()) {
+      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+        e.preventDefault()
+        e.returnValue =
+          "You have unminted characters. Leaving this page will result in loss of stars. Are you sure?"
+        return e.returnValue
+      }
+
+      window.addEventListener("beforeunload", handleBeforeUnload)
+      return () =>
+        window.removeEventListener("beforeunload", handleBeforeUnload)
+    }
+  }, [isMinted, summonType, showMintButton])
+
   return (
-    <Dialog modal={false} open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="bg-[url('/images/modal-bg.jpeg')] bg-cover bg-center bg-no-repeat min-w-full h-screen max-h-[calc(100dvh)] overflow-y-auto rounded-none ">
-        <div className="flex flex-col gap-4 z-10 relative justify-center items-center">
+    <Dialog modal={true} open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className="bg-[url('/images/modal-bg.jpeg')] bg-cover bg-center bg-no-repeat min-w-full h-screen max-h-[calc(100dvh)] overflow-y-auto rounded-none"
+        onPointerDownOutside={(e) => {
+          if (isSigningOrMinting || isMinting) {
+            e.preventDefault()
+          }
+        }}
+        onEscapeKeyDown={(e) => {
+          if (isSigningOrMinting || isMinting) {
+            e.preventDefault()
+          }
+        }}
+      >
+        <div
+          className="flex flex-col gap-4 z-10 relative justify-center items-center"
+          onClick={(e) => isMinting && e.stopPropagation()}
+        >
           <div className="px-20 w-max bg-white/10 border-white/10 border rounded-xl py-6 relative overflow-hidden font-volkhov text-xl">
             {title || "Summon Result"}
             <span
@@ -267,7 +341,7 @@ const SummonModal = ({
           <div className="flex gap-5 ">
             {showCloseButton && (
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={handleClose}
                 className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group"
               >
                 Close
@@ -326,6 +400,7 @@ const SummonModal = ({
             {!hideNextButton && (
               <Link
                 href={summonType === "character" ? "/team" : "/inventory"}
+                onClick={handleNavigation}
                 className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group"
               >
                 Next

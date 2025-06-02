@@ -9,6 +9,8 @@ const TeamRecap = () => {
   const { data: profile } = useProfile()
   const { data: team } = useTeam()
 
+  console.log("team ====>", team)
+
   return (
     <div className="glass-effect p-2 lg:p-4 lg:mt-3 rounded-2xl">
       <div className="flex items-center gap-3 max-lg:flex-col w-full relative">
@@ -55,7 +57,7 @@ const TeamRecap = () => {
         </div>
 
         <div className="flex space-x-3 flex-1 max-lg:w-full">
-          {team?.team.map((member) => (
+          {team?.team?.map((member) => (
             <div
               key={member.id}
               className="aspect-square relative rounded-xl overflow-hidden border-2 border-white/10 hover:z-10 transition-all duration-300 flex-1 max-w-[90px] lg:max-w-[165px]"

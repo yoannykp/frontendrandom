@@ -26,6 +26,12 @@ import {
   upgradeCharacter,
 } from "@/lib/api"
 import { cn, handleSignMessage } from "@/lib/utils"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import CONTRACT_ABI from "@/app/assets/abi.json"
 
 import SummonModal from "../draw/SummonModal"
@@ -443,9 +449,6 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
     }
   }
 
-  console.log("selectedEnhancementObj ====>", selectedEnhancementObj)
-  console.log("forgeList ====>", forgeList)
-
   // Break down the complex function into smaller helper functions
   const renderStage1 = (tierObj: any) => (
     <div
@@ -561,7 +564,22 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                 </div>
               </div>
             ) : (
-              <div className="flex justify-center flex-1 max-w-max">
+              <div className="flex justify-center flex-1 max-w-max relative">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => setSelectedEnhancementObj(null)}
+                        className="absolute -left-12 top-1/2 p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md flex items-center justify-center text-white"
+                      >
+                        <ArrowLeft className="w-4 h-4" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <span>Back to add character</span>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 {/* Stage 01 */}
                 <div className="w-full max-w-sm rounded-xl border border-white/10 backdrop-blur-md flex flex-col p-3">
                   {/* Stage 1 content */}
@@ -729,7 +747,34 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                 </div>
               </div>
             ) : (
-              <div className="flex justify-center flex-1 max-w-max">
+              <div className="flex justify-center flex-1 max-w-max relative">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => {
+                          setSelectedCharacter(null)
+                          setTierObj(null)
+                        }}
+                        className="absolute -left-12 top-1/2 p-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-md flex items-center justify-center text-white"
+                      >
+                        <ArrowLeft className="w-4 h-4" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <span>Back to add character</span>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                {/* <BrandButton
+                blurColor="bg-[#96DFF4]"
+                className="font-light w-max"
+                onClick={() => setSelectedItem(null)}
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span className="text-sm">Back to store</span>
+              </BrandButton> */}
                 {/* Stage 01 */}
                 {renderStage1(tierObj)}
 

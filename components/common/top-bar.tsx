@@ -24,6 +24,7 @@ const topbarItems = [
 
 const TopBar = ({ className }: { className?: string }) => {
   const { data: profile } = useProfile()
+
   return (
     <div
       className={cn(

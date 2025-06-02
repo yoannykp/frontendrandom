@@ -35,6 +35,9 @@ export interface Profile {
   stars: number
   refferalCode: string
   totalReferrals: number
+  starsBoost: number
+  xpBoost: number
+  raidTimeBoost: number
 }
 
 export interface RaidReward {
@@ -108,6 +111,7 @@ export interface Alien {
   createdAt: string
   selected: boolean
   updatedAt: string
+  equipmentPower: number
 }
 
 export interface AliensState {
@@ -306,6 +310,8 @@ export interface Leaderboard {
   createdAt: string
   isLiked: boolean
   twitterId?: string
+  aliens: Alien[]
+  elements: Element[]
 }
 
 export enum ForgeTabs {
@@ -422,6 +428,7 @@ interface TraitItem {
   isDefault: boolean
   createdAt: string
   updatedAt: string
+  power: number
 }
 
 export interface EquippedAlienParts {
@@ -436,4 +443,5 @@ export interface EquippedAlienParts {
   accessories: TraitItem | null
   face: TraitItem | null
   background?: TraitItem | null
+  power: number
 }

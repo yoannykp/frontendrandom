@@ -378,7 +378,11 @@ const StorePage = () => {
               <BrandButton
                 blurColor="bg-[#96DFF4]"
                 className="font-light w-max"
-                onClick={() => setSelectedItem(null)}
+                onClick={() => {
+                  setSelectedItem(null)
+                  setShowTransferInput(false)
+                  setTransferAddress("")
+                }}
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span className="text-sm">Back to store</span>

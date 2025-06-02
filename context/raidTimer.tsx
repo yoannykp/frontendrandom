@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { useAppDispatch, useRaidHistory, useRaids } from "@/store/hooks"
 import { updateRaidHistoryStatus } from "@/store/slices/raidsSlice"
+import { fetchUserProfile } from "@/store/slices/userProfileSlice"
 import { RaidResponse } from "@/types"
 import toast from "react-hot-toast"
 
@@ -58,11 +59,12 @@ export const RaidTimerProvider = ({
           const remainingTime =
             calculateLaunchedRaidRemainingTime(history, raid) || 0
 
-          // If raid is complete, update its status
+          // If raid is complete, update its status and refetch profile
           if (remainingTime <= 0) {
             dispatch(
               updateRaidHistoryStatus({ raidId: raid.id, inProgress: false })
             )
+            dispatch(fetchUserProfile())
             toast.success(
               `Raid completed! You got ${raid.rewards
                 .map((reward) => `${reward.amount} ${reward.type}`)

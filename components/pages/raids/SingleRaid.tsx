@@ -17,6 +17,7 @@ const rewardImages = {
   STARS: "/images/stars.png",
   XP: "/images/xp.png",
   REP: "/images/rep.png",
+  // RPP: "/images/rpp.png",
 }
 
 const SingleRaid = ({ raid }: { raid?: Raid }) => {
@@ -120,6 +121,24 @@ const SingleRaid = ({ raid }: { raid?: Raid }) => {
               </span>
             </div>
           ))}
+          {/* <div className="glass-effect p-2 lg:p-4 rounded-xl flex flex-col items-center relative overflow-hidden  lg:min-h-[150px] justify-center">
+            <Image
+              src={rewardImages.XP}
+              alt="RPP"
+              width={500}
+              height={500}
+              className="object-cover absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-40 lg:size-[400px] opacity-10"
+            />
+            <div className="relative size-8 lg:size-20 mb-2">
+              <Image
+                src={rewardImages.RPP}
+                alt="RPP"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <span className="text-[8px] lg:text-sm">+ 1 RP</span>
+          </div> */}
         </div>
       </div>
 

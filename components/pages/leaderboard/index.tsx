@@ -195,9 +195,10 @@ const LeaderboardPage = () => {
     }
   }
 
-  console.log("selectedUser ===>", selectedUser)
+  console.log("leaderboardData ===>", leaderboardData)
   console.log("Profile ===>", profile)
   console.log("friends ===>", friends)
+  console.log("thisUser ===>", alien)
 
   return (
     <div className="relative w-full h-full">
@@ -348,7 +349,7 @@ const LeaderboardPage = () => {
               <div
                 key={index}
                 className={cn(
-                  `grid grid-cols-${totalColSpan} gap-2 px-4 py-3 rounded-xl items-center`,
+                  `grid grid-cols-${totalColSpan} gap-2 px-4 py-3 rounded-xl items-center relative overflow-hidden`,
                   index % 2 === 0 ? "bg-white/5" : "bg-white/[0.02]",
                   selectedUser?.id === item.id && "bg-white/30"
                 )}
@@ -375,13 +376,32 @@ const LeaderboardPage = () => {
 
                 {/* Name Column */}
                 <div className="flex items-center gap-2 col-span-2 min-w-0">
-                  <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden flex-shrink-0">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  {item?.aliens.length > 0 && item?.elements.length > 0 ? (
+                    <div className="flex gap-2 w-8 h-8">
+                      <div className="flex-1 aspect-square rounded overflow-hidden relative">
+                        <Image
+                          src={item?.aliens[0]?.image || ""}
+                          alt="Character"
+                          fill
+                          className="object-cover z-10"
+                        />
+                        <Image
+                          src={item?.elements[0].background || ""}
+                          alt="User's alien"
+                          fill
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-white/10 overflow-hidden flex-shrink-0">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+
                   <span className="font-medium truncate">{item.name}</span>
                 </div>
 
@@ -411,6 +431,14 @@ const LeaderboardPage = () => {
                 <div className="flex items-center justify-between">
                   <span>{item.reputation}</span>
                 </div>
+                {alien && alien?.userId === item.id && (
+                  <span
+                    className={cn(
+                      "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] duration-500 transition-all",
+                      "bg-[#cf74bd]"
+                    )}
+                  />
+                )}
               </div>
             ))}
           </div>
@@ -435,6 +463,19 @@ const LeaderboardPage = () => {
               <div className="flex gap-2">
                 <div className="flex-1 aspect-square rounded overflow-hidden relative">
                   <Image
+                    src={selectedUser?.aliens[0]?.image || ""}
+                    alt="Character"
+                    fill
+                    className="object-cover z-10"
+                  />
+                  <Image
+                    src={selectedUser?.elements[0].background || ""}
+                    alt="User's alien"
+                    fill
+                  />
+                </div>
+                {/* <div className="flex-1 aspect-square rounded overflow-hidden relative">
+                  <Image
                     src={selectedUserTeam?.team[0]?.image || ""}
                     alt="Character"
                     fill
@@ -445,7 +486,8 @@ const LeaderboardPage = () => {
                     alt="User's alien"
                     fill
                   />
-                </div>
+                </div> */}
+
                 {selectedUserTeam?.team &&
                   selectedUserTeam.team.filter(
                     (teamMember) => !teamMember.isSelected

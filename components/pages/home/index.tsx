@@ -30,6 +30,9 @@ const Page = () => {
   const { user } = useWallet()
   const { activeRaids, mostSoonToCompleteRaid } = useRaidTimer()
 
+  console.log("profile ====>", profile)
+  console.log("alien ====>", alien)
+
   return (
     <>
       {!isActivityMenuOpen && (
@@ -86,7 +89,7 @@ const Page = () => {
               <div className="flex items-center gap-6 bg-white/10 rounded-lg py-1 px-2">
                 <p className="text-xs">Strength points</p>
                 <p className="font-volkhov text-sm">
-                  {alien?.strengthPoints ?? 0}
+                  {(alien?.strengthPoints || 0) + (alien?.equipmentPower || 0)}
                 </p>
               </div>
             </div>

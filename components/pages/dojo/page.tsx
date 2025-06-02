@@ -180,6 +180,7 @@ const DojoPage = () => {
       raidTimeBoost: 0,
     }
 
+    let totalPower = 0
     // Add bonuses from selected hair
     if (selectedTraits.hairId) {
       const selectedHair = traits.HAIR.find(
@@ -189,6 +190,7 @@ const DojoPage = () => {
         newBonusDetails.starBoost += selectedHair.starBoost || 0
         newBonusDetails.xpBoost += selectedHair.xpBoost || 0
         newBonusDetails.raidTimeBoost += selectedHair.raidTimeBoost || 0
+        totalPower += selectedHair.power || 0
       }
     }
 
@@ -201,6 +203,7 @@ const DojoPage = () => {
         newBonusDetails.starBoost += selectedEyes.starBoost || 0
         newBonusDetails.xpBoost += selectedEyes.xpBoost || 0
         newBonusDetails.raidTimeBoost += selectedEyes.raidTimeBoost || 0
+        totalPower += selectedEyes.power || 0
       }
     }
 
@@ -213,6 +216,7 @@ const DojoPage = () => {
         newBonusDetails.starBoost += selectedMouth.starBoost || 0
         newBonusDetails.xpBoost += selectedMouth.xpBoost || 0
         newBonusDetails.raidTimeBoost += selectedMouth.raidTimeBoost || 0
+        totalPower += selectedMouth.power || 0
       }
     }
 
@@ -225,9 +229,11 @@ const DojoPage = () => {
         newBonusDetails.starBoost += selectedElement.starBoost || 0
         newBonusDetails.xpBoost += selectedElement.xpBoost || 0
         newBonusDetails.raidTimeBoost += selectedElement.raidTimeBoost || 0
+        totalPower += selectedElement.power || 0
       }
     }
 
+    setTotalPower(totalPower)
     setBonusDetails(newBonusDetails)
   }, [selectedTraits, traits])
 
@@ -800,7 +806,7 @@ const DojoPage = () => {
                       />
                     </div>
                     <span className="px-3 text-[#FF985F] text-sm">
-                      {alien?.strengthPoints}
+                      {(alien?.strengthPoints || 0) + (totalPower || 0)}
                     </span>
                   </div>
                   <div className="border border-white/10 rounded flex items-center">
