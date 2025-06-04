@@ -8,7 +8,7 @@ import { ethers } from "ethers"
 import { CloudLightning, Loader2, X } from "lucide-react"
 import toast from "react-hot-toast"
 
-import { burnGear, updateGearBalance, useConsumableItem } from "@/lib/api"
+import { burnGear, consumeConsumableItem, updateGearBalance } from "@/lib/api"
 import { cn, handleSignMessage } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import SummonModal from "@/components/pages/draw/SummonModal"
@@ -152,7 +152,7 @@ const InventoryPage = () => {
 
     try {
       setLoading(true)
-      const response = await useConsumableItem(selectedItem.id)
+      const response = await consumeConsumableItem(selectedItem.id)
 
       if (response.error) {
         toast.error(response.error.message || "Failed to use consumable item")

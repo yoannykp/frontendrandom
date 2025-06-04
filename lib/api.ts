@@ -408,7 +408,7 @@ export const burnGear = async (
   return response
 }
 
-export const useConsumableItem = async (
+export const consumeConsumableItem = async (
   itemId: number
 ): Promise<ApiResponse<BurnGearResponse>> => {
   const response = await apiManager.post<BurnGearResponse>(
