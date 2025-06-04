@@ -242,7 +242,7 @@ const DailyLoginReward = ({ onClose }: { onClose: () => void }) => {
           <div className="flex-1">
             <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
               {rewards?.dailyRewards &&
-                rewards?.dailyRewards.map((reward) => (
+                rewards?.dailyRewards.map((reward, index) => (
                   <GradientBorder
                     key={reward.id}
                     isSelected={isCurrent(reward)}
@@ -263,7 +263,7 @@ const DailyLoginReward = ({ onClose }: { onClose: () => void }) => {
                       }}
                     >
                       {/* Day number */}
-                      <span className="absolute top-2 left-2">{reward.id}</span>
+                      <span className="absolute top-2 left-2">{index + 1}</span>
 
                       {/* Reward image */}
                       <div className="w-full flex-1 flex items-center justify-center relative overflow-hidden">

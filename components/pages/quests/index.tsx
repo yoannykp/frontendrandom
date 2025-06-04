@@ -392,7 +392,7 @@ const QuestsPage = () => {
   }
 
   const showGoButton = (quest: Quest) => {
-    const types = ["login", "buy"]
+    const types = ["login"]
 
     return types.includes(quest.type)
       ? quest.currentProgress !== undefined &&

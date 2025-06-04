@@ -293,7 +293,7 @@ export interface InventoryItem {
   image: string
   description: string
   upgradesToId?: number
-  type: "CHARACTER" | "ELEMENT" | "ALIEN_PART" | "GEAR"
+  type: "CHARACTER" | "ELEMENT" | "ALIEN_PART" | "GEAR" | "CONSUMABLE"
 }
 
 export interface Leaderboard {

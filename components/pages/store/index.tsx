@@ -6,7 +6,12 @@ import { ethers } from "ethers"
 import { ArrowLeft, Loader2, X } from "lucide-react"
 import toast from "react-hot-toast"
 
-import { getStoreWearables, getWearableObjectDetails } from "@/lib/api"
+import {
+  getStoreWearables,
+  getWearableObjectDetails,
+  handleBoughtQuest,
+  processBoughtQuest,
+} from "@/lib/api"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import BrandButton from "@/components/ui/brand-button"
@@ -128,8 +133,6 @@ const StorePage = () => {
     }
   }
 
-  console.log("storeWearables ==>", storeWearables)
-
   function formatTinyNumberJSX(value: number) {
     if (value === 0) return <span>$0</span>
 
@@ -150,6 +153,24 @@ const StorePage = () => {
 
     // For regular numbers
     return <span>${value}</span>
+  }
+
+  const handleBoughtQuest = async (subject: string) => {
+    if (!subject) {
+      toast.error("User does not have this consumable item")
+      return
+    }
+
+    try {
+      setLoading(true)
+      await processBoughtQuest(subject)
+    } catch (error) {
+      console.error("Error processing bought quest:", error)
+      toast.error("An error occurred while processing bought quest")
+      setLoading(false)
+    } finally {
+      setLoading(false)
+    }
   }
 
   // const handleTransfer = async (subject: string, amount: number) => {
@@ -262,6 +283,7 @@ const StorePage = () => {
       await tx.wait()
 
       toast.success("Wearables bought successfully!")
+      handleBoughtQuest(subject)
       console.log("Transaction hash:", tx.hash)
     } catch (error: any) {
       console.error("Full error object:", error)
@@ -348,6 +370,8 @@ const StorePage = () => {
     }
   }
 
+  console.log("selectedItem ==>sdfsdf", selectedItem)
+
   return (
     <div className="relative w-full h-full">
       <div className="relative w-full h-full bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col lg:flex-row gap-3 overflow-hidden">
@@ -423,14 +447,26 @@ const StorePage = () => {
                     <p className="truncate mr-2">Total supply</p>
                     <p className="text-2xs whitespace-nowrap">
                       {/* {selectedItem?.totalSupply} */}
-                      {formatTinyNumberJSX(selectedItem?.totalSupply)}
+                      {selectedItem?.totalSupply
+                        ? formatTinyNumberJSX(selectedItem?.totalSupply)
+                        : 0}
                     </p>
                   </div>
                   <div className="flex items-center justify-between text-xs">
                     <p className="truncate mr-2">Item price</p>
                     <p className=" text-2xs whitespace-nowrap">
                       {/* {selectedItem?.buyPrice} */}
-                      {formatTinyNumberJSX(selectedItem?.buyPrice)}
+                      {selectedItem?.buyPrice
+                        ? formatTinyNumberJSX(selectedItem?.buyPrice)
+                        : 0}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <p className="truncate mr-2">Held Amount</p>
+                    <p className=" text-2xs whitespace-nowrap">
+                      {selectedItem?.heldAmount
+                        ? formatTinyNumberJSX(selectedItem?.heldAmount)
+                        : 0}
                     </p>
                   </div>
                 </div>
@@ -453,7 +489,7 @@ const StorePage = () => {
                       blurColor="bg-[#F49696]"
                       className="w-full font-light"
                       onClick={() => handleSell(selectedItem?.subject)}
-                      disabled={isLoading.sell}
+                      disabled={isLoading.sell || !selectedItem?.heldAmount}
                     >
                       {isLoading.sell ? "Selling... " : "Sell"}
                       {isLoading.sell && (
@@ -464,7 +500,7 @@ const StorePage = () => {
                       blurColor="bg-[#EF98E6]"
                       className="w-full font-light"
                       onClick={() => setShowTransferInput(true)}
-                      disabled={isLoading.transfer}
+                      disabled={isLoading.transfer || !selectedItem?.heldAmount}
                     >
                       Transfer
                     </BrandButton>

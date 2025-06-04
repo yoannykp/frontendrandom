@@ -11,7 +11,23 @@ import toast from "react-hot-toast"
 
 import { handleFailedMint, mintCharacters } from "@/lib/api"
 import { cn, handleSignMessage } from "@/lib/utils"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import CONTRACT_ABI from "@/app/assets/abi.json"
 
 const SummonModal = ({
@@ -49,6 +65,13 @@ const SummonModal = ({
   const [isMinting, setIsMinting] = useState(false)
   const [unmintedCharacterIds, setUnmintedCharacterIds] = useState<number[]>([])
   const [isSigningOrMinting, setIsSigningOrMinting] = useState(false)
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [confirmDialogType, setConfirmDialogType] = useState<
+    "close" | "navigate"
+  >("close")
+  const [pendingNavigation, setPendingNavigation] = useState<string | null>(
+    null
+  )
   const router = useRouter()
 
   // Add this function at the top level of the component
@@ -56,18 +79,35 @@ const SummonModal = ({
     return !isMinted && summonType === "character" && showMintButton
   }
 
+  // Add a handler for dialog open change
+  const handleConfirmDialogChange = (open: boolean) => {
+    setShowConfirmDialog(open)
+    if (!open) {
+      // Reset the dialog type and pending navigation when dialog closes
+      setConfirmDialogType("close")
+      setPendingNavigation(null)
+    }
+  }
+
   const handleClose = () => {
     if (shouldShowConfirmation()) {
-      const wantToClose = window.confirm(
-        "Closing without minting will result in loss of stars. Are you sure you want to close?"
-      )
-      if (!wantToClose) {
-        return
-      }
+      setConfirmDialogType("close")
+      setShowConfirmDialog(true)
+      return
     }
 
     fetchCharacters()
     setIsOpen(false)
+  }
+
+  const handleConfirmClose = () => {
+    if (confirmDialogType === "close") {
+      fetchCharacters()
+      setIsOpen(false)
+    } else if (confirmDialogType === "navigate" && pendingNavigation) {
+      router.push(pendingNavigation)
+    }
+    handleConfirmDialogChange(false)
   }
 
   // Handle modal close to refresh characters
@@ -112,9 +152,6 @@ const SummonModal = ({
     }
 
     const amounts = new Array(tokenIds.length).fill(1)
-
-    console.log("Wallet ===>", wallet)
-    console.log("Token IDs to mint:", tokenIds)
 
     try {
       setIsSigningOrMinting(true)
@@ -266,16 +303,15 @@ const SummonModal = ({
     }
   }
 
-  // Add navigation handler
+  // Update navigation handler
   const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (shouldShowConfirmation()) {
-      const wantToNavigate = window.confirm(
-        "Leaving without minting will result in loss of stars. Are you sure you want to continue?"
-      )
-      if (!wantToNavigate) {
-        e.preventDefault()
-        return
-      }
+      e.preventDefault()
+      const href = e.currentTarget.href
+      setPendingNavigation(href)
+      setConfirmDialogType("navigate")
+      setShowConfirmDialog(true)
+      return
     }
   }
 
@@ -296,139 +332,169 @@ const SummonModal = ({
   }, [isMinted, summonType, showMintButton])
 
   return (
-    <Dialog modal={true} open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent
-        className="bg-[url('/images/modal-bg.jpeg')] bg-cover bg-center bg-no-repeat min-w-full h-screen max-h-[calc(100dvh)] overflow-y-auto rounded-none"
-        onPointerDownOutside={(e) => {
-          if (isSigningOrMinting || isMinting) {
-            e.preventDefault()
-          }
-        }}
-        onEscapeKeyDown={(e) => {
-          if (isSigningOrMinting || isMinting) {
-            e.preventDefault()
-          }
-        }}
-      >
-        <div
-          className="flex flex-col gap-4 z-10 relative justify-center items-center"
-          onClick={(e) => isMinting && e.stopPropagation()}
-        >
-          <div className="px-20 w-max bg-white/10 border-white/10 border rounded-xl py-6 relative overflow-hidden font-volkhov text-xl">
-            {title || "Summon Result"}
-            <span
-              className={cn(
-                "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
-                "group-disabled:group-hover:h-[30px]",
-                "bg-[#EF98E6]"
-              )}
-            />
-          </div>
-
-          <div className="flex flex-wrap max-w-4xl my-10 justify-center">
-            {summonItems.map((item, index) => (
-              <Image
-                key={index}
-                src={item.image || ""}
-                alt={summonType === "character" ? "Character" : "Gear"}
-                width={500}
-                height={500}
-                className="size-48 -mx-4 -my-2.5"
-              />
-            ))}
-          </div>
-
-          <div className="flex gap-5 ">
-            {showCloseButton && (
-              <button
-                onClick={handleClose}
-                className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group"
-              >
-                Close
-                <span
-                  className={cn(
-                    "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
-                    "group-disabled:group-hover:h-[30px]",
-                    "bg-[#EF98E6]"
-                  )}
-                />
-              </button>
-            )}
-            {/* {showMultiSummon && (
-              <div className="bg-white/10 px-4 py-2 rounded-xl relative overflow-hidden border border-white/10">
-                <h3 className="font-volkhov">
-                  {summonType === "character"
-                    ? "Multi Summon"
-                    : "Multi Gear Summon"}
-                </h3>
-
-                <button
-                  onClick={handleMultiSummon}
-                  disabled={loading}
-                  className="group mt-1 w-full bg-white/10 px-3 py-1 rounded-lg relative overflow-hidden border border-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <div className="flex items-center gap-2 justify-between z-10 w-full ">
-                    <span>{summonType === "character" ? "1000" : "1000"}</span>
-                    <Image
-                      src="/images/stars.png"
-                      alt="Star"
-                      width={20}
-                      height={20}
-                    />
-                  </div>
-                </button>
-                <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[50px] blur-[15px] z-[-1] group-hover:h-[40px] duration-500 transition-all bg-[#EF98E6]"></div>
-              </div>
-            )} */}
-            {showMintButton && (
-              <button
-                onClick={handleMintCharacter}
-                className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={isMinting || isMinted}
-              >
-                {isMinting ? "Minting..." : isMinted ? "Minted" : "Mint"}
-                {summonItems.length > 1 ? " All" : " Character"}
-                <span
-                  className={cn(
-                    "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
-                    "group-disabled:group-hover:h-[30px]",
-                    "bg-[#EF98E6]"
-                  )}
-                />
-              </button>
-            )}
-            {!hideNextButton && (
-              <Link
-                href={summonType === "character" ? "/team" : "/inventory"}
-                onClick={handleNavigation}
-                className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group"
-              >
-                Next
-                <span
-                  className={cn(
-                    "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
-                    "group-disabled:group-hover:h-[30px]",
-                    "bg-[#EF98E6]"
-                  )}
-                />
-              </Link>
-            )}
-          </div>
-        </div>
-
-        <div
-          style={{
-            background:
-              "radial-gradient(523.95% 555.02% at -125.98% -386.39%, rgba(0, 0, 0, 0) 0%, #000000 100%)",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
+    <>
+      <Dialog modal={true} open={isOpen} onOpenChange={handleOpenChange}>
+        <DialogContent
+          className="bg-[url('/images/modal-bg.jpeg')] bg-cover bg-center bg-no-repeat min-w-full h-screen max-h-[calc(100dvh)] overflow-y-auto rounded-none"
+          onPointerDownOutside={(e) => {
+            if (isSigningOrMinting || isMinting) {
+              e.preventDefault()
+            }
           }}
-        ></div>
-      </DialogContent>
-    </Dialog>
+          onEscapeKeyDown={(e) => {
+            if (isSigningOrMinting || isMinting) {
+              e.preventDefault()
+            }
+          }}
+        >
+          <div
+            className="flex flex-col gap-4 z-10 relative justify-center items-center"
+            onClick={(e) => isMinting && e.stopPropagation()}
+          >
+            <div className="px-20 w-max bg-white/10 border-white/10 border rounded-xl py-6 relative overflow-hidden font-volkhov text-xl">
+              {title || "Summon Result"}
+              <span
+                className={cn(
+                  "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
+                  "group-disabled:group-hover:h-[30px]",
+                  "bg-[#EF98E6]"
+                )}
+              />
+            </div>
+
+            <div className="flex flex-wrap max-w-4xl my-10 justify-center">
+              {summonItems.map((item, index) => (
+                <Image
+                  key={index}
+                  src={item.image || ""}
+                  alt={summonType === "character" ? "Character" : "Gear"}
+                  width={500}
+                  height={500}
+                  className="size-48 -mx-4 -my-2.5"
+                />
+              ))}
+            </div>
+
+            <div className="flex gap-5 ">
+              {showCloseButton && (
+                <button
+                  onClick={handleClose}
+                  className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group"
+                >
+                  Close
+                  <span
+                    className={cn(
+                      "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
+                      "group-disabled:group-hover:h-[30px]",
+                      "bg-[#EF98E6]"
+                    )}
+                  />
+                </button>
+              )}
+              {/* {showMultiSummon && (
+                <div className="bg-white/10 px-4 py-2 rounded-xl relative overflow-hidden border border-white/10">
+                  <h3 className="font-volkhov">
+                    {summonType === "character"
+                      ? "Multi Summon"
+                      : "Multi Gear Summon"}
+                  </h3>
+
+                  <button
+                    onClick={handleMultiSummon}
+                    disabled={loading}
+                    className="group mt-1 w-full bg-white/10 px-3 py-1 rounded-lg relative overflow-hidden border border-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <div className="flex items-center gap-2 justify-between z-10 w-full ">
+                      <span>{summonType === "character" ? "1000" : "1000"}</span>
+                      <Image
+                        src="/images/stars.png"
+                        alt="Star"
+                        width={20}
+                        height={20}
+                      />
+                    </div>
+                  </button>
+                  <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[50px] blur-[15px] z-[-1] group-hover:h-[40px] duration-500 transition-all bg-[#EF98E6]"></div>
+                </div>
+              )} */}
+              {showMintButton && (
+                <button
+                  onClick={handleMintCharacter}
+                  className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isMinting || isMinted}
+                >
+                  {isMinting ? "Minting..." : isMinted ? "Minted" : "Mint"}
+                  {summonItems.length > 1 ? " All" : " Character"}
+                  <span
+                    className={cn(
+                      "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
+                      "group-disabled:group-hover:h-[30px]",
+                      "bg-[#EF98E6]"
+                    )}
+                  />
+                </button>
+              )}
+              {!hideNextButton && (
+                <Link
+                  href={summonType === "character" ? "/team" : "/inventory"}
+                  onClick={handleNavigation}
+                  className="px-10 w-max bg-white/10 border-white/10 border rounded-xl py-5 relative overflow-hidden font-volkhov text-lg flex items-center justify-center group"
+                >
+                  Next
+                  <span
+                    className={cn(
+                      "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
+                      "group-disabled:group-hover:h-[30px]",
+                      "bg-[#EF98E6]"
+                    )}
+                  />
+                </Link>
+              )}
+            </div>
+          </div>
+
+          <div
+            style={{
+              background:
+                "radial-gradient(523.95% 555.02% at -125.98% -386.39%, rgba(0, 0, 0, 0) 0%, #000000 100%)",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+            }}
+          ></div>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog
+        open={showConfirmDialog}
+        onOpenChange={handleConfirmDialogChange}
+      >
+        <AlertDialogContent className="border border-white/10">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-volkhov text-lg text-center">
+              Confirmation
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-white/80">
+              Leaving without minting will result in loss of stars. Are you sure
+              you want to continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
+            <AlertDialogCancel className="px-6 !h-12 bg-white/10 border-white/10 border rounded-xl py-3 relative overflow-hidden font-volkhov text-base group">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmClose}
+              className="px-6 !h-12 !bg-white/10 border-white/10 border rounded-xl py-3 relative overflow-hidden font-volkhov text-base group ![background-image:none]"
+            >
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }
 

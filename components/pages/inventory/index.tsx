@@ -8,7 +8,7 @@ import { ethers } from "ethers"
 import { CloudLightning, Loader2, X } from "lucide-react"
 import toast from "react-hot-toast"
 
-import { burnGear, updateGearBalance } from "@/lib/api"
+import { burnGear, updateGearBalance, useConsumableItem } from "@/lib/api"
 import { cn, handleSignMessage } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
 import SummonModal from "@/components/pages/draw/SummonModal"
@@ -89,13 +89,13 @@ const InventoryPage = () => {
     if (activeTab === "all") {
       setFilteredItems(inventory)
     } else if (activeTab === "gear") {
-      setFilteredItems(inventory.filter((item) => item.type === "GEAR"))
+      setFilteredItems(inventory?.filter((item) => item.type === "GEAR"))
     } else if (activeTab === "raids") {
-      setFilteredItems(inventory.filter((item) => item.type === "CHARACTER"))
+      setFilteredItems(inventory?.filter((item) => item.type === "CHARACTER"))
     } else if (activeTab === "dojo") {
-      setFilteredItems(inventory.filter((item) => item.type === "ALIEN_PART"))
+      setFilteredItems(inventory?.filter((item) => item.type === "ALIEN_PART"))
     } else if (activeTab === "consumable") {
-      setFilteredItems(inventory.filter((item) => item.type === "ELEMENT"))
+      setFilteredItems(inventory?.filter((item) => item.type === "CONSUMABLE"))
     }
   }, [inventory, activeTab]) // Remove selectedItem from dependencies
 
@@ -122,22 +122,7 @@ const InventoryPage = () => {
       // Cast the response data to BurnGearResponse type
       const burnResponse = response.data
 
-      console.log("Burn Response ==>", burnResponse)
-      console.log("selectedItem ==>", selectedItem)
-
       if (burnResponse && burnResponse.success && burnResponse.character) {
-        // Show success message
-        // toast.success("Gear burned successfully!")
-
-        // // Set the summoned character and open the summon modal
-        // setSummonedCharacter(burnResponse.character)
-
-        // // Reset selected item
-        // setSelectedItem(null)
-
-        // Refresh inventory
-        // fetchInventory()
-
         handleMintCharacter(
           burnResponse.serverSignature,
           burnResponse.nonce,
@@ -155,6 +140,43 @@ const InventoryPage = () => {
       setLoading(false)
     } finally {
       // setLoading(false)
+    }
+  }
+
+  const handleConsumeableItem = async () => {
+    if (!selectedItem) return
+    if (selectedItem.type !== "CONSUMABLE") {
+      toast.error("User does not have this consumable item")
+      return
+    }
+
+    try {
+      setLoading(true)
+      const response = await useConsumableItem(selectedItem.id)
+
+      if (response.error) {
+        toast.error(response.error.message || "Failed to use consumable item")
+        return
+      }
+
+      // Cast the response data to BurnGearResponse type
+      const burnResponse = response.data
+
+      if (response.data?.success) {
+        toast.success("Consumable item used successfully")
+        setLoading(false)
+        setSelectedItem(null)
+        fetchInventory()
+      } else {
+        // @ts-expect-error 'response' is not typed
+        toast.error(response?.error?.message || "Failed to use consumable item")
+      }
+    } catch (error) {
+      console.error("Error using consumable item:", error)
+      toast.error("An error occurred while using consumable item")
+      setLoading(false)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -379,10 +401,20 @@ const InventoryPage = () => {
                 <BrandButton
                   blurColor="bg-[#96DFF4]"
                   className="w-full"
-                  onClick={handleBurnGear}
+                  onClick={
+                    selectedItem.type === "CONSUMABLE"
+                      ? handleConsumeableItem
+                      : handleBurnGear
+                  }
                   disabled={loading}
                 >
-                  {loading ? "Summoning..." : "Summon"}
+                  {loading
+                    ? selectedItem.type === "CONSUMABLE"
+                      ? "Consuming..."
+                      : "Summoning..."
+                    : selectedItem.type === "CONSUMABLE"
+                      ? "Use"
+                      : "Summon"}
                   {loading && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
                 </BrandButton>
               </div>

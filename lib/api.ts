@@ -408,6 +408,18 @@ export const burnGear = async (
   return response
 }
 
+export const useConsumableItem = async (
+  itemId: number
+): Promise<ApiResponse<BurnGearResponse>> => {
+  const response = await apiManager.post<BurnGearResponse>(
+    "/profile/use-consumable-item",
+    {
+      itemId,
+    }
+  )
+  return response
+}
+
 export const updateGearBalance = async (
   gearId: number
 ): Promise<ApiResponse<BurnGearResponse>> => {
@@ -795,5 +807,14 @@ export const getWearableObjectDetails = async (
   subject: string
 ): Promise<ApiResponse<any>> => {
   const response = await apiManager.get<any>(`/store/wearables/${subject}`)
+  return response
+}
+
+export const processBoughtQuest = async (
+  subject: string
+): Promise<ApiResponse<any>> => {
+  const response = await apiManager.get<any>("/store/wearables/bought-quest", {
+    subject,
+  })
   return response
 }
