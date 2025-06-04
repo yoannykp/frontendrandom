@@ -442,6 +442,10 @@ const DojoPage = () => {
             if (collection.parts && Array.isArray(collection.parts)) {
               collection.parts.forEach((part: any) => {
                 const type = part.type.toLowerCase()
+                // Skip if image is from placeholder.com
+                if (part.image && part.image.includes("placeholder.com")) {
+                  return
+                }
                 if (
                   partsMap[type] !== undefined &&
                   !seenIds[type].has(part.id)
