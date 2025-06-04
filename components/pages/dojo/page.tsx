@@ -101,7 +101,16 @@ const DojoPage = () => {
     EYES: [],
     MOUTH: [],
     ELEMENT: [],
-    BODY: [],
+    BODY: [
+      {
+        id: 111111,
+        image: "/images/alien/body/body.png",
+        displayImage: "/images/alien/body/body-with-clothes.png",
+        name: "Default Body",
+        type: "body",
+        isDefault: true,
+      },
+    ],
     MARKS: [],
     POWERS: [],
     ACCESSORIES: [],
@@ -392,13 +401,22 @@ const DojoPage = () => {
     if (wallet?.address) {
       getOwnedAlienParts(wallet?.address).then((res) => {
         if (res.data && Array.isArray(res.data?.userAlienParts)) {
-          // Initialize parts map
+          // Initialize parts map with default body already included
           const partsMap: Record<string, any[]> = {
             hair: [],
             eyes: [],
             mouth: [],
             element: [],
-            body: [],
+            body: [
+              {
+                id: 111111,
+                image: "/images/alien/body/body.png",
+                displayImage: "/images/alien/body/body-with-clothes.png",
+                name: "Default Body",
+                type: "body",
+                isDefault: true,
+              },
+            ],
             marks: [],
             powers: [],
             accessories: [],
@@ -410,7 +428,7 @@ const DojoPage = () => {
             eyes: new Set(),
             mouth: new Set(),
             element: new Set(),
-            body: new Set(),
+            body: new Set([111111]), // Include default body ID
             marks: new Set(),
             powers: new Set(),
             accessories: new Set(),

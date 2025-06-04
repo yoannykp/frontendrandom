@@ -521,10 +521,11 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
             const bodySrc = imageCache[selectedTraits.body]
               ? selectedTraits.body
               : previousTraitsRef.current.body
-            if (bodySrc) {
-              drawImage(bodySrc)
-            } else {
+            if (!bodySrc || bodySrc === "/images/alien/body/body.png") {
               drawImage("/images/alien/body/body.png", true)
+              drawImage("/images/alien/body/cothes.png", true)
+            } else {
+              drawImage(bodySrc)
             }
 
             // Draw head
@@ -545,11 +546,6 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
               ? selectedTraits.accessories
               : previousTraitsRef.current.accessories
             if (accessoriesSrc) drawImage(accessoriesSrc)
-
-            // Only draw default clothes if no custom body is selected
-            if (!bodySrc) {
-              drawImage("/images/alien/body/cothes.png", true)
-            }
 
             // Draw hair last to ensure it's on top
             const hairSrc = imageCache[selectedTraits.hair]

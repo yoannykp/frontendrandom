@@ -21,6 +21,7 @@ export interface TraitItem {
   id: number
   type: string
   image: string
+  displayImage?: string
   name: string
   description?: string
   price?: number
@@ -132,7 +133,10 @@ const TraitPopover = ({
             {traits.map((trait) => (
               <GradientBorder
                 key={trait.id}
-                isSelected={selectedId === trait.id}
+                isSelected={
+                  selectedId === trait.id ||
+                  (trait.type === "body" && trait.isDefault && !selectedId)
+                }
                 className="transition-colors duration-300"
               >
                 <div
@@ -147,22 +151,62 @@ const TraitPopover = ({
                       </div>
                     ) : (
                       <>
-                        <Image
-                          src={`/api/image-proxy?url=${trait.image}`}
-                          alt={trait.name || `Trait ${trait.id}`}
-                          width={50}
-                          height={50}
-                          className={cn(
-                            "object-cover",
-                            loadingImages[trait.id] && "opacity-30"
-                          )}
-                          crossOrigin="anonymous"
-                          onError={() => handleImageError(trait.id)}
-                          onLoad={() => handleImageLoad(trait.id)}
-                          onLoadingComplete={() => handleImageLoad(trait.id)}
-                          onLoadStart={() => handleImageStartLoad(trait.id)}
-                          unoptimized
-                        />
+                        {/* Special handling for default body to show both body and clothes */}
+                        {trait.isDefault && trait.type === "body" ? (
+                          <>
+                            <Image
+                              src="/images/alien/body/body.png"
+                              alt="Default Body"
+                              width={50}
+                              height={50}
+                              className={cn(
+                                "object-cover absolute",
+                                loadingImages[trait.id] && "opacity-30"
+                              )}
+                              crossOrigin="anonymous"
+                              onError={() => handleImageError(trait.id)}
+                              onLoad={() => handleImageLoad(trait.id)}
+                              onLoadingComplete={() =>
+                                handleImageLoad(trait.id)
+                              }
+                              onLoadStart={() => handleImageStartLoad(trait.id)}
+                              unoptimized
+                            />
+                            <Image
+                              src="/images/alien/body/cothes.png"
+                              alt="Default Clothes"
+                              width={50}
+                              height={50}
+                              className={cn(
+                                "object-cover absolute",
+                                loadingImages[trait.id] && "opacity-30"
+                              )}
+                              crossOrigin="anonymous"
+                              unoptimized
+                            />
+                          </>
+                        ) : (
+                          <Image
+                            src={
+                              trait.image.includes("https")
+                                ? `/api/image-proxy?url=${trait.image}`
+                                : trait.image
+                            }
+                            alt={trait.name || `Trait ${trait.id}`}
+                            width={50}
+                            height={50}
+                            className={cn(
+                              "object-cover",
+                              loadingImages[trait.id] && "opacity-30"
+                            )}
+                            crossOrigin="anonymous"
+                            onError={() => handleImageError(trait.id)}
+                            onLoad={() => handleImageLoad(trait.id)}
+                            onLoadingComplete={() => handleImageLoad(trait.id)}
+                            onLoadStart={() => handleImageStartLoad(trait.id)}
+                            unoptimized
+                          />
+                        )}
                         {loadingImages[trait.id] && (
                           <div className="absolute inset-0 flex items-center justify-center">
                             <Loader2 className="w-4 h-4 animate-spin text-white/80" />
