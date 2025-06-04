@@ -40,3 +40,5 @@ export const levelRequirements = [
     requiredPoints: 80000,
   },
 ]
+
+export const LIMIT_FOR_SUMMON_OR_MINT = 3

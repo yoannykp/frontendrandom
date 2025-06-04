@@ -101,6 +101,7 @@ const Page = () => {
   // Add new state for countdown
   const [nextSpinTime, setNextSpinTime] = useState<number>(0)
   const [timeRemaining, setTimeRemaining] = useState<string>("")
+  const [hasWonReward, setHasWonReward] = useState(false)
 
   useEffect(() => {
     fetchCanSpin()
@@ -115,7 +116,9 @@ const Page = () => {
 
       const updateTimer = () => {
         if (secondsRemaining <= 0) {
-          // Time's up, refresh spin status
+          // Time's up, reset states and refresh spin status
+          setTimeRemaining("")
+          setHasWonReward(false)
           fetchCanSpin()
           return
         }
@@ -140,6 +143,10 @@ const Page = () => {
 
       // Clean up interval on component unmount
       return () => clearInterval(interval)
+    } else {
+      // Reset states when user can spin
+      setTimeRemaining("")
+      setHasWonReward(false)
     }
   }, [userCanSpin, spinStatus])
 
@@ -205,9 +212,14 @@ const Page = () => {
     }
     setWinningItem(item)
     setIsSpinning(false)
+    setHasWonReward(true)
 
-    fetchCanSpin()
-    fetchWheelItems()
+    // Add delay before showing timer
+    setTimeout(() => {
+      setHasWonReward(false) // Reset hasWonReward after delay
+      fetchCanSpin()
+      fetchWheelItems()
+    }, 3000) // 3 seconds delay
   }
 
   const handleSpin = async () => {
@@ -262,7 +274,21 @@ const Page = () => {
                 <h1 className="text-white text-3xl ">Wheel</h1>
               </div>
               <div className="flex justify-end relative flex-1 rounded-xl lg:rounded-2xl overflow-hidden lg:min-h-[calc(100vh-140px)] max-lg:hidden">
-                <div className="absolute inset-0 bg-cover bg-bottom bg-no-repeat bg-[url('/images/wheel/wheel-bg.png')]">
+                <div className="absolute inset-0 bg-cover bg-bottom bg-no-repeat bg-[url('/images/wheel/background.svg')]">
+                  <div
+                    className={cn(
+                      "absolute inset-0 bg-cover bg-bottom bg-no-repeat",
+                      {
+                        "bg-[url('/images/wheel/4.svg')]":
+                          Boolean(timeRemaining) && !hasWonReward, // Only show timer image if hasWonReward is false
+                        "bg-[url('/images/wheel/3.svg')]": hasWonReward, // Show won image regardless of timer when hasWonReward is true
+                        "bg-[url('/images/wheel/2.svg')]":
+                          !timeRemaining && isSpinning && !hasWonReward,
+                        "bg-[url('/images/wheel/1.svg')]":
+                          !timeRemaining && !isSpinning && !hasWonReward,
+                      }
+                    )}
+                  />
                   <div
                     className="absolute inset-0 "
                     style={{
@@ -286,17 +312,19 @@ const Page = () => {
                     spinHistory={spinHistory}
                     handleSpinComplete={handleSpinComplete}
                     setIsError={setIsError}
+                    timeRemaining={timeRemaining}
+                    hasWonReward={hasWonReward}
                   />
                   <div className="absolute bottom-2 left-1/2 -translate-x-1/2 max-lg:hidden">
                     <BrandButton
                       blurColor="bg-[#F49696]"
                       className="px-14"
                       onClick={handleSpin}
-                      disabled={!userCanSpin || isSpinning}
+                      disabled={!userCanSpin || isSpinning || hasWonReward}
                     >
                       {isSpinning
                         ? "Spin in progress..."
-                        : userCanSpin
+                        : userCanSpin && !hasWonReward
                           ? "Spin"
                           : `Spin again in ${timeRemaining}`}
                     </BrandButton>
@@ -311,6 +339,8 @@ const Page = () => {
                   spinHistory={spinHistory}
                   handleSpinComplete={handleSpinComplete}
                   setIsError={setIsError}
+                  timeRemaining={timeRemaining}
+                  hasWonReward={hasWonReward}
                 />
               </div>
 

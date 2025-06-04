@@ -17,6 +17,7 @@ import { usePrivy, useWallets } from "@privy-io/react-auth"
 import { ethers } from "ethers"
 import toast from "react-hot-toast"
 
+import { LIMIT_FOR_SUMMON_OR_MINT } from "@/config/constants"
 import {
   enhanceAlienPart,
   fetchCharacterTiers,
@@ -671,7 +672,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                         undefined
                         ? userRuneAmounts[selectedEnhancementObj.forgeRuneType]
                         : 0}
-                      /4
+                      /{LIMIT_FOR_SUMMON_OR_MINT}
                     </span>
                     {selectedEnhancementObj?.image && (
                       <span className="p-0.5 bg-white/10 border border-white/10 rounded-full">

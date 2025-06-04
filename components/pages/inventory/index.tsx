@@ -8,6 +8,7 @@ import { ethers } from "ethers"
 import { CloudLightning, Loader2, X } from "lucide-react"
 import toast from "react-hot-toast"
 
+import { LIMIT_FOR_SUMMON_OR_MINT } from "@/config/constants"
 import { burnGear, consumeConsumableItem, updateGearBalance } from "@/lib/api"
 import { cn, handleSignMessage } from "@/lib/utils"
 import BrandButton from "@/components/ui/brand-button"
@@ -393,7 +394,9 @@ const InventoryPage = () => {
 
               <div className="bg-white/10 rounded-lg p-3 gap-3 flex flex-col">
                 <div className="bg-white/10 rounded-lg p-3">
-                  <h3 className="font-inter">Burn 4 {selectedItem.name}</h3>
+                  <h3 className="font-inter">
+                    Burn {LIMIT_FOR_SUMMON_OR_MINT} {selectedItem.name}
+                  </h3>
                   <p className="text-xs text-white/60">
                     Use this item to enhance your character or alien.
                   </p>

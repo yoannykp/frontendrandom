@@ -26,6 +26,8 @@ interface WheelPageProps {
   spinHistory: string[]
   handleSpinComplete: (item: { color: string; name: string }) => void
   setIsError: (isError: boolean) => void
+  timeRemaining: string
+  hasWonReward: boolean
 }
 
 const WheelPage = ({
@@ -35,6 +37,8 @@ const WheelPage = ({
   spinHistory,
   handleSpinComplete,
   setIsError,
+  timeRemaining,
+  hasWonReward,
 }: WheelPageProps) => {
   const [openPopover, setOpenPopover] = useState<"calendar" | "items" | null>(
     null
@@ -270,7 +274,20 @@ const WheelPage = ({
         </div>
       </div>
 
-      <div className="w-full h-full flex flex-col bg-white/5 p-4 rounded-2xl group border border-white/10 bg-bottom bg-no-repeat bg-[url('/images/wheel/wheel-bg.png')] lg:hidden flex-1 ">
+      <div className="w-full h-full flex flex-col bg-white/5 p-4 rounded-2xl group border relative border-white/10 bg-bottom bg-no-repeat bg-[url('/images/wheel/background.svg')] lg:hidden flex-1">
+        {/* TODO: Need to test this on mobile screen */}
+        <div
+          className={cn("absolute inset-0 bg-cover bg-bottom bg-no-repeat", {
+            "bg-[url('/images/wheel/4.svg')]":
+              Boolean(timeRemaining) && !hasWonReward, // Timer cooldown
+            "bg-[url('/images/wheel/3.svg')]": hasWonReward, // Won reward state
+            "bg-[url('/images/wheel/2.svg')]":
+              !timeRemaining && isSpinning && !hasWonReward, // Spinning state
+            "bg-[url('/images/wheel/1.svg')]":
+              !timeRemaining && !isSpinning && !hasWonReward, // Ready to spin
+          })}
+        />
+
         {/* Mobile Version */}
         <Wheel
           isSpinning={isSpinning}
