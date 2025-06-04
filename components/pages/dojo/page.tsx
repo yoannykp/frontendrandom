@@ -788,14 +788,13 @@ const DojoPage = () => {
                   item={DOJO_ITEMS[7]} // Accessories
                   traits={traits.ACCESSORIES}
                   selectedId={selectedTraits.accessoriesId}
-                  onSelect={(trait) => {
-                    console.log("trait ===>", trait),
-                      setSelectedTraits({
-                        ...selectedTraits,
-                        accessories: trait.image,
-                        accessoriesId: trait.id,
-                      })
-                  }}
+                  onSelect={(trait) =>
+                    setSelectedTraits({
+                      ...selectedTraits,
+                      accessories: trait.image,
+                      accessoriesId: trait.id,
+                    })
+                  }
                   disabled={traits.ACCESSORIES.length === 0}
                 />
               </div>
