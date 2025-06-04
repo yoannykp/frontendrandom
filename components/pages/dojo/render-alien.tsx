@@ -9,6 +9,10 @@ interface AlienRendererProps {
     eyes: string
     mouth: string
     element: string
+    body: string
+    marks: string
+    powers: string
+    accessories: string
   }
   element: string
 }
@@ -174,12 +178,20 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
       eyes: "",
       mouth: "",
       element: "",
+      body: "",
+      marks: "",
+      powers: "",
+      accessories: "",
     })
     const [pendingTraits, setPendingTraits] = useState({
       hair: "",
       eyes: "",
       mouth: "",
       element: "",
+      body: "",
+      marks: "",
+      powers: "",
+      accessories: "",
     })
 
     const canvasRef =
@@ -226,7 +238,11 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
         prev.hair !== selectedTraits.hair ||
         prev.eyes !== selectedTraits.eyes ||
         prev.mouth !== selectedTraits.mouth ||
-        prev.element !== element
+        prev.element !== element ||
+        prev.body !== selectedTraits.body ||
+        prev.marks !== selectedTraits.marks ||
+        prev.powers !== selectedTraits.powers ||
+        prev.accessories !== selectedTraits.accessories
       )
     }
 
@@ -236,7 +252,11 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
       return (
         prev.hair !== selectedTraits.hair ||
         prev.eyes !== selectedTraits.eyes ||
-        prev.mouth !== selectedTraits.mouth
+        prev.mouth !== selectedTraits.mouth ||
+        prev.body !== selectedTraits.body ||
+        prev.marks !== selectedTraits.marks ||
+        prev.powers !== selectedTraits.powers ||
+        prev.accessories !== selectedTraits.accessories
       )
     }
 
@@ -253,6 +273,10 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
         eyes: selectedTraits.eyes,
         mouth: selectedTraits.mouth,
         element: element,
+        body: selectedTraits.body,
+        marks: selectedTraits.marks,
+        powers: selectedTraits.powers,
+        accessories: selectedTraits.accessories,
       })
 
       // Determine if only user traits changed
@@ -279,6 +303,10 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
             ...(selectedTraits.eyes ? [selectedTraits.eyes] : []),
             ...(selectedTraits.hair ? [selectedTraits.hair] : []),
             ...(selectedTraits.mouth ? [selectedTraits.mouth] : []),
+            ...(selectedTraits.body ? [selectedTraits.body] : []),
+            ...(selectedTraits.marks ? [selectedTraits.marks] : []),
+            ...(selectedTraits.powers ? [selectedTraits.powers] : []),
+            ...(selectedTraits.accessories ? [selectedTraits.accessories] : []),
             ...(element ? [element] : []),
           ]
 
@@ -303,6 +331,10 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
             eyes: selectedTraits.eyes,
             mouth: selectedTraits.mouth,
             element: element,
+            body: selectedTraits.body,
+            marks: selectedTraits.marks,
+            powers: selectedTraits.powers,
+            accessories: selectedTraits.accessories,
           }
 
           setIsImagesLoaded(true)
@@ -338,6 +370,10 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
       selectedTraits.eyes,
       selectedTraits.mouth,
       selectedTraits.hair,
+      selectedTraits.body,
+      selectedTraits.marks,
+      selectedTraits.powers,
+      selectedTraits.accessories,
       element,
     ])
 
@@ -413,7 +449,22 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
               }
 
               if (imageCache[src]) {
-                ctx.drawImage(imageCache[src].img, 0, 0, width, height)
+                // Special handling for accessories - move them up by adjusting y position
+                if (
+                  src === selectedTraits.accessories ||
+                  src === previousTraitsRef.current.accessories
+                ) {
+                  // Move accessories up by 20 pixels (adjust this value as needed)
+                  ctx.drawImage(
+                    imageCache[src].img,
+                    0,
+                    -20 * scale,
+                    width,
+                    height
+                  )
+                } else {
+                  ctx.drawImage(imageCache[src].img, 0, 0, width, height)
+                }
                 return true
               } else if (!isBasePart) {
                 // For non-base parts (traits), try to use the previous trait if available
@@ -425,7 +476,15 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
                         ? "eyes"
                         : src === pendingTraits.mouth
                           ? "mouth"
-                          : "element"
+                          : src === pendingTraits.body
+                            ? "body"
+                            : src === pendingTraits.marks
+                              ? "marks"
+                              : src === pendingTraits.powers
+                                ? "powers"
+                                : src === pendingTraits.accessories
+                                  ? "accessories"
+                                  : "element"
                   ]
                 if (prevSrc && imageCache[prevSrc]) {
                   ctx.drawImage(imageCache[prevSrc].img, 0, 0, width, height)
@@ -458,8 +517,15 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
               return false
             }
 
-            // Draw base body
-            drawImage("/images/alien/body/body.png", true)
+            // Only draw default body if no custom body is selected
+            const bodySrc = imageCache[selectedTraits.body]
+              ? selectedTraits.body
+              : previousTraitsRef.current.body
+            if (bodySrc) {
+              drawImage(bodySrc)
+            } else {
+              drawImage("/images/alien/body/body.png", true)
+            }
 
             // Draw head
             drawImage("/images/alien/body/head.png", true)
@@ -475,8 +541,15 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
               : previousTraitsRef.current.mouth
             if (mouthSrc) drawImage(mouthSrc)
 
-            // Draw clothes
-            drawImage("/images/alien/body/cothes.png", true)
+            const accessoriesSrc = imageCache[selectedTraits.accessories]
+              ? selectedTraits.accessories
+              : previousTraitsRef.current.accessories
+            if (accessoriesSrc) drawImage(accessoriesSrc)
+
+            // Only draw default clothes if no custom body is selected
+            if (!bodySrc) {
+              drawImage("/images/alien/body/cothes.png", true)
+            }
 
             // Draw hair last to ensure it's on top
             const hairSrc = imageCache[selectedTraits.hair]

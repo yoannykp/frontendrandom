@@ -92,11 +92,19 @@ const DojoPage = () => {
     EYES: any[]
     MOUTH: any[]
     ELEMENT: any[]
+    BODY: any[]
+    MARKS: any[]
+    POWERS: any[]
+    ACCESSORIES: any[]
   }>({
     HAIR: [],
     EYES: [],
     MOUTH: [],
     ELEMENT: [],
+    BODY: [],
+    MARKS: [],
+    POWERS: [],
+    ACCESSORIES: [],
   })
   const router = useRouter()
   const { wallets } = useWallets()
@@ -129,6 +137,14 @@ const DojoPage = () => {
     mouthId: number
     elementId: number
     element: string
+    body: string
+    bodyId: number
+    marks: string
+    marksId: number
+    powers: string
+    powersId: number
+    accessories: string
+    accessoriesId: number
   }>({
     hair: "",
     eyes: "",
@@ -138,6 +154,14 @@ const DojoPage = () => {
     eyesId: 0,
     mouthId: 0,
     elementId: 0,
+    body: "",
+    bodyId: 0,
+    marks: "",
+    marksId: 0,
+    powers: "",
+    powersId: 0,
+    accessories: "",
+    accessoriesId: 0,
   })
 
   const [defaultTraits, setDefaultTraits] = useState<{
@@ -149,6 +173,14 @@ const DojoPage = () => {
     mouthId: number
     elementId: number
     element: string
+    body: string
+    bodyId: number
+    marks: string
+    marksId: number
+    powers: string
+    powersId: number
+    accessories: string
+    accessoriesId: number
   }>({
     hair: "",
     eyes: "",
@@ -158,6 +190,14 @@ const DojoPage = () => {
     eyesId: 0,
     mouthId: 0,
     elementId: 0,
+    body: "",
+    bodyId: 0,
+    marks: "",
+    marksId: 0,
+    powers: "",
+    powersId: 0,
+    accessories: "",
+    accessoriesId: 0,
   })
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -220,6 +260,54 @@ const DojoPage = () => {
       }
     }
 
+    if (selectedTraits.bodyId) {
+      const selectedBody = traits.BODY.find(
+        (body) => body.id === selectedTraits.bodyId
+      )
+      if (selectedBody) {
+        newBonusDetails.starBoost += selectedBody.starBoost || 0
+        newBonusDetails.xpBoost += selectedBody.xpBoost || 0
+        newBonusDetails.raidTimeBoost += selectedBody.raidTimeBoost || 0
+        totalPower += selectedBody.power || 0
+      }
+    }
+
+    if (selectedTraits.marksId) {
+      const selectedMarks = traits.MARKS.find(
+        (marks) => marks.id === selectedTraits.marksId
+      )
+      if (selectedMarks) {
+        newBonusDetails.starBoost += selectedMarks.starBoost || 0
+        newBonusDetails.xpBoost += selectedMarks.xpBoost || 0
+        newBonusDetails.raidTimeBoost += selectedMarks.raidTimeBoost || 0
+        totalPower += selectedMarks.power || 0
+      }
+    }
+
+    if (selectedTraits.powersId) {
+      const selectedPowers = traits.POWERS.find(
+        (powers) => powers.id === selectedTraits.powersId
+      )
+      if (selectedPowers) {
+        newBonusDetails.starBoost += selectedPowers.starBoost || 0
+        newBonusDetails.xpBoost += selectedPowers.xpBoost || 0
+        newBonusDetails.raidTimeBoost += selectedPowers.raidTimeBoost || 0
+        totalPower += selectedPowers.power || 0
+      }
+    }
+
+    if (selectedTraits.accessoriesId) {
+      const selectedAccessories = traits.ACCESSORIES.find(
+        (accessories) => accessories.id === selectedTraits.accessoriesId
+      )
+      if (selectedAccessories) {
+        newBonusDetails.starBoost += selectedAccessories.starBoost || 0
+        newBonusDetails.xpBoost += selectedAccessories.xpBoost || 0
+        newBonusDetails.raidTimeBoost += selectedAccessories.raidTimeBoost || 0
+        totalPower += selectedAccessories.power || 0
+      }
+    }
+
     // Add bonuses from selected element
     if (selectedTraits.elementId) {
       const selectedElement = traits.ELEMENT.find(
@@ -268,6 +356,30 @@ const DojoPage = () => {
             updatedTraits.elementId = alien.element.id
           }
 
+          // Set body if available
+          if (res.data?.body) {
+            updatedTraits.body = res.data.body.image
+            updatedTraits.bodyId = res.data.body.id
+          }
+
+          // Set marks if available
+          if (res.data?.marks) {
+            updatedTraits.marks = res.data.marks.image
+            updatedTraits.marksId = res.data.marks.id
+          }
+
+          // Set powers if available
+          if (res.data?.powers) {
+            updatedTraits.powers = res.data.powers.image
+            updatedTraits.powersId = res.data.powers.id
+          }
+
+          // Set accessories if available
+          if (res.data?.accessories) {
+            updatedTraits.accessories = res.data.accessories.image
+            updatedTraits.accessoriesId = res.data.accessories.id
+          }
+
           // Update the selected traits state
           setDefaultTraits(updatedTraits)
           setSelectedTraits(updatedTraits)
@@ -286,6 +398,10 @@ const DojoPage = () => {
             eyes: [],
             mouth: [],
             element: [],
+            body: [],
+            marks: [],
+            powers: [],
+            accessories: [],
           }
 
           // Track IDs to prevent duplicates
@@ -294,6 +410,10 @@ const DojoPage = () => {
             eyes: new Set(),
             mouth: new Set(),
             element: new Set(),
+            body: new Set(),
+            marks: new Set(),
+            powers: new Set(),
+            accessories: new Set(),
           }
 
           // Calculate total power from all parts
@@ -356,6 +476,10 @@ const DojoPage = () => {
             EYES: partsMap.eyes || [],
             MOUTH: partsMap.mouth || [],
             ELEMENT: uniqueElements || [],
+            BODY: partsMap.body || [],
+            MARKS: partsMap.marks || [],
+            POWERS: partsMap.powers || [],
+            ACCESSORIES: partsMap.accessories || [],
           })
         }
       })
@@ -404,6 +528,21 @@ const DojoPage = () => {
 
     if (selectedTraits.elementId)
       selectedParts.push({ type: "element", id: selectedTraits.elementId })
+
+    if (selectedTraits.bodyId)
+      selectedParts.push({ type: "body", id: selectedTraits.bodyId })
+
+    if (selectedTraits.marksId)
+      selectedParts.push({ type: "marks", id: selectedTraits.marksId })
+
+    if (selectedTraits.powersId)
+      selectedParts.push({ type: "powers", id: selectedTraits.powersId })
+
+    if (selectedTraits.accessoriesId)
+      selectedParts.push({
+        type: "accessories",
+        id: selectedTraits.accessoriesId,
+      })
 
     if (selectedParts.length === 0) {
       toast.error("Some traits are not selected")
@@ -588,48 +727,59 @@ const DojoPage = () => {
             </div>
             <div className="flex items-center gap-3 h-full">
               <div className="flex flex-col gap-2">
-                {DOJO_ITEMS.slice(4, 8).map((item) => (
-                  <Popover key={item.id}>
-                    <PopoverTrigger asChild>
-                      <button
-                        className="flex items-center flex-col gap-2 bg-white/10 rounded-xl p-2 border border-white/10 aspect-square relative hover:bg-white/20 transition-all duration-300 shadow-lg"
-                        onClick={() => setSelectedCategory(item.value)}
-                      >
-                        <Image
-                          src={item.image || "/placeholder.svg"}
-                          alt={item.label}
-                          className="w-24 h-24 opacity-30"
-                          width={100}
-                          height={100}
-                        />
-                        <span className="text-[8px] absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                          {item.label}
-                        </span>
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-64 p-3 rounded-xl border border-gray-light backdrop-blur-[40px] glass-effect"
-                      side="left"
-                      align="start"
-                    >
-                      <div className="grid grid-cols-3 gap-2">
-                        {/* Example items - replace with actual data */}
-                        {[1, 2, 3, 4, 5, 6].map((i) => (
-                          <div
-                            key={i}
-                            className="aspect-square bg-white/10 rounded-lg p-1 hover:bg-white/20 cursor-pointer transition-all"
-                          >
-                            <div className="w-full h-full flex items-center justify-center">
-                              <span className="text-xs">
-                                {item.label} {i}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                ))}
+                <TraitPopover
+                  item={DOJO_ITEMS[4]} // Body
+                  traits={traits.BODY}
+                  selectedId={selectedTraits.bodyId}
+                  onSelect={(trait) =>
+                    setSelectedTraits({
+                      ...selectedTraits,
+                      body: trait.image,
+                      bodyId: trait.id,
+                    })
+                  }
+                  disabled={traits.BODY.length === 0}
+                />
+                <TraitPopover
+                  item={DOJO_ITEMS[5]} // Marks
+                  traits={traits.MARKS}
+                  selectedId={selectedTraits.marksId}
+                  onSelect={(trait) =>
+                    setSelectedTraits({
+                      ...selectedTraits,
+                      marks: trait.image,
+                      marksId: trait.id,
+                    })
+                  }
+                  disabled={traits.MARKS.length === 0}
+                />
+                <TraitPopover
+                  item={DOJO_ITEMS[6]} // Powers
+                  traits={traits.POWERS}
+                  selectedId={selectedTraits.powersId}
+                  onSelect={(trait) =>
+                    setSelectedTraits({
+                      ...selectedTraits,
+                      powers: trait.image,
+                      powersId: trait.id,
+                    })
+                  }
+                  disabled={traits.POWERS.length === 0}
+                />
+                <TraitPopover
+                  item={DOJO_ITEMS[7]} // Accessories
+                  traits={traits.ACCESSORIES}
+                  selectedId={selectedTraits.accessoriesId}
+                  onSelect={(trait) => {
+                    console.log("trait ===>", trait),
+                      setSelectedTraits({
+                        ...selectedTraits,
+                        accessories: trait.image,
+                        accessoriesId: trait.id,
+                      })
+                  }}
+                  disabled={traits.ACCESSORIES.length === 0}
+                />
               </div>
               <IconButton showBase className="size-5 lg:size-14">
                 <ArrowRight />
