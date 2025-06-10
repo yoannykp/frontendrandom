@@ -72,11 +72,13 @@ const PromotionData = ({
     //   return
     // }
 
-    setItems(
-      inventory.filter(
-        (item) => item.type === "CHARACTER" && item.upgradesToId !== null
-      )
-    )
+    const filteredItems = Array.isArray(inventory)
+      ? inventory.filter(
+          (item) => item.type === "CHARACTER" && item.upgradesToId !== null
+        )
+      : []
+
+    setItems(filteredItems || [])
     setLoading(false)
   }, [inventory])
 

@@ -142,7 +142,16 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
       selectedCharacter &&
       dataLoaded
     ) {
+      if (
+        !Array.isArray(characterTiers.portal2) ||
+        !Array.isArray(characterTiers.portal1)
+      ) {
+        toast.error("Character tiers data is not available")
+        setSelectedCharacter(null)
+        return
+      }
       const portalTiers = [...characterTiers.portal2, ...characterTiers.portal1]
+
       // if (activeTab === ForgeTabs.ENHANCEMENT) {
       //   portalTiers = characterTiers.portal2
       // } else if (activeTab === ForgeTabs.PROMOTION) {
@@ -693,7 +702,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                   disabled={
                     !selectedEnhancementObj ||
                     isLoading ||
-                    4 >
+                    LIMIT_FOR_SUMMON_OR_MINT >
                       Number(
                         userRuneAmounts[selectedEnhancementObj.forgeRuneType] ||
                           0
