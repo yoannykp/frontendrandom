@@ -19,8 +19,9 @@ import { Progress } from "@/components/ui/progress"
 import Chat from "@/components/common/Chat"
 import RightSidebar from "@/components/common/right-sidebar"
 import TopBar from "@/components/common/top-bar"
-import { ArrowBack, FranceIcon } from "@/components/icons"
+import { ArrowBack } from "@/components/icons"
 import ActivityMenu from "@/components/pages/home/ActivityMenu"
+import countries from "@/app/assets/countries.json"
 
 const Page = () => {
   const [isActivityMenuOpen, setIsActivityMenuOpen] = useState(false)
@@ -79,8 +80,16 @@ const Page = () => {
 
             <div className="absolute top-4 lg:top-10 right-4 lg:left-[23%] glass-effect z-10 px-3 py-2 rounded-xl w-max">
               <div className="flex items-center gap-2">
-                <div className="glass-effect p-1 rounded-lg">
-                  <FranceIcon size={13} />
+                <div className="glass-effect w-6 h-[1.35rem] rounded-lg relative">
+                  <div className="absolute inset-0 -bottom-0.5 flex items-center justify-center">
+                    {
+                      countries.find(
+                        (country) =>
+                          country.name.toLowerCase().split(",")[0].trim() ===
+                          profile?.country?.toLowerCase()?.split(",")[0].trim()
+                      )?.flag
+                    }
+                  </div>
                 </div>
                 <p className="text-lg font-volkhov">
                   {formateWalletAddress(profile?.walletAddress ?? "")}

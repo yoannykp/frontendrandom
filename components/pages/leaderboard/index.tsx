@@ -200,6 +200,8 @@ const LeaderboardPage = () => {
   console.log("friends ===>", friends)
   console.log("thisUser ===>", alien)
 
+  console.log("selectedUserTeam ===>", selectedUserTeam?.team)
+
   return (
     <div className="relative w-full h-full">
       <div className="relative w-full h-full bg-white/5 border border-white/10 rounded-xl  flex flex-col lg:flex-row gap-3 overflow-hidden backdrop-blur-md">
@@ -501,7 +503,7 @@ const LeaderboardPage = () => {
                             className="aspect-square rounded overflow-hidden bg-white/5"
                           >
                             <img
-                              src={teamMember.image || ""}
+                              src={teamMember.teamImage || ""}
                               alt={teamMember.name}
                               className="w-full h-full object-cover"
                             />

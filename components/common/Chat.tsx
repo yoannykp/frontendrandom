@@ -4,7 +4,14 @@ import { useAliens, useProfile } from "@/store/hooks"
 import { getMessages, sendMessage } from "@/lib/api"
 import { addCacheBuster, cn, getBackgroundImageUrl } from "@/lib/utils"
 import IconButton from "@/components/ui/icon-button"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { ChatIcon } from "@/components/icons"
+import countries from "@/app/assets/countries.json"
 
 function formatTimestamp(): string {
   const now = new Date()
@@ -96,6 +103,7 @@ const Chat = ({
       id: `temp_${timestamp}`,
       senderImage: alien?.image,
       senderName: profile?.name,
+      senderCountry: profile?.country,
       elementImage: alien?.element?.image,
       content: messageInput,
       formattedDate: formatTimestamp(),
@@ -209,9 +217,37 @@ const Chat = ({
                       </div>
                       <div className="flex flex-col">
                         <div className="flex flex-wrap items-center gap-0">
-                          <p className="text-white font-medium pr-1">
-                            {message.senderName}
-                          </p>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <p className="text-white font-medium pr-1 max-w-[120px] truncate">
+                                  {message.senderName}
+                                </p>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <span>{message.senderName}</span>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          {message.senderCountry && (
+                            <div className="glass-effect w-6 h-[1.2rem] rounded-lg relative mr-1">
+                              <div className="absolute inset-0 -bottom-[0.1rem] flex items-center justify-center">
+                                {
+                                  countries.find(
+                                    (country) =>
+                                      country.name
+                                        .toLowerCase()
+                                        .split(",")[0]
+                                        .trim() ===
+                                      message.senderCountry
+                                        ?.toLowerCase()
+                                        ?.split(",")[0]
+                                        .trim()
+                                  )?.flag
+                                }
+                              </div>
+                            </div>
+                          )}
                           <p className="text-white/50 text-xs">
                             {message.formattedDate}
                           </p>

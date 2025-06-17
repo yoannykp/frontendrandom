@@ -1,12 +1,26 @@
 "use client"
 
-const PreviousStepButton = ({ current, moveToPreviousStep }: any) => {
+import { cn } from "@/lib/utils"
+
+const PreviousStepButton = ({
+  className,
+  current,
+  moveToPreviousStep,
+}: any) => {
   return (
     <div
-      className="border border-gray-light group rounded-normal p-2.5 cursor-pointer backdrop-blur-[40px]"
+      className={cn(
+        "border border-gray-light group rounded-normal p-2.5 cursor-pointer backdrop-blur-[40px]",
+        className
+      )}
       onClick={() => moveToPreviousStep(current - 1)}
     >
-      <div className="border border-gray-light rounded-sm bg-glass group-hover:bg-glass/15 transition-colors duration-500 p-2">
+      <div
+        className={cn(
+          "border border-gray-light rounded-sm bg-glass group-hover:bg-glass/15 transition-colors duration-500 p-2",
+          className
+        )}
+      >
         <svg
           width="20"
           height="21"

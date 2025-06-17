@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 interface BrandButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
   className?: string
+  blurSpanClassName?: string
   blurColor?: string
   isLink?: boolean
   href?: string
@@ -18,6 +19,7 @@ interface BrandButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const BrandButton: FC<BrandButtonProps> = ({
   children,
   className = "",
+  blurSpanClassName = "",
   blurColor = "bg-[#5FFF9580]",
   isLink = false,
   href = "#",
@@ -36,7 +38,8 @@ const BrandButton: FC<BrandButtonProps> = ({
       className={cn(
         "absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all",
         "group-disabled:group-hover:h-[30px]",
-        blurColor
+        blurColor,
+        blurSpanClassName
       )}
     />
   )

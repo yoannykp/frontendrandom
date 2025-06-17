@@ -209,16 +209,17 @@ const ConnectModal = ({
   return (
     <div className="w-full md:w-[35rem] space-y-6 z-20">
       <div className="relative w-full flex items-center justify-between">
-        <BrandButton className="items-start cursor-auto">
+        <BrandButton className="items-start cursor-auto bg-white/10 backdrop-blur-[40px]">
           Log In or Sign Up
         </BrandButton>
 
         <PreviousStepButton
           current={current}
           moveToPreviousStep={moveToPreviousStep}
+          className="bg-white/10 backdrop-blur-[40px]"
         />
       </div>
-      <div className="p-6 backdrop-blur-[20px] rounded-normal border border-gray-light max-lg:bg-white/10 lg:backdrop-blur-[80px] font-inter space-y-8">
+      <div className="p-6 backdrop-blur-[40px] bg-white/10 rounded-normal border border-gray-light max-lg:bg-white/10 lg:backdrop-blur-[80px] font-inter space-y-8">
         <div className="bg-glass p-4 rounded-lg text-off-white text-[12px]/[19px] glass-effect">
           By connecting a wallet, you agree to{" "}
           <span className="text-white">Terms of Service</span> and acknowledge

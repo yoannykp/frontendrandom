@@ -221,8 +221,9 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
 
         <div className="relative w-full flex flex-col items-center justify-center">
           <BrandButton
-            className="items-center hover:scale-105 duration-500 transition-transform active:scale-95 lg:fixed lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2"
+            className="items-center bg-white/30 border-black/10 backdrop-blur-[40px] hover:scale-105 duration-500 transition-transform active:scale-95 lg:fixed lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2"
             blurColor="bg-black"
+            blurSpanClassName="blur-[20px]"
             onClick={handleButtonClick}
           >
             Tap here

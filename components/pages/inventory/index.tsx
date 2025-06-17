@@ -279,6 +279,8 @@ const InventoryPage = () => {
     }
   }
 
+  console.log("selectedItem ===>", selectedItem)
+
   return (
     <div className="relative w-full h-full">
       <div className="relative w-full h-full bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col lg:flex-row gap-3 overflow-hidden">
@@ -391,36 +393,43 @@ const InventoryPage = () => {
                   {selectedItem.description || "No description available."}
                 </p>
               </div>
-
-              <div className="bg-white/10 rounded-lg p-3 gap-3 flex flex-col">
-                <div className="bg-white/10 rounded-lg p-3">
-                  <h3 className="font-inter">
-                    Burn {LIMIT_FOR_SUMMON_OR_MINT} {selectedItem.name}
-                  </h3>
-                  <p className="text-xs text-white/60">
-                    Use this item to enhance your character or alien.
-                  </p>
-                </div>
-                <BrandButton
-                  blurColor="bg-[#96DFF4]"
-                  className="w-full"
-                  onClick={
-                    selectedItem.type === "CONSUMABLE"
-                      ? handleConsumeableItem
-                      : handleBurnGear
-                  }
-                  disabled={loading}
-                >
-                  {loading
-                    ? selectedItem.type === "CONSUMABLE"
-                      ? "Consuming..."
-                      : "Summoning..."
-                    : selectedItem.type === "CONSUMABLE"
-                      ? "Use"
-                      : "Summon"}
-                  {loading && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
-                </BrandButton>
-              </div>
+              {selectedItem.type !== "CHARACTER" &&
+                selectedItem.type !== "ELEMENT" &&
+                selectedItem.type !== "ALIEN_PART" && (
+                  <div className="bg-white/10 rounded-lg p-3 gap-3 flex flex-col">
+                    <div className="bg-white/10 rounded-lg p-3">
+                      {selectedItem.type !== "CONSUMABLE" && (
+                        <h3 className="font-inter">
+                          Burn {LIMIT_FOR_SUMMON_OR_MINT} {selectedItem.name}
+                        </h3>
+                      )}
+                      <p className="text-xs text-white/60">
+                        Use this item to enhance your character or alien.
+                      </p>
+                    </div>
+                    <BrandButton
+                      blurColor="bg-[#96DFF4]"
+                      className="w-full"
+                      onClick={
+                        selectedItem.type === "CONSUMABLE"
+                          ? handleConsumeableItem
+                          : handleBurnGear
+                      }
+                      disabled={loading}
+                    >
+                      {loading
+                        ? selectedItem.type === "CONSUMABLE"
+                          ? "Consuming..."
+                          : "Summoning..."
+                        : selectedItem.type === "CONSUMABLE"
+                          ? "Use"
+                          : "Summon"}
+                      {loading && (
+                        <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                      )}
+                    </BrandButton>
+                  </div>
+                )}
             </div>
           </div>
         )}

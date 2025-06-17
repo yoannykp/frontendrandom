@@ -22,6 +22,8 @@ const DailyLoginReward = ({ onClose }: { onClose: () => void }) => {
   const [currentReward, setCurrentReward] = useState<DailyReward | null>(null)
   const [timeLeft, setTimeLeft] = useState("")
 
+  const STREAK_LIMIT = 28
+
   const isClaimed = (reward: DailyReward) => {
     const rewardClaimed = rewards?.claimedDailyRewards.some(
       (r) => r.id === reward.id
@@ -30,7 +32,7 @@ const DailyLoginReward = ({ onClose }: { onClose: () => void }) => {
     // return rewardClaimed
     if (
       currentReward?.id === rewards?.dailyRewards[0].id &&
-      (rewards?.dailyStreak || 0) > 5
+      (rewards?.dailyStreak || 0) > STREAK_LIMIT - 1
     ) {
       return false
     }
@@ -65,7 +67,7 @@ const DailyLoginReward = ({ onClose }: { onClose: () => void }) => {
     if (
       currentReward &&
       isClaimed(currentReward) &&
-      (rewards?.dailyStreak || 0) < 6
+      (rewards?.dailyStreak || 0) < STREAK_LIMIT
     )
       return
 
