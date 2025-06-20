@@ -47,24 +47,25 @@ const ProfilePage = () => {
   const [itemsLoading, setItemsLoading] = useState(false)
 
   useEffect(() => {
-    fetchStoreInventory()
-  }, [])
-
-  const fetchStoreInventory = async () => {
-    setItemsLoading(true)
-    try {
-      const response = await getStoreInventory()
-      if (response?.data && response?.data?.length > 0) {
-        setStoreInventoryItems(response.data)
-      } else {
-        setStoreInventoryItems([])
+    const fetchStoreInventory = async () => {
+      setItemsLoading(true)
+      try {
+        const targetWalletAddress = walletAddress || profile?.walletAddress
+        const response = await getStoreInventory(targetWalletAddress)
+        if (response?.data && response?.data?.length > 0) {
+          setStoreInventoryItems(response.data)
+        } else {
+          setStoreInventoryItems([])
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error)
+      } finally {
+        setItemsLoading(false)
       }
-    } catch (error) {
-      console.error("Error fetching user data:", error)
-    } finally {
-      setItemsLoading(false)
     }
-  }
+
+    fetchStoreInventory()
+  }, [walletAddress, profile?.walletAddress])
 
   useEffect(() => {
     const fetchUserData = async () => {

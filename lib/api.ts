@@ -407,11 +407,16 @@ export const getUserInventory = async (): Promise<
   return response
 }
 
-export const getStoreInventory = async (): Promise<
-  ApiResponse<InventoryItem[]>
-> => {
+export const getStoreInventory = async (
+  walletAddress?: string
+): Promise<ApiResponse<InventoryItem[]>> => {
+  const params: Record<string, string | number | boolean> = {}
+  if (walletAddress) {
+    params.walletAddress = walletAddress
+  }
   const response = await apiManager.get<InventoryItem[]>(
-    "/inventory/get-store-inventory"
+    "/inventory/get-store-inventory",
+    params
   )
   return response
 }
