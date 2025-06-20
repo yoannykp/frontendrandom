@@ -117,8 +117,6 @@ const ProfilePage = () => {
   const fetchFriendsList = async (walletAddress?: string) => {
     try {
       const res = await getFriendsList(walletAddress)
-
-      console.log("res ===>", res)
       if (res.data) {
         setFriends(res.data)
       }
@@ -131,12 +129,9 @@ const ProfilePage = () => {
     if (userData) {
       try {
         // setIsLoading(true)
-        // Call the API with an array of all selected user IDs
-        // This assumes the API endpoint has been updated to accept an array
         const response = await addFriend([userData.id])
         if (response.data?.success) {
           toast.success("Friend added successfully")
-          // Refresh friends list
           fetchFriendsList()
         } else {
           toast.error("Failed to add friend")
@@ -153,10 +148,6 @@ const ProfilePage = () => {
     likeUser(userId).then((res) => {
       if (res?.data?.liked !== undefined && userData) {
         const liked = res.data.liked
-        // setUserData({
-        //   ...userData,
-        //   likedUserIds: [...userData.likedUserIds, userId],
-        // })
         setLiked(liked)
       }
     })
@@ -416,7 +407,7 @@ const ProfilePage = () => {
                           src={item?.image || ""}
                           alt={item?.name || ""}
                           fill
-                          className="object-cover rounded-lg"
+                          className="rounded-lg"
                         />
                       </div>
                       <div className="flex items-center justify-between mb-2">
