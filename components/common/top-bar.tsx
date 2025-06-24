@@ -7,6 +7,7 @@ import { useProfile } from "@/store/hooks"
 import { UserIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import useClickSound from "@/hooks/use-click-sound"
 
 import {
   MailIcon,
@@ -24,7 +25,12 @@ const TopBar = ({ className }: { className?: string }) => {
 
   const topbarItems = [
     { label: "", href: "", icon: MailIcon },
-    { label: "", href: "", icon: ShopIcon, onClick: () => openRewardModal() },
+    {
+      label: "",
+      href: "",
+      icon: ShopIcon,
+      onClick: () => openRewardModal(),
+    },
     { label: "", href: "", icon: Shop2Icon },
     { label: "", href: "", icon: VolumeIcon },
     { label: "", href: "", icon: SettingsIcon },
@@ -35,6 +41,7 @@ const TopBar = ({ className }: { className?: string }) => {
       onClick: () => router.push("/profile"),
     },
   ]
+  const playClickSound = useClickSound("/sounds/click.mp3")
 
   return (
     <div
@@ -55,7 +62,10 @@ const TopBar = ({ className }: { className?: string }) => {
               "size-10 lg:size-11 rounded-lg p-1",
               item.onClick ? "cursor-pointer" : "opacity-50 pointer-events-none"
             )}
-            onClick={item.onClick}
+            onClick={() => {
+              playClickSound()
+              item.onClick?.()
+            }}
           >
             <item.icon className="size-4 lg:size-5" />
           </IconButton>

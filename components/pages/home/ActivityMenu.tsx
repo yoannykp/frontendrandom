@@ -11,6 +11,7 @@ import {
   formatNumber,
   getBackgroundImageUrl,
 } from "@/lib/utils"
+import useHoverSound from "@/hooks/use-hover-sound"
 import { Progress } from "@/components/ui/progress"
 import {
   DojoIcon,
@@ -88,6 +89,10 @@ const ActivityMenu = ({
   zoneBalance?: string | number | undefined
 }) => {
   const { data: profile } = useProfile()
+  const { handleMouseEnter, handleMouseLeave } = useHoverSound(
+    "/sounds/pop.mp3",
+    0.4
+  )
 
   return (
     <div
@@ -111,6 +116,8 @@ const ActivityMenu = ({
                   key={index}
                   href={link.href}
                   className="glass-effect p-2 rounded-lg lg:rounded-xl  hover:scale-105 transition-all duration-300 hover:!bg-white/30"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
                 >
                   <div className="relative pb-[40%] lg:pb-[60%] rounded-lg overflow-hidden">
                     <Image
@@ -131,6 +138,8 @@ const ActivityMenu = ({
                 <Link
                   key={index}
                   href={link.href}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
                   className="glass-effect p-2 rounded-lg lg:rounded-xl  hover:scale-105 transition-all duration-300 hover:!bg-white/30"
                 >
                   <div className="relative pb-[40%] lg:pb-[60%] rounded-lg overflow-hidden">

@@ -134,7 +134,7 @@ const Page = () => {
                 </p>
               </div>
             )}
-            <TopBar className="absolute right-8  max-lg:hidden " />
+            <TopBar className="absolute right-8  max-lg:hidden" />
             <RightSidebar className="absolute left-8 top-10 max-lg:hidden " />
             <Chat
               className="hidden lg:block absolute left-8 bottom-10"

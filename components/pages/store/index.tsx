@@ -257,6 +257,11 @@ const StorePage = () => {
         return
       }
 
+      if (!quantity || parseFloat(quantity) < 0.001) {
+        toast.error("Please enter a valid quantity (min 0.001)")
+        return
+      }
+
       const parsedQuantity = parseFloat(quantity)
       if (
         selectedItem?.availability &&

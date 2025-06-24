@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 import { cn } from "@/lib/utils"
+import useClickSound from "@/hooks/use-click-sound"
 import { useIsMobile } from "@/hooks/useIsMobile"
 
 import {
@@ -44,6 +45,7 @@ const sidebarItems = [
 const RightSidebar = ({ className }: { className?: string }) => {
   const pathname = usePathname()
   const isMobile = useIsMobile()
+  const playClickSound = useClickSound("/sounds/click.mp3")
 
   return (
     <div
@@ -76,6 +78,9 @@ const RightSidebar = ({ className }: { className?: string }) => {
               key={index}
               title={item.label}
               target={item.isExternal ? "_blank" : ""}
+              onClick={() => {
+                playClickSound()
+              }}
             >
               <IconButton
                 className={cn(
