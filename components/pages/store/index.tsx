@@ -16,6 +16,7 @@ import useClickSound from "@/hooks/use-click-sound"
 import { Badge } from "@/components/ui/badge"
 import BrandButton from "@/components/ui/brand-button"
 import CONTRACT_ABI from "@/app/assets/wearablesContractAbi.json"
+import ZONE_TOKEN_ABI from "@/app/assets/zoneTokenContractAbi.json"
 
 // Define the BurnGearResponse type
 
@@ -249,7 +250,7 @@ const StorePage = () => {
   }
 
   const handleBuy = async (subject: string) => {
-    console.log("handleTransfer")
+    console.log("handleBuy")
 
     setIsLoading({ ...isLoading, buy: true })
 
@@ -292,21 +293,49 @@ const StorePage = () => {
         signer
       )
 
+      const zoneTokenContractAddress =
+        process.env.NEXT_PUBLIC_ZONE_TOKEN_CONTRACT_ADDRESS
+      if (
+        !zoneTokenContractAddress ||
+        !ethers.isAddress(zoneTokenContractAddress)
+      ) {
+        toast.error("Invalid zone token contract configuration")
+        return
+      }
+      const zoneTokenContract = new ethers.Contract(
+        zoneTokenContractAddress,
+        ZONE_TOKEN_ABI,
+        signer
+      )
+
+      const signerAddress = await signer.getAddress()
+      const zoneTokenBalance = await zoneTokenContract.balanceOf(signerAddress)
+      // console.log("zoneTokenBalance", zoneTokenBalance, signerAddress)
+      if (zoneTokenBalance < amount) {
+        toast.error("Insufficient zone token balance")
+        return
+      }
+
+      const zoneTokenAllowance = await zoneTokenContract.allowance(
+        await signer.getAddress(),
+        contractAddress
+      )
+      // console.log("zoneTokenAllowance", zoneTokenAllowance)
+      if (zoneTokenAllowance < amount) {
+        await zoneTokenContract.approve(contractAddress, amount * BigInt(2))
+      }
+      // const newZoneTokenAllowance = await zoneTokenContract.allowance(await signer.getAddress(), contractAddress)
+      // console.log("New zoneTokenAllowance", newZoneTokenAllowance)
+
       // Validate inputs before calling contract
-      console.log("Calling getBuyPriceAfterFee with:")
-      console.log("- subject:", subject)
-      console.log("- amount:", amount.toString())
+      // console.log("Calling getBuyPriceAfterFee with:")
+      // console.log("- subject:", subject)
+      // console.log("- amount:", amount.toString())
 
-      const network = await signer.provider?.getNetwork()
-      console.log("Current network:", network?.chainId)
+      // const network = await signer.provider?.getNetwork()
+      // console.log("Current network:", network?.chainId)
 
-      const price = await contract.getBuyPriceAfterFee(subject, amount)
-
-      console.log(`Price returned: ${price.toString()}`)
-
-      const tx = await contract.buyWearables(subject, amount, {
-        value: price,
-      })
+      const tx = await contract.buyWearables(subject, amount)
       await tx.wait()
 
       toast.success("Wearables bought successfully!")
@@ -362,15 +391,13 @@ const StorePage = () => {
         signer
       )
 
-      const price = await contract.getBuyPriceAfterFee(subject, amount)
+      const price = await contract.getSellPriceAfterFee(subject, amount)
 
       console.log(
         `Subject: ${subject}\tAmount: ${amount.toString()}\tPrice: ${price.toString()}`
       )
 
-      const tx = await contract.sellWearables(subject, amount, {
-        value: price,
-      })
+      const tx = await contract.sellWearables(subject, amount)
       await tx.wait()
 
       toast.success("Wearables sold successfully!")
