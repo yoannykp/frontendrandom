@@ -1,7 +1,8 @@
 "use client"
 
+import { useEffect } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useAliens } from "@/store/hooks"
 
 import { addCacheBuster, cn, getBackgroundImageUrl } from "@/lib/utils"
@@ -11,6 +12,12 @@ import RaidsPage from "@/components/pages/raids"
 const Page = () => {
   const pathname = usePathname()
   const { alien } = useAliens()
+  const router = useRouter()
+
+  // push to raids pages
+  useEffect(() => {
+    router.push("/raids")
+  }, [])
 
   return (
     <>
@@ -30,7 +37,7 @@ const Page = () => {
         <Link href="/hunt">
           <Button
             className={cn(
-              "px-5 !h-14 rounded-xl glass-effect",
+              "px-5 !h-14 rounded-xl glass-effect ",
               pathname === "/hunt" ? "!bg-white/20" : ""
             )}
           >
