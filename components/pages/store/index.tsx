@@ -251,6 +251,10 @@ const StorePage = () => {
 
   const handleBuy = async (subject: string) => {
     console.log("handleBuy called!")
+  }
+
+  const handleBuy1 = async (subject: string) => {
+    console.log("handleBuy called!")
 
     setIsLoading({ ...isLoading, buy: true })
 
