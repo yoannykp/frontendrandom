@@ -64,7 +64,10 @@ const SummonModal = ({
                 alt={summonType === "character" ? "Character" : "Gear"}
                 width={500}
                 height={500}
-                className="size-48 -mx-4 -my-2.5"
+                className={cn(
+                  "-mx-4 -my-2.5",
+                  summonItems.length === 1 ? "size-80" : "size-48"
+                )}
               />
             ))}
           </div>

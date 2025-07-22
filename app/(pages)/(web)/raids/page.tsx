@@ -32,15 +32,16 @@ const Page = () => {
             Raids
           </Button>
         </Link>
-        <Link href="/hunt">
+        <Link href="#">
           <Button
             className={cn(
-              "px-5 !h-14 rounded-xl glass-effect",
+              "px-5 !h-14 rounded-xl glass-effect cursor-not-allowed",
               pathname === "/hunt" ? "!bg-white/20" : ""
             )}
-            onClick={() => {
-              playClickSound()
-            }}
+            disabled
+            // onClick={() => {
+            //   playClickSound()
+            // }}
           >
             Hunt
           </Button>

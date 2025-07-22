@@ -6,6 +6,7 @@ import { useAliens } from "@/store/hooks"
 
 import { canSpin, getSpinHistory, getWheelItems } from "@/lib/api"
 import { cn } from "@/lib/utils"
+import useSpinSound from "@/hooks/use-spin-sound"
 import BrandButton from "@/components/ui/brand-button"
 import IconButton from "@/components/ui/icon-button"
 import ChatBox from "@/components/common/chat-box"
@@ -102,6 +103,7 @@ const Page = () => {
   const [nextSpinTime, setNextSpinTime] = useState<number>(0)
   const [timeRemaining, setTimeRemaining] = useState<string>("")
   const [hasWonReward, setHasWonReward] = useState(false)
+  const [play, { stop }] = useSpinSound("/sounds/spin.mp3", 0.5, 5000)
 
   useEffect(() => {
     fetchCanSpin()
@@ -109,6 +111,7 @@ const Page = () => {
     fetchSpinHistory()
   }, [])
 
+  // Remove the old sound effect
   useEffect(() => {
     if (!userCanSpin) {
       // Use the secondsUntilNextSpin from the API response
@@ -210,6 +213,7 @@ const Page = () => {
     if (!isError) {
       setSpinHistory([...spinHistory, new Date().toISOString()])
     }
+    stop() // Stop the sound when spinning completes
     setWinningItem(item)
     setIsSpinning(false)
     // Immediately update the state and fetch new data
@@ -220,6 +224,7 @@ const Page = () => {
   const handleSpin = async () => {
     if (!userCanSpin || isSpinning) return
     setIsError(false)
+    play() // This will now handle the entire sound animation
     setIsSpinning(true)
   }
 

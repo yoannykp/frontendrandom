@@ -251,6 +251,7 @@ const StorePage = () => {
 
   const handleBuy = async (subject: string) => {
     console.log("handleBuy")
+    console.log("handleBuy")
 
     setIsLoading({ ...isLoading, buy: true })
 
@@ -331,7 +332,12 @@ const StorePage = () => {
       // console.log("Calling getBuyPriceAfterFee with:")
       // console.log("- subject:", subject)
       // console.log("- amount:", amount.toString())
+      // console.log("Calling getBuyPriceAfterFee with:")
+      // console.log("- subject:", subject)
+      // console.log("- amount:", amount.toString())
 
+      // const network = await signer.provider?.getNetwork()
+      // console.log("Current network:", network?.chainId)
       // const network = await signer.provider?.getNetwork()
       // console.log("Current network:", network?.chainId)
 

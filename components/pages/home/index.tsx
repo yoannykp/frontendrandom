@@ -140,7 +140,7 @@ const Page = () => {
               className="hidden lg:block absolute left-8 bottom-10"
               btnClassName="absolute left-8 bottom-10"
             />
-            <ActivityMenu zoneBalance={user?.zoneBalance} alien={alien} />
+            <ActivityMenu alien={alien} />
           </div>
           <div className="lg:hidden space-y-4 relative z-10 mt-4">
             <div className="flex gap-4  w-full justify-end">
@@ -229,11 +229,7 @@ const Page = () => {
             Back to Home
             <ArrowBack className="size-4" />
           </button>
-          <ActivityMenu
-            isMobile
-            zoneBalance={user?.zoneBalance}
-            alien={alien}
-          />
+          <ActivityMenu isMobile alien={alien} />
         </>
       )}
 
