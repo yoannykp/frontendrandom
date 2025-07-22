@@ -1,7 +1,9 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useWallet } from "@/context/wallet"
 import { useProfile } from "@/store/hooks"
+import { ethers } from "ethers"
 import { Plus } from "lucide-react"
 
 import { levelRequirements } from "@/config/constants"
@@ -24,6 +26,7 @@ import {
   UpgradeIcon,
   WheelIcon,
 } from "@/components/icons"
+import ZONE_TOKEN_ABI from "@/app/assets/zoneTokenContractAbi.json"
 
 import HomeCarousel from "./Carousel"
 
@@ -83,11 +86,9 @@ export const links = [
 const ActivityMenu = ({
   alien,
   isMobile,
-  zoneBalance,
 }: {
   alien: any
   isMobile?: boolean
-  zoneBalance?: string | number | undefined
 }) => {
   const { data: profile } = useProfile()
   const { handleMouseEnter, handleMouseLeave } = useHoverSound(
@@ -95,6 +96,43 @@ const ActivityMenu = ({
     0.1
   )
   const playClickSound = useClickSound("/sounds/click.mp3")
+  const { signer } = useWallet()
+  const [zoneBalance, setZoneBalance] = useState<string>("0")
+
+  useEffect(() => {
+    const fetchZoneBalance = async () => {
+      if (!signer) return
+
+      try {
+        const zoneTokenContractAddress =
+          process.env.NEXT_PUBLIC_ZONE_TOKEN_CONTRACT_ADDRESS
+        if (
+          !zoneTokenContractAddress ||
+          !ethers.isAddress(zoneTokenContractAddress)
+        ) {
+          console.error("Invalid zone token contract configuration")
+          return
+        }
+
+        const zoneTokenContract = new ethers.Contract(
+          zoneTokenContractAddress,
+          ZONE_TOKEN_ABI,
+          signer
+        )
+
+        const signerAddress = await signer.getAddress()
+        const balance = await zoneTokenContract.balanceOf(signerAddress)
+
+        // Convert balance from Wei to Ether and format it
+        const formattedBalance = ethers.formatEther(balance)
+        setZoneBalance(formattedBalance)
+      } catch (error) {
+        console.error("Error fetching zone balance:", error)
+      }
+    }
+
+    fetchZoneBalance()
+  }, [signer])
 
   return (
     <div

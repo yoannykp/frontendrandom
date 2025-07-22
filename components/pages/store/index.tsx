@@ -310,6 +310,8 @@ const StorePage = () => {
 
       const signerAddress = await signer.getAddress()
       const zoneTokenBalance = await zoneTokenContract.balanceOf(signerAddress)
+
+      console.log("zoneTokenBalance", zoneTokenBalance, signerAddress)
       // console.log("zoneTokenBalance", zoneTokenBalance, signerAddress)
       if (zoneTokenBalance < amount) {
         toast.error("Insufficient zone token balance")
