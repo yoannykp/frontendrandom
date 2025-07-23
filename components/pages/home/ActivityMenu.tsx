@@ -123,8 +123,8 @@ const ActivityMenu = ({
         const signerAddress = await signer.getAddress()
         const balance = await zoneTokenContract.balanceOf(signerAddress)
 
-        // Convert balance from Wei to Ether and format it
-        const formattedBalance = ethers.formatEther(balance)
+        // Use 18 decimals explicitly
+        const formattedBalance = ethers.formatUnits(balance, 18)
         setZoneBalance(formattedBalance)
       } catch (error) {
         console.error("Error fetching zone balance:", error)
@@ -265,7 +265,9 @@ const ActivityMenu = ({
                   />
                 </div>
                 <p className="text-xs font-volkhov">
-                  {Number(zoneBalance) > 0 ? Number(zoneBalance).toFixed(6) : 0}{" "}
+                  {Number(zoneBalance || 0) > 0
+                    ? Number(zoneBalance).toFixed(6)
+                    : "0.000000"}{" "}
                   ZONE
                 </p>
                 <button className="glass-effect size-5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
