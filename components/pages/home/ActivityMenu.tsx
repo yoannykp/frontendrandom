@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
@@ -270,7 +272,7 @@ const ActivityMenu = ({
                 </div>
                 <p className="text-xs font-volkhov">
                   {Number(zoneBalance || 0) > 0
-                    ? Number(zoneBalance).toFixed(6)
+                    ? (Math.floor(Number(zoneBalance) * 1e6) / 1e6).toFixed(6)
                     : "0.000000"}{" "}
                   ZONE
                 </p>
