@@ -125,6 +125,8 @@ const ActivityMenu = ({
 
         // Use 18 decimals explicitly
         const formattedBalance = ethers.formatUnits(balance, 18)
+        console.log("formattedBalance ===>", formattedBalance)
+
         setZoneBalance(formattedBalance)
       } catch (error) {
         console.error("Error fetching zone balance:", error)
@@ -133,6 +135,8 @@ const ActivityMenu = ({
 
     fetchZoneBalance()
   }, [signer])
+
+  console.log("zoneBalance ===>", zoneBalance)
 
   return (
     <div
