@@ -518,12 +518,22 @@ const StorePage = () => {
                   </div>
                   <div className="flex items-center justify-between text-xs">
                     <p className="truncate mr-2">Item price</p>
-                    <p className=" text-2xs whitespace-nowrap">
-                      {/* {selectedItem?.buyPrice} */}
-                      {selectedItem?.buyPrice
-                        ? formatTinyNumberJSX(selectedItem?.buyPrice)
-                        : 0}
-                    </p>
+                    <div className="flex items-center gap-1">
+                      <div className="size-4 flex items-center justify-center">
+                        <Image
+                          src="/images/coin-zone.png"
+                          alt="Coin Zone"
+                          width={50}
+                          height={50}
+                        />
+                      </div>
+                      <p className=" text-2xs whitespace-nowrap">
+                        {/* {selectedItem?.buyPrice} */}
+                        {selectedItem?.buyPrice
+                          ? formatTinyNumberJSX(selectedItem?.buyPrice, false)
+                          : 0}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex items-center justify-between text-xs">
                     <p className="truncate mr-2">Held Amount</p>
