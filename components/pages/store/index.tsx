@@ -519,13 +519,7 @@ const StorePage = () => {
                   <div className="flex items-center justify-between text-xs">
                     <p className="truncate mr-2">Item price</p>
                     <div className="flex items-center gap-1">
-                      <p className=" text-2xs whitespace-nowrap">
-                        {/* {selectedItem?.buyPrice} */}
-                        {selectedItem?.buyPrice
-                          ? formatTinyNumberJSX(selectedItem?.buyPrice, false)
-                          : 0}
-                      </p>
-                      <div className="size-4 flex items-center justify-center">
+                      <div className="size-3 flex items-center justify-center">
                         <Image
                           src="/images/coin-zone.png"
                           alt="Coin Zone"
@@ -533,6 +527,12 @@ const StorePage = () => {
                           height={50}
                         />
                       </div>
+                      <p className=" text-2xs whitespace-nowrap">
+                        {/* {selectedItem?.buyPrice} */}
+                        {selectedItem?.buyPrice
+                          ? formatTinyNumberJSX(selectedItem?.buyPrice, false)
+                          : 0}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-xs">
@@ -707,10 +707,7 @@ const StorePage = () => {
                       <div className="flex items-center justify-between text-xs">
                         <p className="truncate mr-2">Item price</p>
                         <div className="flex items-center gap-1">
-                          <p className=" text-2xs whitespace-nowrap">
-                            {formatTinyNumberJSX(item?.buyPrice, false)}
-                          </p>
-                          <div className="size-4 flex items-center justify-center">
+                          <div className="size-3 flex items-center justify-center">
                             <Image
                               src="/images/coin-zone.png"
                               alt="Coin Zone"
@@ -718,6 +715,9 @@ const StorePage = () => {
                               height={50}
                             />
                           </div>
+                          <p className=" text-2xs whitespace-nowrap">
+                            {formatTinyNumberJSX(item?.buyPrice, false)}
+                          </p>
                         </div>
                       </div>
                       {/* Commenting out buy button as requested */}
