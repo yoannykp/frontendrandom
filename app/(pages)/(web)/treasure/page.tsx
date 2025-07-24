@@ -11,6 +11,7 @@ import { ArrowLeft, Info, Plus } from "lucide-react"
 
 import { getAllPacks } from "@/lib/api"
 import { cn } from "@/lib/utils"
+import { useZoneBalance } from "@/hooks/use-zone-balance"
 import {
   Carousel,
   CarouselContent,
@@ -105,6 +106,8 @@ const Page = () => {
   const [api, setApi] = useState<EmblaCarouselType>()
   const [current, setCurrent] = useState(0)
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null)
+  const { signer } = useWallet()
+  const zoneBalance = useZoneBalance(signer)
 
   useEffect(() => {
     const fetchPacks = async () => {
@@ -212,7 +215,12 @@ const Page = () => {
                   width={24}
                   height={24}
                 />
-                <span>{user?.zoneBalance} ZONE</span>
+                <span>
+                  {Number(zoneBalance || 0) > 0
+                    ? (Math.floor(Number(zoneBalance) * 1e6) / 1e6).toFixed(6)
+                    : "0.000000"}{" "}
+                  ZONE
+                </span>
                 <button className="ml-2 rounded-full p-1 border border-white/10">
                   <Plus size={12} />
                 </button>
@@ -304,7 +312,12 @@ const Page = () => {
               width={24}
               height={24}
             />
-            <span>{user?.zoneBalance} ZONE</span>
+            <span>
+              {Number(zoneBalance || 0) > 0
+                ? (Math.floor(Number(zoneBalance) * 1e6) / 1e6).toFixed(6)
+                : "0.000000"}{" "}
+              ZONE
+            </span>
             <button className="ml-2 rounded-full p-1 border border-white/10">
               <Plus size={12} />
             </button>

@@ -1,11 +1,9 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useWallet } from "@/context/wallet"
 import { useProfile } from "@/store/hooks"
-import { ethers } from "ethers"
 import { Plus } from "lucide-react"
 
 import { levelRequirements } from "@/config/constants"
@@ -17,6 +15,7 @@ import {
 } from "@/lib/utils"
 import useClickSound from "@/hooks/use-click-sound"
 import useHoverSound from "@/hooks/use-hover-sound"
+import { useZoneBalance } from "@/hooks/use-zone-balance"
 import { Progress } from "@/components/ui/progress"
 import {
   DojoIcon,
@@ -28,7 +27,6 @@ import {
   UpgradeIcon,
   WheelIcon,
 } from "@/components/icons"
-import ZONE_TOKEN_ABI from "@/app/assets/zoneTokenContractAbi.json"
 
 import HomeCarousel from "./Carousel"
 
@@ -99,46 +97,7 @@ const ActivityMenu = ({
   )
   const playClickSound = useClickSound("/sounds/click.mp3")
   const { signer } = useWallet()
-  const [zoneBalance, setZoneBalance] = useState<string>("0")
-
-  useEffect(() => {
-    const fetchZoneBalance = async () => {
-      if (!signer) return
-
-      try {
-        const zoneTokenContractAddress =
-          process.env.NEXT_PUBLIC_ZONE_TOKEN_CONTRACT_ADDRESS
-        if (
-          !zoneTokenContractAddress ||
-          !ethers.isAddress(zoneTokenContractAddress)
-        ) {
-          console.error("Invalid zone token contract configuration")
-          return
-        }
-
-        const zoneTokenContract = new ethers.Contract(
-          zoneTokenContractAddress,
-          ZONE_TOKEN_ABI,
-          signer
-        )
-
-        const signerAddress = await signer.getAddress()
-        const balance = await zoneTokenContract.balanceOf(signerAddress)
-
-        // Use 18 decimals explicitly
-        const formattedBalance = ethers.formatUnits(balance, 18)
-        console.log("formattedBalance ===>", formattedBalance)
-
-        setZoneBalance(formattedBalance)
-      } catch (error) {
-        console.error("Error fetching zone balance:", error)
-      }
-    }
-
-    fetchZoneBalance()
-  }, [signer])
-
-  console.log("zoneBalance ===>", zoneBalance)
+  const zoneBalance = useZoneBalance(signer)
 
   return (
     <div
