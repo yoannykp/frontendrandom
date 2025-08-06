@@ -110,6 +110,7 @@ const ActivityMenu = ({
     >
       <div className="flex flex-col w-full lg:max-w-[670px] items-end ml-auto">
         <div className="glass-effect w-full rounded-2xl p-4 space-y-4  ">
+          {/* Carousel */}
           <HomeCarousel />
 
           {/* Links */}
