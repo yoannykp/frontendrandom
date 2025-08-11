@@ -10,6 +10,7 @@ import { ReduxProvider } from "@/store/provider"
 import { Toaster } from "react-hot-toast"
 
 import { cn } from "@/lib/utils"
+import MobileDesktopNotice from "@/components/common/MobileDesktopNotice"
 import { InstallPWAPrompt } from "@/components/pages/pwa/InstallPWAPrompt"
 import Providers from "@/components/Providers"
 
@@ -49,6 +50,7 @@ export default function RootLayout({
               <WalletProvider>
                 <RaidTimerProvider>
                   <DailyLoginRewardProvider>
+                    <MobileDesktopNotice />
                     {children}
                     <Toaster />
                     <InstallPWAPrompt />

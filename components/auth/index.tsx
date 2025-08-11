@@ -7,6 +7,7 @@ import { useUser } from "@privy-io/react-auth"
 import { AnimatePresence, motion } from "framer-motion"
 
 import { getOnboardingData } from "@/lib/api"
+import { useIsMobile } from "@/hooks/useIsMobile"
 import BrandButton from "@/components/ui/brand-button"
 import BackgroundCover from "@/components/common/background-cover"
 import Footer from "@/components/common/footer"
@@ -48,6 +49,7 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const isMobile = useIsMobile()
 
   const [traits, setTraits] = useState<Traits | null>(null)
   const router = useRouter()
@@ -113,10 +115,10 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
     })
   }, [])
 
-  useEffect(() => {
-    audioRef.current = new Audio("/music.mp3")
-    audioRef.current.loop = true
-  }, [])
+  // useEffect(() => {
+  //   audioRef.current = new Audio("/music.mp3")
+  //   audioRef.current.loop = true
+  // }, [])
 
   const moveToPreviousStep = () => {
     if (currentStep === 0) return
@@ -220,14 +222,16 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
         </AnimatePresence>
 
         <div className="relative w-full flex flex-col items-center justify-center">
-          <BrandButton
-            className="items-center bg-white/30 border-black/10 backdrop-blur-[40px] hover:scale-105 duration-500 transition-transform active:scale-95 lg:fixed lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2"
-            blurColor="bg-black"
-            blurSpanClassName="blur-[20px]"
-            onClick={handleButtonClick}
-          >
-            Tap here
-          </BrandButton>
+          {!isMobile && (
+            <BrandButton
+              className="items-center bg-white/30 border-black/10 backdrop-blur-[40px] hover:scale-105 duration-500 transition-transform active:scale-95 lg:fixed lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2"
+              blurColor="bg-black"
+              blurSpanClassName="blur-[20px]"
+              onClick={handleButtonClick}
+            >
+              Tap here
+            </BrandButton>
+          )}
           {currentStep > 0 ? <Sliders current={currentStep} /> : null}
           <Footer />
         </div>
