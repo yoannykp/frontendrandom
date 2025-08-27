@@ -495,7 +495,7 @@ const StorePage = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2 w-full">
+              <div className="flex flex-col gap-2 w-full lg:mt-4">
                 <h2 className="text-xl font-bold">{selectedItem?.name}</h2>
                 <p className="text-lg font-volkhov">
                   {selectedItem?.description}
@@ -503,7 +503,9 @@ const StorePage = () => {
 
                 <div className="flex flex-col mt-3 gap-[0.35rem] py-3">
                   <div className="flex items-center justify-between">
-                    <p className="truncate mr-2 text-[18px] font-bold">Type</p>
+                    <p className="truncate mr-2 text-[16px] font-semibold">
+                      Type
+                    </p>
                     <Badge
                       variant={selectedItem?.alienPart?.type?.toLowerCase()}
                     >
@@ -511,7 +513,7 @@ const StorePage = () => {
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <p className="truncate mr-2 text-[18px] font-bold">
+                    <p className="truncate mr-2 text-[16px] font-semibold">
                       Availability
                     </p>
                     <p className="text-[16px] whitespace-nowrap">
@@ -519,7 +521,7 @@ const StorePage = () => {
                     </p>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <p className="truncate mr-2 text-[18px] font-bold">
+                    <p className="truncate mr-2 text-[16px] font-semibold">
                       Total supply
                     </p>
                     <p className="text-[16px] whitespace-nowrap">
@@ -530,7 +532,7 @@ const StorePage = () => {
                     </p>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <p className="truncate mr-2 text-[18px] font-bold">
+                    <p className="truncate mr-2 text-[16px] font-semibold">
                       Item price
                     </p>
                     <div className="flex items-center gap-1">
@@ -551,7 +553,7 @@ const StorePage = () => {
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <p className="truncate mr-2 text-[18px] font-bold">
+                    <p className="truncate mr-2 text-[16px] font-semibold">
                       Held Amount
                     </p>
                     <p className=" text-[16px] whitespace-nowrap">
