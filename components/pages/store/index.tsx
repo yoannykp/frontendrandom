@@ -142,15 +142,22 @@ const StorePage = () => {
     const parts = value.toExponential().split("e-")
 
     if (parts.length === 2) {
-      const significant = parseFloat(parts[0])
+      const significant = parseFloat(parts[0]).toString().replace(".", "")
       const zeros = parseInt(parts[1]) - 1
-      const decimalPart = significant.toString().split(".")[1] || ""
-
+      if (zeros > 3) {
+        return (
+          <span>
+            {showDollarSign ? "$" : ""}0.0
+            <sub>{zeros - 1}</sub>
+            {significant}
+          </span>
+        )
+      }
       return (
         <span>
-          {showDollarSign ? "$0." : "0."}
-          {decimalPart}
-          <sub>{zeros}</sub>
+          {showDollarSign ? "$" : ""}0.
+          {"0".repeat(zeros)}
+          {significant}
         </span>
       )
     }
