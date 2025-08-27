@@ -488,7 +488,7 @@ const StorePage = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2 w-full">
+              <div className="flex flex-col gap-2 w-full lg:mt-4">
                 <h2 className="text-xl font-bold">{selectedItem?.name}</h2>
                 <p className="text-lg font-volkhov">
                   {selectedItem?.description}
