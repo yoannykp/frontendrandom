@@ -33,9 +33,10 @@ const NoRaid = () => {
               {isHunt ? "Hunt" : "Raids"}
             </h2>
             <p className="text-white/50 text-sm max-w-[400px]">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
-              sagittis ipsum sit amet tortor efficitur volutpat. Nullam a quam
-              efficitur, sagittis est non, vestibulum ligula.
+              Raids are special adventures where you explore foreign places and
+              overcome unique challenges to earn Stars. Each Raid offers a
+              different setting, enemies, and rewards, making them the key to
+              growing stronger in your journey.
             </p>
           </div>
           <div className="ml-auto">
