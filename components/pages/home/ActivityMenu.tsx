@@ -232,7 +232,7 @@ const ActivityMenu = ({
                 <p className="text-xs font-volkhov">
                   {Number(zoneBalance || 0) > 0
                     ? (Math.floor(Number(zoneBalance) * 1e6) / 1e6).toFixed(6)
-                    : "0.000000"}{" "}
+                    : "0.0"}{" "}
                   ZONE
                 </p>
                 <button className="glass-effect size-5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
