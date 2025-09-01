@@ -14,7 +14,7 @@ const RaidsList = ({
   raids: Raid[]
 }) => {
   return (
-    <div className="lg:glass-effect h-full lg:rounded-2xl w-full lg:w-[420px] lg:p-4 flex flex-col gap-2">
+    <div className="lg:glass-effect h-full lg:rounded-2xl w-full lg:w-[420px] lg:p-4 flex flex-col gap-2 overflow-y-scroll">
       {raids.map((raid) => (
         <div
           key={raid.id}
