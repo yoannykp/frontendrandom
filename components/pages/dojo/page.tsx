@@ -29,6 +29,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
 import { RenderAlien } from "./render-alien"
 import TraitPopover from "./trait-popover"
+import { useZoneBalance } from "@/hooks/use-zone-balance"
 
 const DOJO_ITEMS = [
   {
@@ -125,6 +126,8 @@ const DojoPage = () => {
   })
   const router = useRouter()
   const { wallets } = useWallets()
+  const { signer } = useWallet()
+  const zoneBalance = useZoneBalance(signer)
   const { user, wallet } = useWallet()
   // const wallet = wallets[0] ? getEthWallet(wallets) : null
   console.log("wallet ====>", wallet)
@@ -972,7 +975,12 @@ const DojoPage = () => {
                       />
                     </div>
                     <p className="text-xs font-volkhov">
-                      {formatNumber(user?.zoneBalance)} ZONE
+                      {Number(zoneBalance || 0) > 0
+                        ? (Math.floor(Number(zoneBalance) * 1e6) / 1e6).toFixed(
+                            6
+                          )
+                        : "0.0"}{" "}
+                      ZONE
                     </p>
                     <button className="glass-effect size-5 rounded-full flex items-center justify-center hover:bg-white/20 transition-all duration-300">
                       <Plus className="size-3" />
