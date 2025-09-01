@@ -18,8 +18,6 @@ import BrandButton from "@/components/ui/brand-button"
 import CONTRACT_ABI from "@/app/assets/wearablesContractAbi.json"
 import ZONE_TOKEN_ABI from "@/app/assets/zoneTokenContractAbi.json"
 
-// Define the BurnGearResponse type
-
 const storeTabs = [
   {
     label: "All",
