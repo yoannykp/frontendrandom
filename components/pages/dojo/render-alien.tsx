@@ -13,6 +13,7 @@ interface AlienRendererProps {
     marks: string
     powers: string
     accessories: string
+    background: string
   }
   element: string
 }
@@ -51,7 +52,6 @@ const preloadImage = (
   if (!src || typeof src !== "string" || src.trim() === "") {
     return Promise.reject(new Error(`Invalid image source: ${src}`))
   }
-
   // Get proxied URL for trait images
   const proxiedSrc = getProxiedUrl(src)
 
@@ -182,6 +182,7 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
       marks: "",
       powers: "",
       accessories: "",
+      background: "",
     })
     const [pendingTraits, setPendingTraits] = useState({
       hair: "",
@@ -192,6 +193,7 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
       marks: "",
       powers: "",
       accessories: "",
+      background: "",
     })
 
     const canvasRef =
@@ -242,7 +244,8 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
         prev.body !== selectedTraits.body ||
         prev.marks !== selectedTraits.marks ||
         prev.powers !== selectedTraits.powers ||
-        prev.accessories !== selectedTraits.accessories
+        prev.accessories !== selectedTraits.accessories ||
+        prev.background !== selectedTraits.background
       )
     }
 
@@ -256,7 +259,8 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
         prev.body !== selectedTraits.body ||
         prev.marks !== selectedTraits.marks ||
         prev.powers !== selectedTraits.powers ||
-        prev.accessories !== selectedTraits.accessories
+        prev.accessories !== selectedTraits.accessories ||
+        prev.background !== selectedTraits.background
       )
     }
 
@@ -277,6 +281,7 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
         marks: selectedTraits.marks,
         powers: selectedTraits.powers,
         accessories: selectedTraits.accessories,
+        background: selectedTraits.background,
       })
 
       // Determine if only user traits changed
@@ -307,6 +312,7 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
             ...(selectedTraits.marks ? [selectedTraits.marks] : []),
             ...(selectedTraits.powers ? [selectedTraits.powers] : []),
             ...(selectedTraits.accessories ? [selectedTraits.accessories] : []),
+            ...(selectedTraits.background ? [selectedTraits.background] : []),
             ...(element ? [element] : []),
           ]
 
@@ -335,6 +341,7 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
             marks: selectedTraits.marks,
             powers: selectedTraits.powers,
             accessories: selectedTraits.accessories,
+            background: selectedTraits.background,
           }
 
           setIsImagesLoaded(true)
@@ -374,6 +381,7 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
       selectedTraits.marks,
       selectedTraits.powers,
       selectedTraits.accessories,
+      selectedTraits.background,
       element,
     ])
 
@@ -484,7 +492,9 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
                                 ? "powers"
                                 : src === pendingTraits.accessories
                                   ? "accessories"
-                                  : "element"
+                                  : src === pendingTraits.background
+                                    ? "background"
+                                    : "element"
                   ]
                 if (prevSrc && imageCache[prevSrc]) {
                   ctx.drawImage(imageCache[prevSrc].img, 0, 0, width, height)
@@ -593,9 +603,11 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
     const { width: naturalWidth, height: naturalHeight } = getBaseDimensions()
 
     // Get cached background URL (calculated once)
-    const backgroundImageUrl = element
-      ? getCachedBackgroundUrl(element)
-      : undefined
+    const backgroundImageUrl = selectedTraits.background
+      ? getCachedBackgroundUrl(selectedTraits.background)
+      : element
+        ? getCachedBackgroundUrl(element)
+        : undefined
 
     return (
       <div
