@@ -203,7 +203,27 @@ const StorePage = () => {
     console.log("handleTransfer")
     setIsLoading({ ...isLoading, transfer: true })
 
-    const amount = ethers.parseEther("0.001")
+    if (!quantity || parseFloat(quantity) <= 0) {
+      toast.error("Please enter a valid quantity")
+      return
+    }
+
+    if (!quantity || parseFloat(quantity) < 0.001) {
+      toast.error("Please enter a valid quantity (min 0.001)")
+      return
+    }
+
+    const parsedQuantity = parseFloat(quantity)
+    if (
+      selectedItem?.heldAmount &&
+      parsedQuantity > selectedItem.heldAmount
+    ) {
+      toast.error("Quantity exceeds held amount")
+      return
+    }
+
+    const amount = ethers.parseEther(quantity)
+
 
     if (!signer) {
       toast.error("Wallet not connected")
@@ -387,7 +407,27 @@ const StorePage = () => {
     setIsLoading({ ...isLoading, sell: true })
     // const subject =
     //   "0xb7fbc0ed8d213b20fd87a6dc606ea6408011c15f43415245898593f5808fbdd6"
-    const amount = ethers.parseEther("0.001")
+    if (!quantity || parseFloat(quantity) <= 0) {
+      toast.error("Please enter a valid quantity")
+      return
+    }
+
+    if (!quantity || parseFloat(quantity) < 0.001) {
+      toast.error("Please enter a valid quantity (min 0.001)")
+      return
+    }
+
+    const parsedQuantity = parseFloat(quantity)
+    if (
+      selectedItem?.heldAmount &&
+      parsedQuantity > selectedItem.heldAmount
+    ) {
+      toast.error("Quantity exceeds held amount")
+      return
+    }
+
+    const amount = ethers.parseEther(quantity)
+
 
     if (!signer) {
       toast.error("Wallet not connected")
