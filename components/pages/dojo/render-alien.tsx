@@ -26,6 +26,9 @@ const imageCache: {
 // Background image cache to prevent flickering
 const backgroundCache: { [key: string]: string } = {}
 
+// Session-based cache busting parameter that stays consistent during the session
+const SESSION_CACHE_BUST = Date.now()
+
 // Base images that don't change
 const BASE_IMAGES = [
   "/images/alien/body/body.png",
@@ -129,22 +132,25 @@ const clearStaleCache = (maxAge = 10 * 60 * 1000) => {
 }
 
 // Helper function to get or create a cached background URL
-const getCachedBackgroundUrl = (elementUrl: string): string => {
+const getCachedBackgroundUrl = (elementUrl: string, isBackground: boolean = false): string => {
   if (!elementUrl || !elementUrl.includes(".png")) {
     return ""
   }
 
-  const bgUrl = elementUrl.replace(".png", "-bg.png")
+  const bgUrl = isBackground ? elementUrl : elementUrl.replace(".png", "-bg.png")
+  
+  // Create a unique cache key that includes both the URL and background flag
+  const cacheKey = `${elementUrl}_${isBackground}`
 
   // If we already have this background URL cached, return it
-  if (backgroundCache[elementUrl]) {
-    return backgroundCache[elementUrl]
+  if (backgroundCache[cacheKey]) {
+    return backgroundCache[cacheKey]
   }
 
-  // Otherwise, create a new cached URL with a cache-busting parameter
+  // Otherwise, create a new cached URL with a session-based cache-busting parameter
   // that will remain consistent for this session
-  const cachedUrl = `${bgUrl}?cb=${Date.now()}`
-  backgroundCache[elementUrl] = cachedUrl
+  const cachedUrl = `${bgUrl}?cb=${SESSION_CACHE_BUST}`
+  backgroundCache[cacheKey] = cachedUrl
   return cachedUrl
 }
 
@@ -602,9 +608,9 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
     // Get dimensions for the container
     const { width: naturalWidth, height: naturalHeight } = getBaseDimensions()
 
-    // Get cached background URL (calculated once)
+    // Get cached background URL (cached per session to prevent unnecessary re-renders)
     const backgroundImageUrl = selectedTraits.background
-      ? getCachedBackgroundUrl(selectedTraits.background)
+      ? getCachedBackgroundUrl(selectedTraits.background, true)
       : element
         ? getCachedBackgroundUrl(element)
         : undefined
@@ -612,15 +618,17 @@ export const RenderAlien = forwardRef<HTMLCanvasElement, AlienRendererProps>(
     return (
       <div
         ref={containerRef}
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: backgroundImageUrl
-            ? `url(${backgroundImageUrl})`
-            : undefined,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
+        className="absolute inset-0"
       >
+        {/* Background image as img element for more reliable updates */}
+        {backgroundImageUrl && (
+          <img
+            src={backgroundImageUrl}
+            alt="Background"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            style={{ zIndex: -1 }}
+          />
+        )}
         <div className="relative w-fit h-fit max-w-full max-h-full flex items-center justify-center">
           {/* Visible canvas for display */}
           <canvas
