@@ -321,6 +321,17 @@ const LeaderboardPage = () => {
                       </div>
                     </div>
 
+                    {/* ID Column */}
+                    <div
+                      className={cn(
+                        "truncate",
+                        !LEADERBOARD_COLUMNS.find((col) => col.id === "id")
+                          ?.showOnSmall && "hidden md:block"
+                      )}
+                    >
+                      {thisUser?.id}
+                    </div>
+
                     {/* Name Column */}
                     <div className="flex items-center gap-2 col-span-2 min-w-0">
                       {thisUser?.aliens.length > 0 &&
