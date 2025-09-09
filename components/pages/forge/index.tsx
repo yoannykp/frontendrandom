@@ -548,7 +548,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
 
   return (
     <div className="w-full h-full rounded-lg backdrop-blur-xl border border-white/10 p-2">
-      <div className="h-full rounded-lg backdrop-blur-lg bg-white/10 px-14 py-10 flex flex-col">
+      <div className="h-full rounded-lg backdrop-blur-lg bg-white/10 px-14 py-10 flex flex-col overflow-y-scroll">
         {activeTab === ForgeTabs.ENHANCEMENT && (
           <div className={cn("h-full w-full max-w-max mx-auto flex flex-col")}>
             {!selectedEnhancementObj ? (
@@ -946,7 +946,10 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                 }}
               >
                 {forgeList.map((item, index) => (
-                  <SwiperSlide key={index} className="w-full">
+                  <SwiperSlide
+                    key={index}
+                    className="w-full !flex items-center justify-center"
+                  >
                     {({ isActive }) => (
                       <div className="rounded-xl transition-all duration-300 p-2">
                         <div className="aspect-square relative overflow-hidden">
@@ -955,7 +958,7 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                             alt={item.name}
                             width={400}
                             height={400}
-                            className="object-cover w-full h-full rounded-lg"
+                            className="object-cover rounded-lg w-[20rem] h-[20rem]"
                           />
                         </div>
                         {isActive && (
@@ -1024,7 +1027,20 @@ const ForgePage = ({ activeTab }: { activeTab: ForgeTabs }) => {
                   ) < Number(activeItem?.forgeRuneAmount || 0) ||
                   !!activeItem?.userForgeTime
                 }
-                className="w-full h-14 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center relative group overflow-hidden"
+                className={cn(
+                  "w-full h-14 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center relative group overflow-hidden z-[5555555]",
+                  !activeItemId ||
+                    isLoading ||
+                    Number(
+                      activeItem?.forgeRuneType &&
+                        userRuneAmounts[activeItem.forgeRuneType] !== undefined
+                        ? userRuneAmounts[activeItem.forgeRuneType]
+                        : 0
+                    ) < Number(activeItem?.forgeRuneAmount || 0) ||
+                    !!activeItem?.userForgeTime
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                )}
               >
                 <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-4/5 h-[30px] blur-[20px] z-[-1] group-hover:h-[40px] duration-500 transition-all group-disabled:group-hover:h-[30px] bg-[#5FD7FF]" />
 

@@ -103,7 +103,7 @@ const Page = () => {
               </div>
             </div>
             {mostSoonToCompleteRaid && (
-              <div className="absolute top-4 lg:top-10 right-4 lg:right-[31rem] glass-effect z-10 px-3 py-2 rounded-xl w-44 max-lg:hidden">
+              <div className="absolute top-4 lg:top-10 right-[43rem] lg:right-[43rem] glass-effect z-10 px-3 py-2 rounded-xl w-44 max-lg:hidden">
                 <div className="flex items-center justify-between gap-2">
                   <p className="font-volkhov">Ongoing Raid</p>
 

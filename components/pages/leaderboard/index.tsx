@@ -264,7 +264,7 @@ const LeaderboardPage = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 h-[calc(100vh-295px)] overflow-y-auto bg-white/5 rounded px-2 py-1">
+          <div className="flex flex-col gap-2 h-[calc(100vh-295px)] overflow-y-scroll bg-white/5 rounded px-2 py-1">
             {/* Table Header */}
             <div
               className={`grid grid-cols-${totalColSpan} gap-2 px-4 py-2 text-sm text-gray-400`}
@@ -407,7 +407,7 @@ const LeaderboardPage = () => {
                 <div
                   key={index}
                   className={cn(
-                    `grid grid-cols-${totalColSpan} gap-2 px-4 py-3 rounded-xl items-center relative overflow-hidden`,
+                    `grid grid-cols-${totalColSpan} gap-2 px-4 py-3 rounded-xl items-center relative overflow-hidden min-h-[3.8rem]`,
                     index % 2 === 0 ? "bg-white/5" : "bg-white/[0.02]",
                     selectedUser?.id === item.id && "bg-white/30"
                   )}
