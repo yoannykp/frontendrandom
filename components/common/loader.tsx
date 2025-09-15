@@ -65,7 +65,7 @@ export function Loader({
       if (user?.wallet?.address) {
         try {
           await Promise.all([
-            dispatch(fetchUserProfile()),
+            dispatch(fetchUserProfile(user?.id || "")),
             dispatch(fetchRaids()),
             dispatch(fetchAliens()),
             dispatch(fetchRaidHistory()),

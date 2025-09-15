@@ -231,12 +231,12 @@ const Chat = ({
                           className="size-14 rounded"
                         />
                       </div>
-                      <div className="flex flex-col">
-                        <div className="flex flex-wrap items-center gap-0">
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-1 min-w-0">
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <p className="text-white font-medium pr-1 max-w-[120px] truncate">
+                                <p className="text-white font-medium pr-1 max-w-[100px] truncate">
                                   {message.senderName}
                                 </p>
                               </TooltipTrigger>
@@ -246,7 +246,7 @@ const Chat = ({
                             </Tooltip>
                           </TooltipProvider>
                           {message.senderCountry && (
-                            <div className="glass-effect w-6 h-[1.2rem] rounded-lg relative mr-1">
+                            <div className="glass-effect w-6 h-[1.2rem] rounded-lg relative shrink-0">
                               <div className="absolute inset-0 -bottom-[0.1rem] flex items-center justify-center">
                                 {
                                   countries.find(
@@ -264,11 +264,11 @@ const Chat = ({
                               </div>
                             </div>
                           )}
-                          <p className="text-white/50 text-xs">
+                          <p className="text-white/50 text-xs shrink-0">
                             {message.formattedDate}
                           </p>
                         </div>
-                        <p className="text-white text-xs text-wrap">
+                        <p className="text-white text-xs break-words overflow-wrap-anywhere">
                           {message.content}
                         </p>
                       </div>

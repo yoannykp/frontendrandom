@@ -58,7 +58,7 @@ const ConnectModal = ({
     // },
   ]
 
-  console.log("user ====>", user)
+  console.log("privy user ====>", user)
 
   const handleOptionClick = (option: (typeof options)[0]) => {
     if (ready && authenticated) {
@@ -120,7 +120,7 @@ const ConnectModal = ({
   //   checkUser()
   // }, [authenticated, ready, wallets[0]])
 
-  const handleAuthenticate = async (email: string) => {
+  const handleAuthenticate = async (email: string, privyId: string) => {
     // const wallet = getEthWallet(wallets)
     // const wallet = getUserWallet(wallets, walletAddress)
     if (!wallet) {
@@ -155,6 +155,7 @@ const ConnectModal = ({
       signedMessage: process.env.NEXT_PUBLIC_SIGN_MESSAGE!,
       register: {
         email: email,
+        privyId: privyId,
       },
     })
 
@@ -176,7 +177,7 @@ const ConnectModal = ({
         console.log("================================================")
 
         if (res.data) {
-          handleAuthenticate(user?.email?.address || "")
+          handleAuthenticate(user?.email?.address || "", user?.id || "")
         } else {
           moveToStep(2)
         }

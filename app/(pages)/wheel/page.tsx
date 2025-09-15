@@ -23,10 +23,10 @@ const colors = [
   "#FFD600", // Bronze Cut
   "#FF69B4", // Silver Knife
   "#FF99CC", // Golden Shears
-  "#FF4444", // Uncommon Rune
+  "#00BFFF", // Uncommon Rune
   "#7FFF00", // Common Rune
-  "#00BFFF", // Rare Rune
-  "#4169E1", // Epic Rune
+  "#FF4444", // Rare Rune
+  "#ff4bff", // Epic Rune
   // "#FF0000", // Legendary Rune
   // Additional colors if needed
   // "#9400D3",

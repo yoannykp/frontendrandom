@@ -28,11 +28,11 @@ export const wheelItemImages = {
     "https://alienzone-v2.s3.amazonaws.com/buff-items/Silver%20Knife.png",
   golden_shears:
     "https://alienzone-v2.s3.amazonaws.com/buff-items/Golden%20Shears.png",
-  uncommon_rune: "",
-  common_rune: "",
-  rare_rune: "",
-  epic_rune: "",
-  legendary_rune: "",
+  uncommon_rune: "/images/runes/uncommon.png",
+  common_rune: "/images/runes/common.png",
+  rare_rune: "/images/runes/rare.png",
+  epic_rune: "/images/runes/epic.png",
+  legendary_rune: "/images/runes/legendary.png",
 }
 
 interface WheelPageProps {
@@ -270,47 +270,50 @@ const WheelPage = ({
           <div className="bg-white/10 backdrop-blur-lg p-4 rounded-2xl group border border-white/10 flex-1 mt-10 min-h-0 overflow-hidden flex flex-col">
             <div className="flex-1 overflow-y-auto min-h-0">
               <div className="flex flex-col gap-2 pr-4">
-                {wheelItems?.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3 p-3 rounded-xl justify-between bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-8 h-8 rounded-lg"
-                        style={{ backgroundColor: item.color }}
-                      />
-                      <span className="text-white flex-1">{item.name}</span>
-                    </div>
-                    {/* {item.isNew && (
+                {wheelItems?.map((item, index) => {
+                  console.log("item ===>", item)
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center gap-3 p-3 rounded-xl justify-between bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-8 h-8 rounded-lg"
+                          style={{ backgroundColor: item.color }}
+                        />
+                        <span className="text-white flex-1">{item.name}</span>
+                      </div>
+                      {/* {item.isNew && (
                           <span className="text-2xs font-inter bg-white/10 px-2 py-0.5 rounded-lg">
                             New
                           </span>
                         )} */}
-                    {wheelItemImages[
-                      item.name
-                        .toLocaleLowerCase()
-                        .split(" ")
-                        .join("_") as keyof typeof wheelItemImages
-                    ] && (
-                      <div className="relative h-6 w-6">
-                        <Image
-                          src={
-                            wheelItemImages[
-                              item.name
-                                .toLocaleLowerCase()
-                                .split(" ")
-                                .join("_") as keyof typeof wheelItemImages
-                            ]
-                          }
-                          alt={item.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    )}
-                  </div>
-                ))}
+                      {wheelItemImages[
+                        item.name
+                          .toLocaleLowerCase()
+                          .split(" ")
+                          .join("_") as keyof typeof wheelItemImages
+                      ] && (
+                        <div className="relative h-6 w-6">
+                          <Image
+                            src={
+                              wheelItemImages[
+                                item.name
+                                  .toLocaleLowerCase()
+                                  .split(" ")
+                                  .join("_") as keyof typeof wheelItemImages
+                              ]
+                            }
+                            alt={item.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>

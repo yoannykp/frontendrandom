@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useAliens, useProfile } from "@/store/hooks"
+import { usePrivy } from "@privy-io/react-auth"
 import { Grid2X2, Loader2 } from "lucide-react"
 import moment from "moment"
 import { toast } from "react-hot-toast"
@@ -45,6 +46,7 @@ const ProfilePage = () => {
   const router = useRouter()
   const [storeInventoryItems, setStoreInventoryItems] = useState<any[]>([])
   const [itemsLoading, setItemsLoading] = useState(false)
+  const { user } = usePrivy()
 
   useEffect(() => {
     const fetchStoreInventory = async () => {
@@ -77,7 +79,7 @@ const ProfilePage = () => {
 
       try {
         setLoading(true)
-        const response = await getProfile(walletAddress)
+        const response = await getProfile(walletAddress, user?.id || "")
         setUserData(response.data)
       } catch (error) {
         console.error("Error fetching user data:", error)
@@ -87,7 +89,7 @@ const ProfilePage = () => {
     }
 
     fetchUserData()
-  }, [walletAddress, profile])
+  }, [walletAddress, profile, user])
 
   useEffect(() => {
     setLiked(!!profile?.likedUserIds?.includes(userData?.id || 0))

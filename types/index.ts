@@ -12,6 +12,7 @@ export type AuthUserData = {
   image?: string
   refferalCode?: string
   email?: string
+  privyId?: string
 }
 
 export interface CreateAlienData {

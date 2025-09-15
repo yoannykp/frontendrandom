@@ -17,7 +17,6 @@ const rewardImages = {
   STARS: "/images/stars.png",
   XP: "/images/xp.png",
   REP: "/images/rep.png",
-  // RPP: "/images/rpp.png",
 }
 
 const SingleRaid = ({ raid }: { raid?: Raid }) => {
