@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAliens, useProfile } from "@/store/hooks"
 import { Leaderboard, TeamResponse } from "@/types"
+import { CheckIcon, CopyIcon } from "lucide-react"
 import moment from "moment"
 import toast from "react-hot-toast"
 
@@ -216,6 +217,15 @@ const LeaderboardPage = () => {
     }
   }
 
+  const [copiedId, setCopiedId] = useState<string>("")
+
+  const handleCopy = (id: number) => {
+    if (!id) return
+    navigator.clipboard.writeText(id.toString())
+    setCopiedId(id.toString())
+    setTimeout(() => setCopiedId(null), 1000) // show check for 2s
+  }
+
   const handleDateChange = (date: string | null) => {
     setSelectedDate(date)
     setSelectedUser(null)
@@ -324,12 +334,30 @@ const LeaderboardPage = () => {
                     {/* ID Column */}
                     <div
                       className={cn(
-                        "truncate",
+                        "flex items-center truncate",
                         !LEADERBOARD_COLUMNS.find((col) => col.id === "id")
                           ?.showOnSmall && "hidden md:block"
                       )}
                     >
-                      {thisUser?.id}
+                      <span className="mr-2">
+                        {thisUser?.id
+                          ? thisUser.id
+                              ?.toString()
+                              .split("did:privy:")[1]
+                              ?.substring(0, selectedUser ? 3 : 8) + "..."
+                          : ""}
+                      </span>
+                      {copiedId === thisUser?.id?.toString() ? (
+                        <CheckIcon className="w-5 h-5 text-green-500" />
+                      ) : (
+                        <CopyIcon
+                          className="w-5 h-5 cursor-pointer hover:text-gray-400"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleCopy(thisUser?.id)
+                          }}
+                        />
+                      )}
                     </div>
 
                     {/* Name Column */}
@@ -454,12 +482,32 @@ const LeaderboardPage = () => {
                   {/* ID Column */}
                   <div
                     className={cn(
-                      "truncate",
+                      "flex items-center truncate",
                       !LEADERBOARD_COLUMNS.find((col) => col.id === "id")
                         ?.showOnSmall && "hidden md:block"
                     )}
                   >
-                    {item.id}
+                    <span className="mr-2">
+                      {item.id
+                        ? item.id
+                            ?.toString()
+                            .split("did:privy:")[1]
+                            ?.substring(0, selectedUser ? 3 : 8) + "..."
+                        : ""}
+                    </span>
+                    {copiedId === item.id?.toString() ? (
+                      <CheckIcon className="w-5 h-5 text-green-500" />
+                    ) : item.id ? (
+                      <CopyIcon
+                        className="w-5 h-5 cursor-pointer hover:text-gray-400"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleCopy(item.id)
+                        }}
+                      />
+                    ) : (
+                      ""
+                    )}
                   </div>
 
                   {/* Name Column */}
