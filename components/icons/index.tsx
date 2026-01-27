@@ -636,7 +636,6 @@ export const ArrowBack: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -657,7 +656,6 @@ export const TwitterX: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -678,7 +676,6 @@ export const UserRound: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -702,7 +699,6 @@ export const EnterpriseIcon: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -726,7 +722,6 @@ export const HeartIcon: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -750,7 +745,6 @@ export const SearchIcon: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -773,7 +767,6 @@ export const MessageIcon: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -797,7 +790,6 @@ export const AddUserIcon: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -821,7 +813,6 @@ export const PlusIcon: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -844,7 +835,6 @@ export const XLogo: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
