@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { useAliens, useProfile } from "@/store/hooks"
 import { usePrivy } from "@privy-io/react-auth"
 import { Grid2X2, Loader2 } from "lucide-react"
@@ -38,14 +38,13 @@ import { ProfileContentWidget } from "./widgets"
 const ProfilePage = () => {
   const searchParams = useSearchParams()
   const walletAddress = searchParams.get("walletAddress")
-  const { data: profile, fetchUserProfile } = useProfile()
+  const { data: profile } = useProfile()
   const { alien } = useAliens()
   const [userData, setUserData] = useState<any>(null)
-  const [userTeam, setUserTeam] = useState<any>(null)
+  const [setUserTeam] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [friends, setFriends] = useState<any[]>([])
   const [liked, setLiked] = useState(false)
-  const router = useRouter()
   const [storeInventoryItems, setStoreInventoryItems] = useState<any[]>([])
   const [itemsLoading, setItemsLoading] = useState(false)
   const { user } = usePrivy()
@@ -62,6 +61,7 @@ const ProfilePage = () => {
           setStoreInventoryItems([])
         }
       } catch (error) {
+        // eslint-disable-next-line
         console.error("Error fetching user data:", error)
       } finally {
         setItemsLoading(false)
@@ -84,6 +84,7 @@ const ProfilePage = () => {
         const response = await getProfile(walletAddress, user?.id || "")
         setUserData(response.data)
       } catch (error) {
+        // eslint-disable-next-line
         console.error("Error fetching user data:", error)
       } finally {
         setLoading(false)
@@ -110,13 +111,14 @@ const ProfilePage = () => {
           setUserTeam(response.data)
         }
       } catch (error) {
+        // eslint-disable-next-line
         console.error("Error fetching team data:", error)
       }
     }
 
     fetchTeamData()
     fetchFriendsList(walletAddress || "")
-  }, [userData, walletAddress, profile?.walletAddress])
+  }, [userData, walletAddress, setUserTeam, profile?.walletAddress])
 
   const fetchFriendsList = async (walletAddress?: string) => {
     try {
@@ -125,6 +127,7 @@ const ProfilePage = () => {
         setFriends(res.data)
       }
     } catch (error) {
+      // eslint-disable-next-line
       console.error("Error fetching friends list:", error)
     }
   }
@@ -141,6 +144,7 @@ const ProfilePage = () => {
           toast.error("Failed to add friend")
         }
       } catch (error) {
+        // eslint-disable-next-line
         console.error("Error adding friend:", error)
       } finally {
         // setIsLoading(false)
