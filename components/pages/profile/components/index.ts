@@ -1,2 +1,5 @@
 export * from "./Tabs"
 export * from "./TabContentSwitch"
+export * from "./Loader"
+export * from "./Card"
+export * from "./Box"
