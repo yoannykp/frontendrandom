@@ -15,12 +15,12 @@ export const PORTFOLIO_TABS = [
   {
     id: ProfilePageTab.ACTIVITY,
     title: "Activity",
-    before: <ActivityIcon />,
+    after: <ActivityIcon />,
   },
   {
     id: ProfilePageTab.PORTFOLIO,
     title: "Portfolio",
-    before: <PortfolioIcon />,
+    after: <PortfolioIcon />,
   },
 ]
 
@@ -29,3 +29,5 @@ export const PORTFOLIO_CONTENT = [
   { id: ProfilePageTab.ACTIVITY, content: <ActivityContent /> },
   { id: ProfilePageTab.PORTFOLIO, content: <PortfolioContent /> },
 ]
+
+export const TOKEN_NAME = "ZONE"
