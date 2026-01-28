@@ -5,8 +5,8 @@ import { Box } from "../Box"
 
 interface PriceChangeProps {
   isPositive: boolean
-  count_usd: string
-  percentage_diff: string
+  countUsd: string
+  percentageDiff: string
 }
 
 export const PriceChange = ({
@@ -35,7 +35,7 @@ export const PriceChange = ({
 
 type PriceChangeSmallProps = Pick<
   PriceChangeProps,
-  "isPositive" | "percentage_diff"
+  "isPositive" | "percentageDiff"
 >
 
 export const PriceChangeSmall = ({
