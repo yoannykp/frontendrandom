@@ -5,5 +5,5 @@ interface CardProps {
 }
 
 export const Card = ({ children }: CardProps) => {
-  return <div className="bg-white/5 rounded-xl p-3">{children}</div>
+  return <div className="bg-white/5 rounded-10 p-4">{children}</div>
 }

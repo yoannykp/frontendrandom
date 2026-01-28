@@ -1,6 +1,6 @@
 import { Tab, TabProps } from "./Tab"
 
-type TabItemProps = Pick<TabProps, "title" | "before"> & { id: number }
+type TabItemProps = Pick<TabProps, "title" | "after"> & { id: number }
 
 interface TabsProps {
   tabs: TabItemProps[]

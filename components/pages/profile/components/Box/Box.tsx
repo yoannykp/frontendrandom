@@ -7,8 +7,8 @@ interface BoxProps {
   ySpacing?: number
   flex?: boolean
   direction?: "row" | "column"
-  justify?: "center" | "space-between" | "stretch"
-  align?: "center" | "stretch"
+  justify?: "center" | "between" | "stretch" | "end"
+  align?: "center" | "stretch" | "end"
   children?: ReactNode
 }
 
@@ -39,11 +39,13 @@ export const Box = ({
       flex: flex,
       "flex-row": direction === "row",
       "flex-col": direction === "column",
-      "justify-content-center": justify === "center",
-      "justify-content-between": justify === "between",
-      "justify-content-stretch": justify === "stretch",
+      "justify-center": justify === "center",
+      "justify-between": justify === "between",
+      "justify-stretch": justify === "stretch",
+      "justify-end": justify === "end",
       "items-center": align === "center",
       "items-stretch": align === "stretch",
+      "items-end": align === "end",
     },
     spacingClass,
     xSpacingClass,
