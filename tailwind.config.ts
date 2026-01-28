@@ -59,9 +59,12 @@ const config: Config = {
         "gray-dark-with-opacity": "#D9D9D912",
         "off-white": "#FFFFFF80",
         glass: "rgba(217, 217, 217, 0.07)",
+        positive: "#5FFF95",
+        negative: "#FF3F3F",
       },
       borderRadius: {
         normal: "15px",
+        "10": "10px",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
@@ -72,12 +75,15 @@ const config: Config = {
       },
       fontSize: {
         "2xs": ["10px", "1.25rem"],
+        "12": ["12px", "1rem"],
         xs: ["12px", "1.25rem"],
         sm: ["14px", "1.25rem"],
         base: ["16px", "1.25rem"],
         lg: ["20px", "2rem"],
+        "lg-low": ["20px", "1.5rem"],
         xl: ["24px", "1.25rem"],
         "18": ["18px", "1.25rem"],
+        "30": ["30px", "2.45rem"],
       },
       keyframes: {
         "accordion-down": {
