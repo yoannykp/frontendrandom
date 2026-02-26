@@ -2,7 +2,6 @@ import { useEffect } from "react"
 import { usePortfolio } from "@/store/hooks"
 
 import { ALIENZONE_TOKEN_ICON_URL } from "@/lib/constants"
-
 import {
   Box,
   Card,
@@ -11,7 +10,8 @@ import {
   Price,
   PriceChange,
   Typography,
-} from "../../../components"
+} from "@/components/pages/profile/components"
+
 import { TOKEN_NAME } from "../constants"
 
 export const PortfolioContent = () => {
@@ -27,7 +27,7 @@ export const PortfolioContent = () => {
     return <Loader text={"Portfolio loading"} />
   }
 
-  if (!loading && !data) {
+  if (!loading || !data) {
     return "Portfolio data is not found"
   }
 
@@ -48,9 +48,9 @@ export const PortfolioContent = () => {
 
         {shouldShowPortfolioPriceChange && (
           <PriceChange
-            countUsd={data.usd_balance_diff}
-            isPositive={data.usd_balance_diff_positive}
-            percentageDiff={data.usd_diff_percentage}
+            countUsd={data.usd_balance_diff as string}
+            isPositive={data.usd_balance_diff_positive as boolean}
+            percentageDiff={data.usd_diff_percentage as string}
           />
         )}
       </Box>
@@ -101,7 +101,6 @@ export const PortfolioContent = () => {
                 key={item.name}
                 imageUrl={item.picture_url}
                 name={item.name}
-                count={item.amount}
                 after={<Price price={item.price} tokenName={TOKEN_NAME} />}
               />
             ))}
