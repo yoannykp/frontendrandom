@@ -16,6 +16,7 @@ export const PORTFOLIO_TABS = [
     id: ProfilePageTab.ACTIVITY,
     title: "Activity",
     after: <ActivityIcon />,
+    disabled: true,
   },
   {
     id: ProfilePageTab.PORTFOLIO,
