@@ -20,17 +20,20 @@ import {
 } from "@/types"
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios"
 
+import { getMockApiResponse, portfolioMock } from "@/lib/mocks"
+import { GetPortfolioResponse } from "@/lib/types"
+
 import { getCookie, setCookie } from "./cookie"
 
 // Define the structure for API errors
-interface ApiError {
+export interface ApiError {
   message: string
   code?: string | number
   details?: any
 }
 
 // Define the structure for API responses
-interface ApiResponse<T = any> {
+export interface ApiResponse<T = any> {
   data: T | null
   error: ApiError | null
 }
@@ -904,4 +907,17 @@ export const processBoughtQuest = async (
 
 export const getUser = async (userId: string) => {
   return await apiManager.get(`/users/${userId}`)
+}
+
+export const getPortfolio = async (): Promise<
+  ApiResponse<GetPortfolioResponse>
+> => {
+  const response =
+    await apiManager.get<GetPortfolioResponse>("/profile/portfolio")
+
+  if (process.env.NEXT_PUBLIC_GET_PORTFOLIO_API_MOCK_ENABLED) {
+    return getMockApiResponse(portfolioMock)
+  }
+
+  return response
 }

@@ -636,7 +636,6 @@ export const ArrowBack: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -657,7 +656,6 @@ export const TwitterX: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -678,7 +676,6 @@ export const UserRound: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -702,7 +699,6 @@ export const EnterpriseIcon: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -726,7 +722,6 @@ export const HeartIcon: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -750,7 +745,6 @@ export const SearchIcon: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -773,7 +767,6 @@ export const MessageIcon: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -797,7 +790,6 @@ export const AddUserIcon: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -821,7 +813,6 @@ export const PlusIcon: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -844,7 +835,6 @@ export const XLogo: React.FC<IconSvgProps> = ({
   size = 20,
   width,
   height,
-  strokeWidth = 2,
   ...props
 }) => (
   <svg
@@ -860,6 +850,61 @@ export const XLogo: React.FC<IconSvgProps> = ({
       clip-rule="evenodd"
       d="M0.61163 17H2.00607L7.46362 10.4048L11.8032 17H16.5996L10.1323 7.21969L16.0707 0H14.6522L9.49518 6.24541L5.35994 0H0.599609L6.85055 9.46804L0.61163 17ZM2.52298 1.11168H4.67474L14.6642 15.9508H12.4884L2.52298 1.11168Z"
       fill="white"
+    />
+  </svg>
+)
+
+export const PortfolioIcon: React.FC<IconSvgProps> = ({ size = 18 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox={`0 0 ${size} ${size}`}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M0 0H1.125V16.875H18V18H0V0ZM16.6691 3.50212C16.7263 3.54893 16.7738 3.60656 16.8087 3.67171C16.8436 3.73686 16.8653 3.80825 16.8726 3.8818C16.88 3.95536 16.8727 4.02963 16.8513 4.10038C16.8299 4.17113 16.7947 4.23697 16.7479 4.29413L11.6854 10.4816C11.6356 10.5424 11.5737 10.592 11.5036 10.6274C11.4335 10.6627 11.3568 10.683 11.2783 10.6869C11.1999 10.6909 11.1216 10.6783 11.0483 10.6501C10.975 10.6219 10.9084 10.5787 10.8529 10.5233L7.9425 7.61287L3.8295 13.2682C3.73953 13.3827 3.60871 13.4577 3.46453 13.4777C3.32036 13.4977 3.17406 13.461 3.05637 13.3753C2.93868 13.2897 2.85877 13.1618 2.83344 13.0184C2.8081 12.8751 2.83931 12.7276 2.9205 12.6068L7.4205 6.41925C7.46826 6.35345 7.52972 6.29879 7.60065 6.25904C7.67157 6.21928 7.75027 6.19537 7.83132 6.18895C7.91237 6.18254 7.99385 6.19377 8.07014 6.22187C8.14644 6.24998 8.21573 6.29429 8.27325 6.35175L11.2084 9.288L15.8771 3.58088C15.9239 3.52367 15.9816 3.47625 16.0467 3.44133C16.1119 3.4064 16.1832 3.38467 16.2568 3.37735C16.3304 3.37004 16.4046 3.37729 16.4754 3.3987C16.5461 3.42011 16.612 3.45526 16.6691 3.50212Z"
+      fill="white"
+    />
+  </svg>
+)
+
+export const ActivityIcon: React.FC<IconSvgProps> = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 18 18"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <g clip-path="url(#clip0_6092_386)">
+      <path
+        d="M12.375 2.25C12.375 1.95163 12.4935 1.66548 12.7045 1.4545C12.9155 1.24353 13.2016 1.125 13.5 1.125H15.75C16.0484 1.125 16.3345 1.24353 16.5455 1.4545C16.7565 1.66548 16.875 1.95163 16.875 2.25V15.75H17.4375C17.5867 15.75 17.7298 15.8093 17.8352 15.9148C17.9407 16.0202 18 16.1633 18 16.3125C18 16.4617 17.9407 16.6048 17.8352 16.7102C17.7298 16.8157 17.5867 16.875 17.4375 16.875H0.5625C0.413316 16.875 0.270242 16.8157 0.164752 16.7102C0.0592632 16.6048 0 16.4617 0 16.3125C0 16.1633 0.0592632 16.0202 0.164752 15.9148C0.270242 15.8093 0.413316 15.75 0.5625 15.75H1.125V12.375C1.125 12.0766 1.24353 11.7905 1.4545 11.5795C1.66548 11.3685 1.95163 11.25 2.25 11.25H4.5C4.79837 11.25 5.08452 11.3685 5.2955 11.5795C5.50647 11.7905 5.625 12.0766 5.625 12.375V15.75H6.75V7.875C6.75 7.57663 6.86853 7.29048 7.0795 7.0795C7.29048 6.86853 7.57663 6.75 7.875 6.75H10.125C10.4234 6.75 10.7095 6.86853 10.9205 7.0795C11.1315 7.29048 11.25 7.57663 11.25 7.875V15.75H12.375V2.25ZM13.5 15.75H15.75V2.25H13.5V15.75ZM10.125 15.75V7.875H7.875V15.75H10.125ZM4.5 15.75V12.375H2.25V15.75H4.5Z"
+        fill="white"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_6092_386">
+        <rect width="18" height="18" fill="white" />
+      </clipPath>
+    </defs>
+  </svg>
+)
+
+export const ChartCaretIcon: React.FC<IconSvgProps> = ({ fill, rotate }) => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M7.24701 4.86002L2.45101 10.341C1.88501 10.988 2.34501 12 3.20401 12H12.796C12.9883 12.0002 13.1765 11.9449 13.3381 11.8409C13.4998 11.7368 13.628 11.5884 13.7075 11.4133C13.7869 11.2383 13.8142 11.044 13.7861 10.8538C13.758 10.6637 13.6757 10.4856 13.549 10.341L8.75301 4.86102C8.65915 4.75361 8.5434 4.66753 8.41352 4.60854C8.28364 4.54956 8.14265 4.51904 8.00001 4.51904C7.85737 4.51904 7.71638 4.54956 7.5865 4.60854C7.45663 4.66753 7.34087 4.75261 7.24701 4.86002Z"
+      fill={fill}
+      transform={rotate ? `rotate(${rotate})` : undefined}
     />
   </svg>
 )

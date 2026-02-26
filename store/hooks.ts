@@ -1,3 +1,4 @@
+import { clearPortfolio, fetchPortfolio } from "@/store/slices/portfolioSlice"
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux"
 
 import type { AppDispatch, RootState } from "./index"
@@ -142,5 +143,16 @@ export const useDailyRewards = () => {
     claimRewards: handleClaimRewards,
     resetAwardStatus: () => dispatch(resetAwardStatus()),
     clearDailyRewards: () => dispatch(clearDailyRewards()),
+  }
+}
+
+export const usePortfolio = () => {
+  const dispatch = useAppDispatch()
+  const portfolioState = useAppSelector((state) => state.portfolio)
+
+  return {
+    ...portfolioState,
+    fetchPortfolio: () => dispatch(fetchPortfolio()),
+    clearPortfolio: () => dispatch(clearPortfolio()),
   }
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { useAliens, useProfile } from "@/store/hooks"
 import { usePrivy } from "@privy-io/react-auth"
 import { Grid2X2, Loader2 } from "lucide-react"
@@ -33,17 +33,18 @@ import {
   XLogo,
 } from "@/components/icons"
 
+import { ProfileContentWidget } from "./widgets"
+
 const ProfilePage = () => {
   const searchParams = useSearchParams()
   const walletAddress = searchParams.get("walletAddress")
-  const { data: profile, fetchUserProfile } = useProfile()
+  const { data: profile } = useProfile()
   const { alien } = useAliens()
   const [userData, setUserData] = useState<any>(null)
-  const [userTeam, setUserTeam] = useState<any>(null)
+  const [setUserTeam] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [friends, setFriends] = useState<any[]>([])
   const [liked, setLiked] = useState(false)
-  const router = useRouter()
   const [storeInventoryItems, setStoreInventoryItems] = useState<any[]>([])
   const [itemsLoading, setItemsLoading] = useState(false)
   const { user } = usePrivy()
@@ -60,6 +61,7 @@ const ProfilePage = () => {
           setStoreInventoryItems([])
         }
       } catch (error) {
+        // eslint-disable-next-line
         console.error("Error fetching user data:", error)
       } finally {
         setItemsLoading(false)
@@ -82,6 +84,7 @@ const ProfilePage = () => {
         const response = await getProfile(walletAddress, user?.id || "")
         setUserData(response.data)
       } catch (error) {
+        // eslint-disable-next-line
         console.error("Error fetching user data:", error)
       } finally {
         setLoading(false)
@@ -108,13 +111,14 @@ const ProfilePage = () => {
           setUserTeam(response.data)
         }
       } catch (error) {
+        // eslint-disable-next-line
         console.error("Error fetching team data:", error)
       }
     }
 
     fetchTeamData()
     fetchFriendsList(walletAddress || "")
-  }, [userData, walletAddress, profile?.walletAddress])
+  }, [userData, walletAddress, setUserTeam, profile?.walletAddress])
 
   const fetchFriendsList = async (walletAddress?: string) => {
     try {
@@ -123,6 +127,7 @@ const ProfilePage = () => {
         setFriends(res.data)
       }
     } catch (error) {
+      // eslint-disable-next-line
       console.error("Error fetching friends list:", error)
     }
   }
@@ -139,6 +144,7 @@ const ProfilePage = () => {
           toast.error("Failed to add friend")
         }
       } catch (error) {
+        // eslint-disable-next-line
         console.error("Error adding friend:", error)
       } finally {
         // setIsLoading(false)
@@ -369,91 +375,7 @@ const ProfilePage = () => {
             </ScrollArea>
           </div>
           {/* main content */}
-          <div className="flex-1 flex flex-col gap-3">
-            {/* Top Tabs */}
-            <div className="flex gap-2 font-inter">
-              <div className="flex-1 bg-white/10 rounded-xl p-3 flex items-center justify-between">
-                <span className="text-white font-medium">Inventory</span>
-                {/* <div className="flex items-center gap-2 text-sm">
-                  <span className=" ">Total worth</span>
-                  <div className="flex items-center gap-1">
-                    <span className="text-white">4.567</span>
-                    <Image
-                      src="/images/logos/eth.png"
-                      alt="Star"
-                      width={16}
-                      height={16}
-                    />
-                  </div>
-                </div> */}
-              </div>
-              <div className="flex-1 bg-white/5 hover:bg-white/10 rounded-xl p-3 flex items-center justify-between">
-                <span className="text-white font-medium">Activity</span>
-                <button className="size-6 flex items-center justify-center bg-white/5 rounded border border-white/10">
-                  <Grid2X2 className="size-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Scrollable Grid Area */}
-            <ScrollArea className="flex-1">
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-3 p-0.5">
-                {storeInventoryItems.length > 0 && !itemsLoading ? (
-                  storeInventoryItems?.map((item, index) => (
-                    <div
-                      key={index}
-                      className="bg-white/5 rounded-xl p-3 flex flex-col"
-                    >
-                      <div className="h-[250px] rounded-lg bg-white/5 mb-3 relative">
-                        <Image
-                          src={item?.image || ""}
-                          alt={item?.name || ""}
-                          fill
-                          className="rounded-lg"
-                        />
-                      </div>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center justify-between gap-2 w-full">
-                          <span className="text-white font-medium">
-                            {item.name}
-                          </span>
-
-                          <Badge variant={item?.type?.toLowerCase()}>
-                            {item?.type}
-                          </Badge>
-                        </div>
-                      </div>
-                      <div className="flex items-center flex-col text-sm">
-                        <div className="flex items-center gap-1 justify-between w-full">
-                          <span className="text-white/50">Item Price</span>
-                          <div className="flex items-center gap-1">
-                            <span>{item.price || 0}</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1 justify-between w-full">
-                          <span className="text-white/50">Quantity</span>
-                          <div className="flex items-center gap-1">
-                            <span>{item.quantity || 0}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="col-span-full text-center py-10 text-white/60">
-                    {itemsLoading ? (
-                      <div className="flex items-center justify-center">
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        <span className="text-sm">Loading Items...</span>
-                      </div>
-                    ) : (
-                      "No items found"
-                    )}
-                  </div>
-                )}
-              </div>
-            </ScrollArea>
-          </div>
+          <ProfileContentWidget />
         </div>
       </div>
 
