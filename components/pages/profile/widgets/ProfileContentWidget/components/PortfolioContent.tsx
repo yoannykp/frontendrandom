@@ -18,17 +18,21 @@ export const PortfolioContent = () => {
   const { fetchPortfolio, loading, data } = usePortfolio()
 
   useEffect(() => {
-    if (!data) {
+    if (!data && !loading) {
       void fetchPortfolio()
     }
-  }, [data, fetchPortfolio])
+  })
 
   if (loading) {
     return <Loader text={"Portfolio loading"} />
   }
 
-  if (!loading || !data) {
+  if (!loading && !data) {
     return "Portfolio data is not found"
+  }
+
+  if (data === null) {
+    return
   }
 
   const shouldShowPortfolioPriceChange = Boolean(
