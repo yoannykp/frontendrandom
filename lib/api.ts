@@ -300,7 +300,7 @@ export const getWearableVolume = async (
 }
 
 export const unlockWithStars = async (
-  subject: string
+  rarity: string
 ): Promise<
   ApiResponse<{
     success: boolean
@@ -309,10 +309,10 @@ export const unlockWithStars = async (
     rarity?: string
   }>
 > => {
-  return apiManager.post("/store/wearables/unlock-with-stars", { subject })
+  return apiManager.post("/store/wearables/unlock-with-stars", { rarity })
 }
 
-export const getUserUnlockedWearables = async (): Promise<
+export const getUserUnlockedRarities = async (): Promise<
   ApiResponse<string[]>
 > => {
   return apiManager.get<string[]>("/store/wearables/unlocked")

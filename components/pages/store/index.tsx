@@ -14,7 +14,7 @@ import {
   getWearableDetails,
   getWearableActivity,
   unlockWithStars,
-  getUserUnlockedWearables,
+  getUserUnlockedRarities,
   progressBoughtQuest,
 } from "@/lib/api"
 import { cn } from "@/lib/utils"
@@ -70,7 +70,7 @@ const StorePage = () => {
   const { provider, signer } = useWallet()
   const { data: profile } = useProfile()
   const [storeWearables, setStoreWearables] = useState<any[]>([])
-  const [unlockedWearables, setUnlockedWearables] = useState<Set<string>>(new Set())
+  const [unlockedRarities, setUnlockedRarities] = useState<Set<string>>(new Set())
   const [loadingItemId, setLoadingItemId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState({
     buy: false,
@@ -85,7 +85,7 @@ const StorePage = () => {
   // Fetch store data on mount
   useEffect(() => {
     fetchStoreWearables()
-    fetchUnlockedWearables()
+    fetchUnlockedRarities()
   }, [])
 
   // Refetch when sort changes
@@ -112,14 +112,14 @@ const StorePage = () => {
     }
   }
 
-  const fetchUnlockedWearables = async () => {
+  const fetchUnlockedRarities = async () => {
     try {
-      const response = await getUserUnlockedWearables()
+      const response = await getUserUnlockedRarities()
       if (response.data) {
-        setUnlockedWearables(new Set(response.data))
+        setUnlockedRarities(new Set(response.data))
       }
     } catch (error) {
-      console.error("Error fetching unlocked wearables:", error)
+      console.error("Error fetching unlocked rarities:", error)
     }
   }
 
@@ -200,22 +200,24 @@ const StorePage = () => {
     }
   }
 
-  const handleUnlockWithStars = async (subject: string) => {
+  const handleUnlockRarity = async (rarity: string) => {
     setIsLoading({ ...isLoading, unlock: true })
     try {
-      const response = await unlockWithStars(subject)
+      const response = await unlockWithStars(rarity)
       if (response.error) {
-        toast.error(response.error.message || "Failed to unlock item")
+        toast.error(response.error.message || "Failed to unlock rarity tier")
         return
       }
-      toast.success(`Item unlocked! ${response.data?.starsSpent} Stars spent.`)
-      // Add to unlocked set
-      setUnlockedWearables((prev) => new Set([...prev, subject]))
+      toast.success(
+        `${rarity.charAt(0) + rarity.slice(1).toLowerCase()} tier unlocked! ${response.data?.starsSpent} Stars spent.`
+      )
+      // Add rarity to unlocked set
+      setUnlockedRarities((prev) => new Set([...prev, rarity]))
       // Refresh unlocked list
-      fetchUnlockedWearables()
+      fetchUnlockedRarities()
     } catch (error: any) {
-      console.error("Error unlocking with stars:", error)
-      toast.error("Failed to unlock item")
+      console.error("Error unlocking rarity tier:", error)
+      toast.error("Failed to unlock rarity tier")
     } finally {
       setIsLoading({ ...isLoading, unlock: false })
     }
@@ -398,10 +400,10 @@ const StorePage = () => {
     }
   }
 
-  // Check if item is unlocked for trading (Common = always unlocked)
+  // Check if item is unlocked for trading (Common = always unlocked, otherwise check rarity tier)
   const isItemUnlocked = (item: any): boolean => {
     if (!item?.rarity || item.rarity === "COMMON") return true
-    return unlockedWearables.has(item.subject)
+    return unlockedRarities.has(item.rarity)
   }
 
   // Check if user owns this item (heldAmount > 0)
@@ -555,7 +557,7 @@ const StorePage = () => {
                 </div>
               </div>
 
-              {/* Unlock with Stars (for non-Common items that aren't unlocked) */}
+              {/* Unlock rarity tier with Stars (for non-Common items with locked rarity) */}
               {selectedItem?.rarity &&
                 selectedItem.rarity !== "COMMON" &&
                 !isItemUnlocked(selectedItem) && (
@@ -567,22 +569,26 @@ const StorePage = () => {
                       </p>
                     </div>
                     <p className="text-xs text-white/60 mb-3">
-                      This {selectedItem.rarity.toLowerCase()} item requires{" "}
-                      {starsUnlockPrices[selectedItem.rarity] || 0} Stars to
-                      unlock for trading.
+                      Unlock all{" "}
+                      <span className="font-semibold text-white/80">
+                        {selectedItem.rarity.charAt(0) +
+                          selectedItem.rarity.slice(1).toLowerCase()}
+                      </span>{" "}
+                      items for trading with{" "}
+                      {starsUnlockPrices[selectedItem.rarity] || 0} Stars.
                     </p>
                     <BrandButton
                       blurColor="bg-[#FFD700]"
                       className="w-full font-light"
                       onClick={() =>
-                        handleUnlockWithStars(selectedItem?.subject)
+                        handleUnlockRarity(selectedItem?.rarity)
                       }
                       disabled={isLoading.unlock}
                     >
                       <Star className="w-4 h-4 mr-1" />
                       {isLoading.unlock
                         ? "Unlocking..."
-                        : `Unlock for ${starsUnlockPrices[selectedItem.rarity] || 0} Stars`}
+                        : `Unlock ${selectedItem.rarity.charAt(0) + selectedItem.rarity.slice(1).toLowerCase()} tier for ${starsUnlockPrices[selectedItem.rarity] || 0} Stars`}
                       {isLoading.unlock && (
                         <Loader2 className="w-4 h-4 ml-2 animate-spin" />
                       )}
@@ -774,10 +780,10 @@ const StorePage = () => {
                           <Check className="w-3 h-3 text-white" />
                         </div>
                       )}
-                      {/* Lock indicator for non-unlocked rare+ items */}
+                      {/* Lock indicator for non-unlocked rarity tiers */}
                       {item?.rarity &&
                         item.rarity !== "COMMON" &&
-                        !unlockedWearables.has(item.subject) && (
+                        !unlockedRarities.has(item.rarity) && (
                           <div className="absolute top-2 left-2 bg-yellow-500/80 rounded-full p-0.5">
                             <Lock className="w-3 h-3 text-white" />
                           </div>
