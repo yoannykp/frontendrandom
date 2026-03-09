@@ -94,12 +94,32 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     )
   }
 
-  // Refresh balances every 30 seconds
+  // Refresh balances every 2 minutes (120s) and only when tab is visible
   useEffect(() => {
     if (!isConnected) return
 
-    const interval = setInterval(refreshBalances, 30000)
-    return () => clearInterval(interval)
+    let interval: NodeJS.Timeout
+
+    const startPolling = () => {
+      interval = setInterval(refreshBalances, 120000)
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        refreshBalances() // Refresh immediately when tab becomes visible
+        startPolling()
+      } else {
+        clearInterval(interval)
+      }
+    }
+
+    startPolling()
+    document.addEventListener("visibilitychange", handleVisibilityChange)
+
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener("visibilitychange", handleVisibilityChange)
+    }
   }, [isConnected, provider, user?.address])
 
   return (

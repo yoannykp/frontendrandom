@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useAliens, useAppDispatch } from "@/store/hooks"
 import { fetchAliens } from "@/store/slices/aliensSlice"
@@ -10,11 +10,7 @@ import { usePrivy } from "@privy-io/react-auth"
 import { Loader2 } from "lucide-react"
 import toast from "react-hot-toast"
 
-import { getAliens } from "@/lib/api"
 import { removeCookie } from "@/lib/cookie"
-import { useIsMobile } from "@/hooks/useIsMobile"
-
-const WALLET_INIT_TIMEOUT = 2000
 
 export function Loader({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch()
@@ -22,8 +18,7 @@ export function Loader({ children }: { children: React.ReactNode }) {
   const { ready, authenticated, user } = usePrivy()
   const [isLoading, setIsLoading] = useState(true)
   const { data: aliens } = useAliens()
-  const isMobile = useIsMobile()
-  const pathname = usePathname()
+  const hasInitialized = useRef(false)
 
   const searchParams = useSearchParams()
 
@@ -38,6 +33,9 @@ export function Loader({ children }: { children: React.ReactNode }) {
   }, [searchParams, router])
 
   useEffect(() => {
+    // Prevent double initialization
+    if (hasInitialized.current) return
+
     const handleWalletState = async () => {
       if (!ready) return
 
@@ -48,25 +46,31 @@ export function Loader({ children }: { children: React.ReactNode }) {
       }
 
       if (user?.wallet?.address) {
+        hasInitialized.current = true
         try {
-          await Promise.all([
-            dispatch(fetchUserProfile(user?.wallet?.address)),
+          // Fetch all data in parallel — fetchAliens populates the Redux store
+          const results = await Promise.all([
+            dispatch(fetchUserProfile(user.wallet.address)),
             dispatch(fetchRaids()),
             dispatch(fetchAliens()),
             dispatch(fetchRaidHistory()),
           ])
 
-          const aliens = await getAliens()
+          // Check aliens from the Redux action result instead of making a duplicate API call
+          const aliensResult = results[2] as any
+          const aliensData = aliensResult?.payload?.data ?? aliensResult?.payload
 
-          if (aliens?.data?.length === 0 || !aliens?.data) {
+          if (!aliensData || (Array.isArray(aliensData) && aliensData.length === 0)) {
             removeCookie("accessToken")
             toast.error("Please create your first alien")
             router.push("/auth")
+            hasInitialized.current = false
             return
           }
           setIsLoading(false)
         } catch (error) {
           console.error("Error fetching data:", error)
+          hasInitialized.current = false
         }
       }
     }
