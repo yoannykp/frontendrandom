@@ -17,8 +17,8 @@ const initialState: UserProfileState = {
 
 export const fetchUserProfile = createAsyncThunk(
   "userProfile/fetchUserProfile",
-  async (walletAddress: string) => {
-    const response = await getProfile(walletAddress)
+  async (walletAddress?: string) => {
+    const response = await getProfile(walletAddress || "")
     if (response.error) {
       throw new Error(response.error.message)
     }

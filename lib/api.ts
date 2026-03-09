@@ -326,8 +326,20 @@ export const progressBoughtQuest = async (
 
 // ========== Dojo API ==========
 
-export const getDojoOwnedAlienParts = async (): Promise<ApiResponse<any>> => {
-  return apiManager.get<any>("/profile/get-dojo-owned-alien-parts")
+export const getDojoOwnedAlienParts = async (
+  walletAddress?: string
+): Promise<ApiResponse<any>> => {
+  const params: Record<string, string> = {}
+  if (walletAddress) params.walletAddress = walletAddress
+  return apiManager.get<any>("/profile/get-dojo-owned-alien-parts", params)
+}
+
+export const getEquippedAlienParts = async (
+  alienId?: number
+): Promise<ApiResponse<any>> => {
+  const params: Record<string, string | number> = {}
+  if (alienId) params.alienId = alienId
+  return apiManager.get<any>("/profile/get-equipped-alien-parts", params)
 }
 
 export const equipAlienPart = async (data: {

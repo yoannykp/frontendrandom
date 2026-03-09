@@ -12,7 +12,7 @@ import toast from "react-hot-toast"
 
 import { removeCookie } from "@/lib/cookie"
 
-export function Loader({ children }: { children: React.ReactNode }) {
+export function Loader({ children, isDojoPage }: { children: React.ReactNode; isDojoPage?: boolean }) {
   const dispatch = useAppDispatch()
   const router = useRouter()
   const { ready, authenticated, user } = usePrivy()
