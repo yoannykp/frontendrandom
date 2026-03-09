@@ -1,6 +1,14 @@
 "use client"
 
-import React, { createContext, useContext, useEffect, useState } from "react"
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+} from "react"
 import { useAppDispatch, useRaidHistory, useRaids } from "@/store/hooks"
 import { updateRaidHistoryStatus } from "@/store/slices/raidsSlice"
 import { RaidResponse } from "@/types"
@@ -42,14 +50,24 @@ export const RaidTimerProvider = ({
       })
     | null
   >(null)
+  const completedRaidsRef = useRef<Set<number>>(new Set())
 
   useEffect(() => {
     if (!raidHistory || !raids) return
 
+    // Check if there are any active raids at all
+    const activeRaidHistories = raidHistory.filter(
+      (history) => history.inProgress
+    )
+
+    // If no active raids, don't start the interval at all
+    if (activeRaidHistories.length === 0) {
+      setActiveRaids([])
+      setMostSoonToCompleteRaid(null)
+      return
+    }
+
     const updateTimers = () => {
-      const activeRaidHistories = raidHistory.filter(
-        (history) => history.inProgress
-      )
       const newActiveRaids = activeRaidHistories
         .map((history) => {
           const raid = raids.find((r) => r.id === history.raidId)
@@ -58,16 +76,19 @@ export const RaidTimerProvider = ({
           const remainingTime =
             calculateLaunchedRaidRemainingTime(history, raid) || 0
 
-          // If raid is complete, update its status
+          // If raid is complete, update its status (only once)
           if (remainingTime <= 0) {
-            dispatch(
-              updateRaidHistoryStatus({ raidId: raid.id, inProgress: false })
-            )
-            toast.success(
-              `Raid completed! You got ${raid.rewards
-                .map((reward) => `${reward.amount} ${reward.type}`)
-                .join(", ")}`
-            )
+            if (!completedRaidsRef.current.has(raid.id)) {
+              completedRaidsRef.current.add(raid.id)
+              dispatch(
+                updateRaidHistoryStatus({ raidId: raid.id, inProgress: false })
+              )
+              toast.success(
+                `Raid completed! You got ${raid.rewards
+                  .map((reward) => `${reward.amount} ${reward.type}`)
+                  .join(", ")}`
+              )
+            }
             return null
           }
 
@@ -88,13 +109,20 @@ export const RaidTimerProvider = ({
     }
 
     updateTimers()
+    // Only tick every second when there are active raids
     const interval = setInterval(updateTimers, 1000)
 
     return () => clearInterval(interval)
   }, [raidHistory, raids, dispatch])
 
+  // Memoize context value to prevent unnecessary re-renders of consumers
+  const contextValue = useMemo(
+    () => ({ activeRaids, mostSoonToCompleteRaid }),
+    [activeRaids, mostSoonToCompleteRaid]
+  )
+
   return (
-    <RaidTimerContext.Provider value={{ activeRaids, mostSoonToCompleteRaid }}>
+    <RaidTimerContext.Provider value={contextValue}>
       {children}
     </RaidTimerContext.Provider>
   )

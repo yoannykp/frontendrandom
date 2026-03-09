@@ -266,3 +266,103 @@ export const createCheckoutSession = async (
   })
   return response
 }
+
+// ========== Store API ==========
+
+export const getStoreWearables = async (params?: {
+  sort?: "all" | "trending" | "newest"
+  rarity?: "COMMON" | "UNCOMMON" | "RARE" | "EPIC" | "LEGENDARY"
+}): Promise<ApiResponse<any[]>> => {
+  return apiManager.get<any[]>("/store/wearables", params as any)
+}
+
+export const getWearableDetails = async (
+  subject: string
+): Promise<ApiResponse<any>> => {
+  return apiManager.get<any>(`/store/wearables/${subject}`)
+}
+
+export const getWearableActivity = async (
+  subject: string,
+  limit?: number
+): Promise<ApiResponse<any[]>> => {
+  return apiManager.get<any[]>(`/store/wearables/${subject}/activity`, {
+    ...(limit ? { limit } : {}),
+  })
+}
+
+export const getWearableVolume = async (
+  subject: string
+): Promise<ApiResponse<{ subject: string; volume7d: number }>> => {
+  return apiManager.get<{ subject: string; volume7d: number }>(
+    `/store/wearables/${subject}/volume`
+  )
+}
+
+export const unlockWithStars = async (
+  rarity: string
+): Promise<
+  ApiResponse<{
+    success: boolean
+    message: string
+    starsSpent?: number
+    rarity?: string
+  }>
+> => {
+  return apiManager.post("/store/wearables/unlock-with-stars", { rarity })
+}
+
+export const getUserUnlockedRarities = async (): Promise<
+  ApiResponse<string[]>
+> => {
+  return apiManager.get<string[]>("/store/wearables/unlocked")
+}
+
+export const progressBoughtQuest = async (
+  subject: string
+): Promise<ApiResponse<any>> => {
+  return apiManager.post("/store/wearables/bought-quest", { subject })
+}
+
+// ========== Dojo API ==========
+
+export const getDojoOwnedAlienParts = async (
+  walletAddress?: string
+): Promise<ApiResponse<any>> => {
+  const params: Record<string, string> = {}
+  if (walletAddress) params.walletAddress = walletAddress
+  return apiManager.get<any>("/profile/get-dojo-owned-alien-parts", params)
+}
+
+export const getEquippedAlienParts = async (
+  alienId?: number
+): Promise<ApiResponse<any>> => {
+  const params: Record<string, string | number> = {}
+  if (alienId) params.alienId = alienId
+  return apiManager.get<any>("/profile/get-equipped-alien-parts", params)
+}
+
+export const equipAlienPart = async (data: {
+  alienId: number
+  parts: { type: string; id: number }[]
+}): Promise<ApiResponse<any>> => {
+  return apiManager.post("/profile/equip-alien-part", data)
+}
+
+// ========== Quest API ==========
+
+export const getQuests = async (): Promise<ApiResponse<any>> => {
+  return apiManager.get<any>("/quests/list")
+}
+
+export const claimQuestRewards = async (
+  questId: number
+): Promise<ApiResponse<any>> => {
+  return apiManager.post("/quests/claim-rewards", { questId })
+}
+
+export const progressVolumeQuest = async (
+  zoneVolume: number
+): Promise<ApiResponse<any>> => {
+  return apiManager.post("/quests/progress-volume", { zoneVolume })
+}

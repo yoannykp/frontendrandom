@@ -138,12 +138,19 @@ const Auth = ({ deviceType }: { deviceType: "mobile" | "desktop" }) => {
         <BackgroundCover url="/images/auth/mobile-bg.jpeg" />
       ) : (
         <video
-          src="/images/auth/desktop-bg.mov"
           autoPlay
           muted
           loop
+          playsInline
+          preload="metadata"
+          poster="/images/auth/desktop-bg-poster.jpg"
           className="w-full h-full object-cover fixed top-0 left-0"
-        />
+        >
+          {/* Prefer MP4 (H.264) over .mov for better browser compat & smaller size */}
+          {/* Convert your .mov to .mp4: ffmpeg -i desktop-bg.mov -c:v libx264 -crf 23 -preset medium -an desktop-bg.mp4 */}
+          <source src="/images/auth/desktop-bg.mp4" type="video/mp4" />
+          <source src="/images/auth/desktop-bg.mov" type="video/quicktime" />
+        </video>
       )}
       {currentStep > 0 ? (
         <div className="fixed w-[100vw] h-[100vh] backdrop-blur-[10px] z-10 max-lg:bg-black/50"></div>

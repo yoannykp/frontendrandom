@@ -39,7 +39,6 @@ export const links = [
     icon: TeamIcon,
     image: "/images/pages/team.png",
   },
-
   {
     title: "Upgrade",
     href: "/upgrade",
@@ -54,9 +53,10 @@ export const links = [
   },
   {
     title: "Journal",
-    href: "/journal",
+    href: "",
     icon: JournalIcon,
     image: "/images/pages/journal.png",
+    disabled: true,
   },
   {
     title: "Store",
@@ -90,28 +90,53 @@ const ActivityMenu = ({ isMobile }: { isMobile?: boolean }) => {
 
           {/* Links */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {links.map((link, index) => (
-              <Link
-                key={index}
-                href={link.href}
-                className="glass-effect p-2 rounded-lg lg:rounded-xl  hover:scale-105 transition-all duration-300 hover:!bg-white/30"
-              >
-                <div className="relative pb-[40%] lg:pb-[60%] rounded-lg overflow-hidden">
-                  <Image
-                    src={link.image}
-                    alt={link.title}
-                    className="object-cover"
-                    fill
-                  />
-                </div>
-                <div className="flex items-end justify-between gap-2 mt-3">
-                  <h3 className="text-18 leading-none">{link.title}</h3>
-                  <div className="glass-effect size-6 rounded-sm flex items-center justify-center">
-                    <link.icon className="size-3" />
+            {links.map((link, index) => {
+              if (link.disabled) {
+                return (
+                  <div
+                    key={index}
+                    className="glass-effect p-2 rounded-lg lg:rounded-xl opacity-50 cursor-not-allowed"
+                  >
+                    <div className="relative pb-[40%] lg:pb-[60%] rounded-lg overflow-hidden">
+                      <Image
+                        src={link.image}
+                        alt={link.title}
+                        className="object-cover"
+                        fill
+                      />
+                    </div>
+                    <div className="flex items-end justify-between gap-2 mt-3">
+                      <h3 className="text-18 leading-none">{link.title}</h3>
+                      <div className="glass-effect size-6 rounded-sm flex items-center justify-center">
+                        <link.icon className="size-3" />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                )
+              }
+              return (
+                <Link
+                  key={index}
+                  href={link.href}
+                  className="glass-effect p-2 rounded-lg lg:rounded-xl  hover:scale-105 transition-all duration-300 hover:!bg-white/30"
+                >
+                  <div className="relative pb-[40%] lg:pb-[60%] rounded-lg overflow-hidden">
+                    <Image
+                      src={link.image}
+                      alt={link.title}
+                      className="object-cover"
+                      fill
+                    />
+                  </div>
+                  <div className="flex items-end justify-between gap-2 mt-3">
+                    <h3 className="text-18 leading-none">{link.title}</h3>
+                    <div className="glass-effect size-6 rounded-sm flex items-center justify-center">
+                      <link.icon className="size-3" />
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </div>
 
