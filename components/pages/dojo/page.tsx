@@ -128,9 +128,7 @@ const DojoPage = () => {
   const { wallets } = useWallets()
   const { signer } = useWallet()
   const zoneBalance = useZoneBalance(signer)
-  const { user, wallet } = useWallet()
-  // const wallet = wallets[0] ? getEthWallet(wallets) : null
-  console.log("wallet ====>", wallet)
+  const wallet = wallets[0] ?? null
 
   const [userData, setUserData] = useState<AuthUserData>({
     name: "",
