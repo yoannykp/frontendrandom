@@ -8,6 +8,7 @@ import {
   resetCreateStatus,
   updateAlienImage,
 } from "./slices/aliensSlice"
+import type { Alien } from "@/types"
 import { clearCharacters, fetchCharacters } from "./slices/charactersSlice"
 import {
   claimDailyRewards,
@@ -72,8 +73,11 @@ export const useAliens = () => {
     }
   }
 
+  const alien: Alien | null = aliensState.data?.[0] ?? null
+
   return {
     ...aliensState,
+    alien,
     fetchAliens: () => dispatch(fetchAliens()),
     createAlien: handleCreateAlien,
     updateAlienImage: handleUpdateAlienImage,

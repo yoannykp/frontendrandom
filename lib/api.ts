@@ -366,3 +366,28 @@ export const progressVolumeQuest = async (
 ): Promise<ApiResponse<any>> => {
   return apiManager.post("/quests/progress-volume", { zoneVolume })
 }
+
+// ========== Characters API ==========
+
+export const getAllCharacters = async (): Promise<ApiResponse<any>> => {
+  return apiManager.get<any>("/characters/get-all-characters")
+}
+
+// ========== Inventory API ==========
+
+export const getUserInventory = async (): Promise<ApiResponse<any>> => {
+  return apiManager.get<any>("/inventory/get-user-inventory")
+}
+
+// ========== Team API ==========
+
+export const getTeam = async (): Promise<ApiResponse<any>> => {
+  return apiManager.get<any>("/profile/get-team")
+}
+
+export const updateTeam = async (data: {
+  alienIds: number[]
+  characterIds: number[]
+}): Promise<ApiResponse<any>> => {
+  return apiManager.post("/profile/update-team", data)
+}

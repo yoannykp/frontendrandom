@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState, useCallback, useRef } from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState, useRef } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useAliens, useAppDispatch } from "@/store/hooks"
 import { fetchAliens } from "@/store/slices/aliensSlice"
 import { fetchRaidHistory, fetchRaids } from "@/store/slices/raidsSlice"

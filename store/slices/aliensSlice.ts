@@ -1,7 +1,7 @@
 import { Alien, AliensState, CreateAlienData } from "@/types"
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 
-import { createAlien, getAliens } from "@/lib/api"
+import { apiManager, createAlien, getAliens } from "@/lib/api"
 
 const initialState: AliensState = {
   data: null,
@@ -24,6 +24,25 @@ export const fetchAliens = createAsyncThunk(
       return response.data
     } catch (error) {
       return rejectWithValue("Failed to fetch aliens")
+    }
+  }
+)
+
+export const updateAlienImage = createAsyncThunk(
+  "aliens/updateAlienImage",
+  async (data: FormData, { rejectWithValue }) => {
+    try {
+      const response = await apiManager.call({
+        url: "/profile/update-alien-image",
+        method: "POST",
+        data,
+      })
+      if (response.error) {
+        return rejectWithValue(response.error.message)
+      }
+      return response.data
+    } catch (error) {
+      return rejectWithValue("Failed to update alien image")
     }
   }
 )

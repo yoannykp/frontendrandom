@@ -201,3 +201,37 @@ export interface PackReward {
   type: PackRewardType
   amount: number
 }
+
+export interface Character {
+  id: number
+  name: string
+  rarity: string
+  power: number
+  image: string | null
+  teamImage: string | null
+  video: string | null
+  tokenId: number
+  tier: number
+  element?: Element
+  elementId: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface InventoryItem {
+  id: number
+  name: string
+  type: string
+  image: string | null
+  quantity?: number
+}
+
+export interface TeamState {
+  data: any | null
+  loading: boolean
+  error: string | null
+  updateStatus: {
+    loading: boolean
+    error: string | null
+  }
+}
