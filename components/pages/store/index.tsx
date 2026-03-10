@@ -211,7 +211,7 @@ const StorePage = () => {
         `${rarity.charAt(0) + rarity.slice(1).toLowerCase()} tier unlocked! ${response.data?.starsSpent} Stars spent.`
       )
       // Add rarity to unlocked set
-      setUnlockedRarities((prev) => new Set([...prev, rarity]))
+      setUnlockedRarities((prev) => new Set([...Array.from(prev), rarity]))
       // Refresh unlocked list
       fetchUnlockedRarities()
     } catch (error: any) {
