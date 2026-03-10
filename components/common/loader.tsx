@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { Suspense, useEffect, useState, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useAliens, useAppDispatch } from "@/store/hooks"
 import { fetchAliens } from "@/store/slices/aliensSlice"
@@ -12,15 +12,9 @@ import toast from "react-hot-toast"
 
 import { removeCookie } from "@/lib/cookie"
 
-export function Loader({ children, isDojoPage }: { children: React.ReactNode; isDojoPage?: boolean }) {
-  const dispatch = useAppDispatch()
-  const router = useRouter()
-  const { ready, authenticated, user } = usePrivy()
-  const [isLoading, setIsLoading] = useState(true)
-  const { data: aliens } = useAliens()
-  const hasInitialized = useRef(false)
-
+function ReferralCodeHandler() {
   const searchParams = useSearchParams()
+  const router = useRouter()
 
   useEffect(() => {
     const refferalCode = searchParams.get("refferalCode")
@@ -31,6 +25,17 @@ export function Loader({ children, isDojoPage }: { children: React.ReactNode; is
       router.replace(newSearchParams.toString())
     }
   }, [searchParams, router])
+
+  return null
+}
+
+export function Loader({ children, isDojoPage }: { children: React.ReactNode; isDojoPage?: boolean }) {
+  const dispatch = useAppDispatch()
+  const router = useRouter()
+  const { ready, authenticated, user } = usePrivy()
+  const [isLoading, setIsLoading] = useState(true)
+  const { data: aliens } = useAliens()
+  const hasInitialized = useRef(false)
 
   useEffect(() => {
     // Prevent double initialization
@@ -86,5 +91,12 @@ export function Loader({ children, isDojoPage }: { children: React.ReactNode; is
     )
   }
 
-  return <>{children}</>
+  return (
+    <>
+      <Suspense fallback={null}>
+        <ReferralCodeHandler />
+      </Suspense>
+      {children}
+    </>
+  )
 }
