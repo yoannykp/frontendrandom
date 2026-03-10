@@ -476,7 +476,7 @@ const DojoPage = () => {
           let totalPartspower = 0
 
           // Process all objects in the array and collect their parts
-          res.data.userAlienParts.forEach((collection) => {
+          res.data.userAlienParts.forEach((collection: any) => {
             if (collection.parts && Array.isArray(collection.parts)) {
               collection.parts.forEach((part: any) => {
                 const type = part.type.toLowerCase()
